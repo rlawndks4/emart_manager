@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import {
   Card,
@@ -16,8 +16,13 @@ import Dropzone from "react-dropzone"
 import SweetAlert from "react-bootstrap-sweetalert"
 //Import Breadcrumb
 import Breadcrumbs from "../../components/Common/Breadcrumb"
-
+import axios from 'axios'
+import { useHistory , useLocation } from 'react-router';
 const AddProduct = () => {
+  const history = useHistory();
+  const [itemName, setItemName] = useState('')
+  const [itemNum, setItemNum] = useState('')
+  const [brandPk, setBrandPk] = useState(1)
   const [selectedMainFiles, setselectedMainFiles] = useState([])
   const [selectedDetailFiles, setselectedDetailFiles] = useState([])
   const [selectedQrFiles, setselectedQrFiles] = useState([])
@@ -40,14 +45,70 @@ const AddProduct = () => {
 
   const [with_save, setwith_save] = useState(false);
   const [with_cancel, setwith_cancel] = useState(false);
-  const options = [
-    { value: "AK", label: "Alaska" },
-    { value: "HI", label: "Hawaii" },
-    { value: "CA", label: "California" },
-    { value: "NV", label: "Nevada" },
-    { value: "OR", label: "Oregon" },
-    { value: "WA", label: "Washington" }
-  ]
+
+  
+  const classList = ["일반 상품", "오늘의 상품"];
+  const [selectedclass, setSelectedclass] = useState("일반 상품");
+
+  const brandList = ["kissher", "silit", "happycall", "tefal", "emile henry"];
+  const [selectedBrand, setSelectedBrand] = useState("kissher");
+ 
+  const [userLevel, setUserLevel] = useState(0);
+  const middleClassList = ["프라이팬", "냄비", "매직핸즈", "주방가전", "생활가전"];
+  const [selectedmiddleClass, setSelectedmiddleClass] = useState("프라이팬");
+
+  const handleSelectClass = (e) => {
+    setSelectedclass(e.target.value);
+  };
+  const handleSelectBrand = (e) => {
+    setSelectedBrand(e.target.value);
+  };
+  const handleSelectMiddleClass = (e) => {
+    setSelectedmiddleClass(e.target.value);
+  };
+  useEffect(()=>{
+    if(selectedBrand==='kissher') setBrandPk(1)
+      else if(selectedBrand==='silit') setBrandPk(2)
+      else if(selectedBrand==='happycall') setBrandPk(3)
+      else if(selectedBrand==='tefal') setBrandPk(4)
+      else{
+        setBrandPk(5)
+      }
+   })
+  console.log(itemName)
+  console.log(itemNum)
+  console.log(selectedmiddleClass)
+  console.log(selectedclass)
+  console.log(brandPk)
+  console.log(selectedMainFiles)
+  console.log(selectedDetailFiles)
+  console.log(selectedQrFiles)
+   const handleSubmit = async (e) => {
+     e.preventDefault()
+     if( itemName.length==0 ||
+       itemNum==0 ||
+       !selectedMainFiles ||
+       !selectedDetailFiles||
+       !selectedQrFiles){
+         alert("필수 입력 사항을 입력하지 않으셨습니다.");
+         setwith_save(false)
+       }
+       else{//brandPk, itemNum, itemName, classification, middleClass, status
+         const formData = new FormData();
+         formData.append('mainImage', selectedMainFiles)
+          formData.append('detailImage', selectedDetailFiles)
+          formData.append('qrImage',selectedQrFiles)
+          formData.append('brandPk',brandPk)
+          formData.append('itemNum',itemNum)
+          formData.append('itemName',itemName)
+          formData.append('classification', selectedclass)
+          formData.append('middleClass',selectedmiddleClass)
+          
+         axios.post('/api/addproduct', formData)
+         alert("상품이 추가되었습니다.")
+         history.push('/product-list')
+       }
+   }
 
   function handleAcceptedMainFiles(files) {
     files.map(file =>
@@ -79,7 +140,12 @@ const AddProduct = () => {
 
     setselectedQrFiles(files)
   }
-
+  const onChangeItemName = (e) => {
+    setItemName(e.target.value)
+  }
+  const onChangeItemNum = (e) => {
+    setItemNum(e.target.value)
+  }
   function formatBytes(bytes, decimals = 2) {
     if (bytes === 0) return "0 Bytes"
     const k = 1024
@@ -94,9 +160,7 @@ const AddProduct = () => {
     <React.Fragment>
       <div className="page-content">
         <Container fluid>
-          {/* Render Breadcrumb */}
           <Breadcrumbs breadcrumbItem="상품추가" />
-
           <Row>
             <Col lg="12">
               <div id="addproduct-accordion" className="custom-accordion">
@@ -125,46 +189,7 @@ const AddProduct = () => {
                   <Collapse isOpen={isOpen}>
                     <div className="p-4 border-top">
                       <Form>
-                        <Row>
-                          <Col md="4">
-                            <div className="mb-3">
-                              <Label className="control-label">상품 분류</Label>
-                              <Select
-                                classNamePrefix="select2-selection"
-                                placeholder="오늘의 상품"
-                                title="Country"
-                                options={options}
-                                isMulti
-                              />
-                            </div>
-                          </Col>
-                          <Col md="4">
-                            <div className="mb-3">
-                              <Label className="control-label">브랜드</Label>
-                              <Select
-                                classNamePrefix="select2-selection"
-                                placeholder="HappyCall"
-                                title="Country"
-                                options={options}
-                                isMulti
-                              />
-                            </div>
-                          </Col>
-                          <Col md="4">
-                            <div className="mb-3">
-                              <Label className="control-label">상태</Label>
-                              <Select
-                                classNamePrefix="select2-selection"
-                                placeholder="상품의 상태"
-                                title="Country"
-                                options={options}
-                                isMulti
-                              />
-                            </div>
-                          </Col>
-                        </Row>
-
-                        <Row>
+                      <Row>
                           <Col md="4">
                             <div className="mb-3">
                               <Label htmlFor="productname">상품명</Label>
@@ -173,6 +198,7 @@ const AddProduct = () => {
                                 name="productname"
                                 type="text"
                                 className="form-control"
+                                onChange={onChangeItemName}
                               />
                             </div>
                           </Col>
@@ -184,22 +210,62 @@ const AddProduct = () => {
                                 name="productname"
                                 type="text"
                                 className="form-control"
+                                onChange={onChangeItemNum}
                               />
                             </div>
                           </Col>
+                          <Col md="4">
+                          <div className="mb-3">
+                                  <Label>중분류</Label>
+                                  <form >
+                                    <select className="form-control" name="userlevel"
+                                      onChange={handleSelectMiddleClass} value={selectedmiddleClass}>
+                                      {middleClassList.map((item) => (
+                                        <option value={item} key={item}>
+                                          {item}
+                                        </option>
+                                      ))}
+                                    </select>
+                                  </form>
+                                </div>
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col md="4">
+                          <div className="mb-3">
+                                  <Label>상품분류</Label>
+                                  <form >
+                                    <select className="form-control" name="userlevel"
+                                      onChange={handleSelectClass} value={selectedclass}>
+                                      {classList.map((item) => (
+                                        <option value={item} key={item}>
+                                          {item}
+                                        </option>
+                                      ))}
+                                    </select>
+                                  </form>
+                                </div>
+                          </Col>
+                          <Col md="4">
+                          <div className="mb-3">
+                                  <Label>브랜드</Label>
+                                  <form >
+                                    <select className="form-control" name="userlevel"
+                                      onChange={handleSelectBrand} value={selectedBrand}>
+                                      {brandList.map((item) => (
+                                        <option value={item} key={item}>
+                                          {item}
+                                        </option>
+                                      ))}
+                                    </select>
+                                  </form>
+                                </div>
+                          </Col>
+                          
                         </Row>
 
+                        
 
-                        <div className="mb-0">
-                          <Label htmlFor="productdesc">
-                            상품 설명
-                          </Label>
-                          <textarea
-                            className="form-control"
-                            id="productdesc"
-                            rows="4"
-                          />
-                        </div>
 
                       </Form>
                     </div>
@@ -500,9 +566,7 @@ const AddProduct = () => {
                   <Link to="#" className="btn btn-danger" onClick={() => {
                     setwith_save(false)
                   }}> <i className="uil uil-times me-1" ></i> 취소 </Link>{" "}
-                  <Link to="#" className="btn btn-success" onClick={() => {
-                    setwith_save(false)
-                  }}> <i className="uil uil-file-alt me-1"></i> 저장 </Link>
+                  <Link to="#" className="btn btn-success" onClick={handleSubmit}> <i className="uil uil-file-alt me-1"></i> 저장 </Link>
                 </SweetAlert>
               ) : null}
 

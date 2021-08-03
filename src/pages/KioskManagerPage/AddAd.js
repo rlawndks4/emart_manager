@@ -49,9 +49,11 @@ const AddAd = () => {
       }
       else{
         const formData = new FormData();
-        formData.append('name', adName)
-        formData.append('img',adFile)
-        axios.post('http://localhost:8001/api/addad',[formData])
+        formData.append('adName', adName)
+        formData.append('image',adFile)
+        axios.post('/api/addad', formData)
+        alert("광고가 추가되었습니다.")
+        history.push('/ad-list')
       }
   }
 
@@ -65,16 +67,14 @@ const AddAd = () => {
     )
     setselectedFiles(files)
   }
-  console.log(adName)
-  console.log(selectedFiles[0])
-  console.log(selectedFiles)
+  
 
   const onChangeAdName = (e) => {
   setAdName(e.target.value)
 }
 
 useEffect(()=>{
-  setAdFile(selectedFiles);
+  setAdFile(selectedFiles[0]);
 })
 
   function formatBytes(bytes, decimals = 2) {
@@ -90,7 +90,6 @@ useEffect(()=>{
     <React.Fragment>
       <div className="page-content">
         <Container fluid>
-          {/* Render Breadcrumb */}
           <Breadcrumbs breadcrumbItem="광고 관리" />
 
           <div className="checkout-tabs">
@@ -215,11 +214,6 @@ useEffect(()=>{
 
                 </div>
                 <Row>
-                  {/* <Col>
-                    <Link to="/ecommerce-products" className="btn btn-link text-muted">
-                      <i className="uil uil-arrow-left me-1"></i> Continue Shopping
-                    </Link>
-                  </Col> */}
                   <Col>
                     <div className="text-sm-end mt-2 mt-sm-0">
                       <Link to="#" className="btn btn-danger" onClick={() => {

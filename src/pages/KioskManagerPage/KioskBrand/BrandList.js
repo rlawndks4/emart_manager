@@ -140,7 +140,7 @@ const BrandList = () => {
   useEffect(() => {
     async function fetchPosts() {
       setLoading(true);
-      const response = await axios.get('http://localhost:8001/brand');
+      const response = await axios.get('/api/brand');
       setPosts(response.data);
       setLoading(false);
     }
@@ -194,7 +194,7 @@ const BrandList = () => {
                       <Class2>중분류2</Class2>
                       <Class3>중분류3</Class3>
                       <Class4>중분류4</Class4>
-                      <Class5>중분류5</Class5>
+              
                       <Date>생성시간</Date>
                       <Modify>수정</Modify>
                       <Delete>삭제</Delete>
@@ -208,11 +208,10 @@ const BrandList = () => {
                         <Table key={post.pk}>
                           <CheckBox type="checkbox" id="cb1" />
                           <BrandName><ListText>{post.brand_name}</ListText></BrandName>
-                          <Class1><ListText>{post.maddle_class_1}</ListText></Class1>
-                          <Class2><ListText>{post.maddle_class_1}</ListText></Class2>
-                          <Class3><ListText>{post.maddle_class_1}</ListText></Class3>
-                          <Class4><ListText>{post.maddle_class_1}</ListText></Class4>
-                          <Class5><ListText>{post.maddle_class_1}</ListText></Class5>
+                          <Class1><ListText>{post.middle_class_1}</ListText></Class1>
+                          <Class2><ListText>{post.middle_class_2}</ListText></Class2>
+                          <Class3><ListText>{post.middle_class_3}</ListText></Class3>
+                          <Class4><ListText>{post.middle_class_4}</ListText></Class4>
                           <Date><ListText>{post.create_time}</ListText></Date>
                           <Modify><Link to="/brand-revise" className="px-3 text-primary"><i className="uil uil-pen font-size-18"></i></Link></Modify>
                           <Delete><Link to="#" className="px-3 text-danger" onClick={() => {

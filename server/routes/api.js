@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const path = require('path')
-const db = require('../config/db')
+const db = require('../config/db');
+const datas = require('../config/secure.js');
+const salt = "$2b$10$v.Pi5m.G2lIxZc9aV32O/u";
 const cors = require('cors');
 const { json } = require('body-parser');
 const customerInterface = require('../interface/CustomerInterface')
@@ -10,7 +12,6 @@ router.use(express.json());
 const bcrypt = require('bcrypt');
 const saltRounds = 10
 const multer = require('multer');
-
 
 router.get('/', (req, res) => {
     console.log("back-end initialized")
@@ -31,7 +32,7 @@ router.get('/kiosk', (req, res) => {
 
     })
 })
-
+a
 
 //  router.post('/addkiosk', (req, res) => {
 //      const kioskNum = req.body.kioskNum
@@ -111,7 +112,8 @@ router.post('/adduser', (req, res, next) => {
     console.log(id)
     console.log(pw)
     console.log(userLevel)
-    bcrypt.hash(pw , saltRounds , (error, hash) => {
+    bcrypt.hash(pw, salt, (error, hash) => {
+        console.log(hash);
         db.query('INSERT INTO user_information_tb (id, pw, user_level) VALUES (?, ?, ?)',
             [id, hash , userLevel], (err, result) => {
                 if (err) {
@@ -119,7 +121,6 @@ router.post('/adduser', (req, res, next) => {
                 }
                 else
                 {
-                    
                     console.log(result)
                 }
             })
@@ -140,20 +141,24 @@ router.post('/login', (req, res, next) => {
             } else {
                 console.log(result)
                 if (result.length>0) {
-                    
-                    bcrypt.compare( loginPw, result[0].pw , (error, response)=>{
-                        console.log(result[0].pw)
-                        console.log(loginPw)
-                        console.log(response)
-                        if(error) console.log(error)
-                        if(response){
-                            console.log("성공")
-                        }
-                        else{
-                            console.log("실패")
-                        }
-                    })
-                   
+                    bcrypt.hash(loginPw, salt, (error, hash) => {
+                        // bcrypt.compare(hash, result[0].pw , (error, response)=>{
+                        //     console.log(hash)
+                        //     console.log(result[0].pw)
+                        //     console.log(response)
+                        //     if(error) console.log(error)
+                        //     if(response){
+                        //         console.log("성공")
+                        //     }
+                        //     else{
+                        //         console.log("실패")
+                        //     }
+                        // })
+                        if(hash === result[0].pw)
+                            console.log("성공");
+                        else
+                            console.log("실패");
+                    });
                 }  
                 else {
                     return res.json({
@@ -272,19 +277,7 @@ router.get('/product', (req, res) => {
     })
 })
 //상품 추가
-router.post('/addproduct', (req, res, next) => {
-    const adName = req.body.adName
-    const adImage = req.body.adImage
-    db.query('INSERT INTO brand_information_tb (ad_name, ad_image) VALUES (?, ?)',
-        [], (err, result) => {
-            if (err) {
-                console.log(err)
-            }
-            else {
 
-            }
-        })
-})
 //상품 수정
 
 //상품 삭제

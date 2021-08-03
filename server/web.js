@@ -11,10 +11,19 @@ const port = 8001;
 app.use(cors());
 app.use(express.json());
 const jwt = require('jsonwebtoken')
+
+
 const multer = require('multer');
 
-const upload = multer({dest: './image/ad'})
-
+const storage = multer.diskStorage({
+        destination: function (req, file, cb) {
+                cb(null, 'image/ad/')
+        },
+        filename: function (req, file, cb) {
+                cb(null, Date.now() + '-' + file.originalname)
+        }
+})
+const upload = multer({storage: storage})
 app.use(bodyParser.urlencoded({
         extended: true
 }));
@@ -38,8 +47,8 @@ app.post('/api/addad', upload.single('image'),(req, res) =>{
         console.log(req.body)
         console.log(req.file)
         const sql = 'INSERT INTO ad_information_tb  (ad_name, ad_image) VALUE (? , ?)'
-        const adName = req.file.adName;
-        const image = '/image/' + new Date().valueOf()+ req.body.adImg
+        const adName = req.body.adName;
+        const image = "/image/ad/" + req.file.filename;
         db.query(sql, [adName, image] , (err, rows, feild)=>{
                 if(err) console.log(err)
                 else{
@@ -51,4 +60,3 @@ app.post('/api/addad', upload.single('image'),(req, res) =>{
 app.listen(port, () => {
         console.log("Server running on port 8001")
 })
-

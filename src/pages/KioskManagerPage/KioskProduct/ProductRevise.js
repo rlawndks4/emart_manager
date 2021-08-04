@@ -18,8 +18,19 @@ import SweetAlert from "react-bootstrap-sweetalert"
 import Breadcrumbs from "../../../components/Common/Breadcrumb"
 import axios from 'axios'
 import { useHistory , useLocation } from 'react-router';
+import styled from "styled-components"
+const LoadingBox = styled.div`
+width: 100%;
+align-items: center;
+display: flex;
+flex-direction: column;
+`
 const ProductRevise = () => {
   const history = useHistory();
+
+  const history2 = useHistory();
+  const location = useLocation();
+  const [loading, setLoading] = useState(false);
   const [itemName, setItemName] = useState('')
   const [itemNum, setItemNum] = useState('')
   const [brandPk, setBrandPk] = useState(1)
@@ -29,7 +40,7 @@ const ProductRevise = () => {
   const [isOpen, setIsOpen] = useState(true);
 
   const toggle = () => setIsOpen(!isOpen);
-
+console.log(location)
   const [isOpenAddproduct, setIsOpenAddproduct] = useState(false);
   const toggleAddproduct = () => setIsOpenAddproduct(!isOpenAddproduct);
 
@@ -56,7 +67,22 @@ const ProductRevise = () => {
   const [userLevel, setUserLevel] = useState(0);
   const middleClassList = ["프라이팬", "냄비", "매직핸즈", "주방가전", "생활가전"];
   const [selectedmiddleClass, setSelectedmiddleClass] = useState("프라이팬");
+  const isAdmin = async () => {
+    setLoading(true);
+    const { data: response } = await axios.get('/api/auth')
+    if(!response.third){
+      alert('회원만 접근 가능합니다.')
+      history.push('/login')
+    }else{
+      
+      setLoading(false)
+   
 
+      }
+    }
+  useEffect(() => {
+    isAdmin()
+  }, [])
   const handleSelectClass = (e) => {
     setSelectedclass(e.target.value);
   };

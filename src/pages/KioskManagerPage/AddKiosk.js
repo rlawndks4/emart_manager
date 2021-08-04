@@ -17,7 +17,13 @@ import Breadcrumbs from "../../components/Common/Breadcrumb"
 import SweetAlert from "react-bootstrap-sweetalert"
 import { useHistory } from 'react-router'
 import { Button } from "bootstrap"
-
+import styled from "styled-components"
+const LoadingBox = styled.div`
+width: 100%;
+align-items: center;
+display: flex;
+flex-direction: column;
+`
 const AddKiosk = () => {
   const history = useHistory()
   
@@ -29,6 +35,8 @@ const AddKiosk = () => {
   const [checkStore, setCheckStore] = useState('');
   const [addKiosk, setAddKiosk] = useState(false);
 
+  const selectList = ["일반유저", "관리자", "개발자"];
+  const [selected, setSelected] = useState("일반유저");
   const [isOpen, setIsOpen] = useState(true);
   const toggle = () => setIsOpen(!isOpen);
   const [with_save, setwith_save] = useState(false);
@@ -59,7 +67,9 @@ console.log(store)
     //     setwith_save(false)
     // }
 };
-
+const handleSelect = (e) => {
+  setSelected(e.target.value);
+};
 const handleCheckKn = async () => {
   if (kioskNum.length === 0) {
       setCheckKn('')
@@ -159,7 +169,21 @@ const handleCheckKn = async () => {
                               />
                             </div>
                           </Col>
-                          
+                          <Col md="2">
+                                <div className="mb-3">
+                                  <Label>추가를 원하는 유저</Label>
+                                  <form >
+                                    <select className="form-control" name="userlevel"
+                                      onChange={handleSelect} value={selected}>
+                                      {selectList.map((item) => (
+                                        <option value={item} key={item}>
+                                          {item}
+                                        </option>
+                                      ))}
+                                    </select>
+                                  </form>
+                                </div>
+                              </Col>
                         </Row>
                         <Row>
                           <Col  md="2">

@@ -14,12 +14,20 @@ import {
   Media
 } from "reactstrap"
 import SweetAlert from "react-bootstrap-sweetalert"
-import { Link, useHistory } from "react-router-dom"
+import { Link } from "react-router-dom"
 //Import Breadcrumb
 import Breadcrumbs from "../../components/Common/Breadcrumb"
 import axios from 'axios'
-
+import {useHistory, useLocation} from 'react-router';
+import styled from "styled-components"
+const LoadingBox = styled.div`
+width: 100%;
+align-items: center;
+display: flex;
+flex-direction: column;
+`
 const AddBrand = () => {
+  const history = useHistory()
   const [isOpen, setIsOpen] = useState(true);
   const toggle = () => setIsOpen(!isOpen);
   const [with_save, setwith_save] = useState(false);
@@ -32,7 +40,7 @@ const AddBrand = () => {
   const[class3, setClass3] = useState("");
   const[class4, setClass4] = useState("");
   const[checkAddBrand, setCheckAddBrand] = useState(false);
-  const history = useHistory()
+ 
 
   const onSubmit = async (e) => {
     e.preventDefault()

@@ -21,7 +21,13 @@ import Breadcrumbs from "../../components/Common/Breadcrumb"
 import { useHistory , useLocation } from 'react-router';
 import axios from "axios"
 import { formatDate } from "@fullcalendar/react"
-
+import styled from "styled-components"
+const LoadingBox = styled.div`
+width: 100%;
+align-items: center;
+display: flex;
+flex-direction: column;
+`
 const AddAd = () => {
   const history = useHistory();
   const location = useLocation();
@@ -51,7 +57,11 @@ const AddAd = () => {
         const formData = new FormData();
         formData.append('adName', adName)
         formData.append('image',adFile)
-        axios.post('/api/addad', formData)
+        const headers = {
+          'Content-type': 'multipart/form-data; charset=UTF-8',
+          'Accept': '*/*'
+      }
+        axios.post('/api/addad', formData,{ headers })
         alert("광고가 추가되었습니다.")
         history.push('/ad-list')
       }

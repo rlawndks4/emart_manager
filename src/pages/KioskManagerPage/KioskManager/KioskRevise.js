@@ -17,10 +17,16 @@ import Breadcrumbs from "../../../components/Common/Breadcrumb"
 import SweetAlert from "react-bootstrap-sweetalert"
 import { useHistory } from 'react-router'
 import { Button } from "bootstrap"
-
+import styled from "styled-components"
+const LoadingBox = styled.div`
+width: 100%;
+align-items: center;
+display: flex;
+flex-direction: column;
+`
 const KioskRevise = () => {
   const history = useHistory()
-  
+  const [loading, setLoading] = useState(false);
   const [kioskNum, setKioskNum] = useState('');
   const [checkKn, setCheckKn] = useState('');
   const [uniNum, setUniNum] = useState('');
@@ -37,6 +43,27 @@ const KioskRevise = () => {
 console.log(kioskNum)
 console.log(uniNum)
 console.log(store)
+const isAdmin = async () => {
+  setLoading(true);
+  const { data: response } = await axios.get('/api/auth')
+  if(!response.third){
+    alert('회원만 접근 가능합니다.')
+    history.push('/login')
+  }
+  else{
+    
+      if(!response.first){
+        alert('개발자만 접근 가능합니다.')
+        history.push('/product-list')
+      }else{
+        setLoading(false)
+      }
+    
+  } 
+}
+useEffect(() => {
+  isAdmin()
+}, [])
   const onSubmit = () => {
     
     // if (addKiosk) {   

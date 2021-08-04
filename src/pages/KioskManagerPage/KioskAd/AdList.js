@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, Col, Container, Row, Label, Input, Card, Spinner } from "reactstrap"
-import { Link } from "react-router-dom"
+import { Link ,useHistory, useLocation} from "react-router-dom"
 //Import Breadcrumb
 import Breadcrumbs from "../../../components/Common/Breadcrumb"
 import axios from 'axios'
@@ -99,9 +99,12 @@ const PageSpan = styled.span`
     background-color:black;
   }
 `;
-
+const ListImg = styled.img`
+height: 100px;
+width: 100%;
+`
 const AdList = () => {
-
+  const history = useHistory()
 
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -109,6 +112,25 @@ const AdList = () => {
   const [postsPerPage, setPostsPerPage] = useState(10);
   const [with_delete, setwith_delete] = useState(false);
   
+  const isAdmin = async () => {
+    setLoading(true);
+    const { data: response } = await axios.get('/api/auth')
+    if(!response.third){
+      alert('회원만 접근 가능합니다.')
+      history.push('/login')
+    }
+    else{
+      if (!response.second) {
+        alert('관리자만 접근 가능합니다.')
+        history.push('/product-list')
+      } else {
+        setLoading(false)
+      }
+    } 
+  }
+  useEffect(() => {
+    isAdmin()
+  }, [])
 
   useEffect(() => {
     async function fetchPosts() {
@@ -177,9 +199,14 @@ const AdList = () => {
                         <Table key={post.pk}>
                           <CheckBox type="checkbox" id="cb1" />
                           <AdName><ListText>{post.ad_name}</ListText></AdName>
-                          <AdImg><ListText>{post.ad_image}</ListText></AdImg>
+                          <AdImg><ListImg src={post.ad_image}/></AdImg>
                           <Date><ListText>{post.create_time}</ListText></Date>
-                          <Modify><Link to="/ad-revise" className="px-3 text-primary"><i className="uil uil-pen font-size-18"></i></Link></Modify>
+                          <Modify><Link to={{
+                            pathname: '/ad-revise',
+                            state: {
+                              value: post.pk
+                            }
+                          }} className="px-3 text-primary" ><i className="uil uil-pen font-size-18"></i></Link></Modify>
                           <Delete><Link to="#" className="px-3 text-danger" onClick={() => {
                             setwith_delete(true)
                           }}><i className="uil uil-trash-alt font-size-18"></i></Link></Delete>

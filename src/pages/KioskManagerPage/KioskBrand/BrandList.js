@@ -7,6 +7,7 @@ import axios from 'axios'
 import styled from "styled-components"
 import SweetAlert from "react-bootstrap-sweetalert"
 import { padStart } from "lodash";
+import {useHistory, useLocation} from 'react-router';
 
 const CheckBox = styled.input`
 margin: 14px 14px 14px;
@@ -129,14 +130,33 @@ const PageSpan = styled.span`
 
 const BrandList = () => {
 
-
+  const history = useHistory()
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage, setPostsPerPage] = useState(10);
   const [with_delete, setwith_delete] = useState(false);
   const [pagecolor, setPagecolor] = useState("white");
+  const isAdmin = async () => {
+    setLoading(true);
+    const { data: response } = await axios.get('/api/auth')
 
+    if(!response.third){
+      alert('회원만 접근 가능합니다.')
+      history.push('/login')
+    }
+    else{
+      if (!response.second) {
+        alert('관리자만 접근 가능합니다.')
+        history.push('/product-list')
+      } else {
+        setLoading(false)
+      }
+    } 
+  }
+  useEffect(() => {
+    isAdmin()
+  }, [])
   useEffect(() => {
     async function fetchPosts() {
       setLoading(true);

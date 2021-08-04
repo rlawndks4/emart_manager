@@ -19,8 +19,15 @@ import SweetAlert from "react-bootstrap-sweetalert"
 import Breadcrumbs from "../../components/Common/Breadcrumb"
 import axios from "axios"
 import { useHistory } from 'react-router'
-
+import styled from "styled-components"
+const LoadingBox = styled.div`
+width: 100%;
+align-items: center;
+display: flex;
+flex-direction: column;
+`
 const AddCustomers = () => {
+  const history = useHistory()
   const [isOpen, setIsOpen] = useState(true);
   const toggle = () => setIsOpen(!isOpen);
   const [with_save, setwith_save] = useState(false);
@@ -36,32 +43,56 @@ const AddCustomers = () => {
   const selectList = ["일반유저", "관리자", "개발자"];
   const [selected, setSelected] = useState("일반유저");
 
+  
+  const [selectedBrand, setSelectedBrand] = useState('');
+  
+  const [emileHenry, setEmileHenry] = useState(false)
+  const [tefal, setTefal] = useState(false)
+  const [happyCall, setHappyCall] = useState(false)
+  const [silit, setSilit] = useState(false)
+  const [kissher, setKissher] = useState(false)
   const handleSelect = (e) => {
     setSelected(e.target.value);
   };
 
-  const history = useHistory()
+
 
 
   const onSubmit = () => {
-    
+    var brandPk = '['
+    if(kissher){
+      brandPk += "1,"
+    }
+    if(silit){
+      brandPk += "2,"
+    }
+    if(happyCall){
+      brandPk += "3,"
+    }
+    if(tefal){
+      brandPk += "4,"
+    }
+    if(emileHenry){
+      brandPk += "5,"
+    }
+    brandPk = brandPk.substring(0, brandPk.length-1)
+    brandPk += "]"
+    console.log(brandPk)
     // if (checkAddUser) {
-      //회원가입
-      axios.post('/api/adduser', {
-         id: id, 
-         pw: pw,
-        userLevel: userLevel 
-        }).then(()=>{
-          console.log("success")
-          setwith_save(false)
-           setwith_good(true)
-          history.push('/customer-list')
-        })
-        .catch(err => console.log(err))
-      
-      
+    //회원가입
+    axios.post('/api/adduser', {
+      id: id,
+      pw: pw,
+      userLevel: userLevel,
+      brandPk: brandPk
+    }).then(() => {
+      console.log("success")
+      setwith_save(false)
+      setwith_good(true)
+      history.push('/customer-list')
+    })
+      .catch(err => console.log(err))
 
-      
     // } else {
     //   if(checkId===''){
     //     alert('ID 중복확인을 해주세요.')
@@ -80,21 +111,21 @@ const AddCustomers = () => {
       checkId !== '사용 가능한 ID입니다.'
     ) {
       setCheckAddUser(false)
-      
+
     } else {
       setCheckAddUser(true)
     }
   })
 
- useEffect(()=>{
-  if(selected==='일반유저') setUserLevel(0)
-    else if(selected==='관리자') setUserLevel(40)
-    else{
+  useEffect(() => {
+    if (selected === '일반유저') setUserLevel(0)
+    else if (selected === '관리자') setUserLevel(40)
+    else {
       setUserLevel(50)
     }
- })
-    
-  
+  })
+
+
   const onChangeId = (e) => {
     setId(e.target.value)
     setCheckId('')
@@ -103,9 +134,9 @@ const AddCustomers = () => {
     setPw(e.target.value)
     setCheckPw('')
   };
-
+  
   const handleCheckId = async () => {
-    
+
     if (id.length === 0) {
       setCheckId('')
     } else {
@@ -113,16 +144,55 @@ const AddCustomers = () => {
       console.log(response.data)
       // .then(res => console.log(res))
       //       .catch(err => console.log(err)) //true면 중복
-      
+
     }
   }
-  
-  console.log(id);
-  console.log(pw);
-  console.log(selected);
-  console.log(checkAddUser);
-  console.log(checkId);
-  console.log(userLevel);
+ 
+  const handleEmileHenry = () =>{
+    if(!emileHenry){
+      setEmileHenry(true)
+    }
+    else{
+      setEmileHenry(false)
+    }
+  }
+  const handleTefal = () =>{
+    if(!tefal){
+      setTefal(true)
+    }
+    else{
+      setTefal(false)
+    }
+  }
+  const handleHappycall = () =>{
+    if(!happyCall){
+      setHappyCall(true)
+    }
+    else{
+      setHappyCall(false)
+    }
+  }
+  const handleSilit = () =>{
+    if(!silit){
+      setSilit(true)
+    }
+    else{
+      setSilit(false)
+    }
+  }
+  const handleKissher = () =>{
+    if(!kissher){
+      setKissher(true)
+    }
+    else{
+      setKissher(false)
+    }
+  }
+  console.log(emileHenry)
+  console.log(tefal)
+  console.log(happyCall)
+  console.log(silit)
+  console.log(kissher)
   return (
     <React.Fragment>
       <div className="page-content">
@@ -208,10 +278,80 @@ const AddCustomers = () => {
                                   </form>
                                 </div>
                               </Col>
+                              <Col lg={4}>
+                                <div className="mb-3">
+                                  <Label>관리할 브랜드</Label>
+                                  <form>
+
+                                    <input
+                                      className="form-check-input"
+                                      type="checkbox"
+                                      name="emile henry"
+                                      onClick={handleEmileHenry}
+                                    />
+                                    <label
+                                      className="form-check-label"
+                                      htmlFor="exampleRadios2"
+                                    >
+                                      emile henry
+                                    </label>
+                                    <br/>
+                                    <input
+                                      className="form-check-input"
+                                      type="checkbox"
+                                      name="tefal"
+                                      onClick={handleTefal}
+                                    />
+                                    <label
+                                      className="form-check-label"
+                                      htmlFor="exampleRadios2"
+                                    >
+                                      tefal
+                                    </label>
+                                    <br/>
+                                    <input
+                                      className="form-check-input"
+                                      type="checkbox"
+                                      name="happycall"
+                                      onClick={handleHappycall}
+                                    />
+                                    <label
+                                      className="form-check-label"
+                                      htmlFor="exampleRadios2"
+                                    >
+                                      happycall
+                                    </label>
+                                    <br/>
+                                    <input
+                                      className="form-check-input"
+                                      type="checkbox"
+                                      name="silit"
+                                      onClick={handleSilit}
+                                    />
+                                    <label
+                                      className="form-check-label"
+                                      htmlFor="exampleRadios2"
+                                    >
+                                      silit
+                                    </label>
+                                    <br/>
+                                    <input
+                                      className="form-check-input"
+                                      type="checkbox"
+                                      name=" kissher"
+                                      onClick={handleKissher}
+                                    />
+                                    <label
+                                      className="form-check-label"
+                                      htmlFor="exampleRadios2"
+                                    >
+                                      kissher
+                                    </label>
+                                  </form>
+                                </div>
+                              </Col>
                             </Row>
-                            <Col lg={1}>
-                              <Link to="#" className="btn btn-primary" onClick={handleCheckId}>중복확인</Link>
-                            </Col>
+                           
                           </div>
                         </Form>
                       </div>
@@ -244,7 +384,7 @@ const AddCustomers = () => {
                         }}> <i className="uil uil-times me-1" ></i> 취소 </Link>{" "}
                         <Link to="#" className="btn btn-success" onClick={onSubmit}
                         >
-                        <i className="uil uil-file-alt me-1"></i> 저장 </Link>
+                          <i className="uil uil-file-alt me-1"></i> 저장 </Link>
                       </SweetAlert>
                     ) : null}
 

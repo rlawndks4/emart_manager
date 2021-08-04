@@ -19,14 +19,20 @@ import SweetAlert from "react-bootstrap-sweetalert"
 import Breadcrumbs from "../../../components/Common/Breadcrumb"
 import axios from "axios"
 import { useHistory } from 'react-router'
-
+import styled from "styled-components"
+const LoadingBox = styled.div`
+width: 100%;
+align-items: center;
+display: flex;
+flex-direction: column;
+`
 const CustomerRevise = () => {
   const [isOpen, setIsOpen] = useState(true);
   const toggle = () => setIsOpen(!isOpen);
   const [with_save, setwith_save] = useState(false);
   const [with_cancel, setwith_cancel] = useState(false);
   const [with_good, setwith_good] = useState(false);
-
+  const [loading, setLoading] = useState(false);
   const [id, setId] = useState('');
   const [pw, setPw] = useState('');
   const [checkId, setCheckId] = useState('');
@@ -35,7 +41,27 @@ const CustomerRevise = () => {
   const [userLevel, setUserLevel] = useState(0);
   const selectList = ["일반유저", "관리자", "개발자"];
   const [selected, setSelected] = useState("일반유저");
-
+  const isAdmin = async () => {
+    setLoading(true);
+    const { data: response } = await axios.get('/api/auth')
+    if(!response.third){
+      alert('회원만 접근 가능합니다.')
+      history.push('/login')
+    }
+    else{
+      
+        if(!response.first){
+          alert('개발자만 접근 가능합니다.')
+          history.push('/product-list')
+        }else{
+          setLoading(false)
+        }
+      
+    } 
+  }
+  useEffect(() => {
+    isAdmin()
+  }, [])
   const handleSelect = (e) => {
     setSelected(e.target.value);
   };

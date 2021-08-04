@@ -2,9 +2,8 @@ const LocalStrategy = require('passport-local').Strategy;
 const crypto = require('crypto');
 const bcrypt = require('bcrypt');
 const db = require('../config/db');
-const {salt} = require('../config/secure.js');
+const salt = process.env.salt
 // const { User } = require('../models');
-const {salt} = require('../config/secure.js');
 
 var isEmpty = function (value) {
     if (value == "" || value == null || value == undefined || (value != null && typeof value == "object" && !Object.keys(value).length)) {
@@ -25,7 +24,7 @@ module.exports = (passport) => {
                     bcrypt.hash(pw, salt, (error, hash) => {
                         console.log("salt : " + salt );
                         if(hash === result[0].pw)
-                            done(null, result);
+                            done(null, result[0]);
                         else
                             done(null, false, { message: '비밀번호가 일치하지 않습니다.' });
                     });

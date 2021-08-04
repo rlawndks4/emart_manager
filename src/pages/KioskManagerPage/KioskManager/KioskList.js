@@ -120,6 +120,27 @@ const KioskList = () => {
   const [with_delete, setwith_delete] = useState(false);
   const [kioskNum, setkioskNum] = useState('')
   const [with_good, setwith_good] = useState(false);
+  const isAdmin = async () => {
+    setLoading(true);
+    const { data: response } = await axios.get('/api/auth')
+    if(!response.third){
+      alert('회원만 접근 가능합니다.')
+      history.push('/login')
+    }
+    else{
+      
+        if(!response.first){
+          alert('개발자만 접근 가능합니다.')
+          history.push('/product-list')
+        }else{
+          setLoading(false)
+        }
+      
+    } 
+  }
+  useEffect(() => {
+    isAdmin()
+  }, [])
   function deleteKiosk(num) {
     setkioskNum(num)
     console.log(kioskNum)

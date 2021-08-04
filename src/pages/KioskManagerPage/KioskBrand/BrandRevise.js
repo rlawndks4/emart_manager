@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import {
   Container,
   Row,
@@ -15,13 +15,20 @@ import {
 } from "reactstrap"
 import SweetAlert from "react-bootstrap-sweetalert"
 import { Link } from "react-router-dom"
-
+import {useHistory, useLocation} from 'react-router';
 //Import Breadcrumb
 import Breadcrumbs from "../../../components/Common/Breadcrumb"
-
+import styled from "styled-components"
 //Import Images
 import img1 from "../../../assets/images/product/img-1.png"
 import img6 from "../../../assets/images/product/img-6.png"
+import axios from "axios";
+const LoadingBox = styled.div`
+width: 100%;
+align-items: center;
+display: flex;
+flex-direction: column;
+`
 
 const orderSummary = [
   {
@@ -35,6 +42,27 @@ const orderSummary = [
 ]
 
 const BrandRevise = () => {
+  const [loading, setLoading] = useState(false);
+  const isAdmin = async () => {
+    setLoading(true);
+    const { data: response } = await axios.get('/api/auth')
+    if(!response.third){
+      alert('회원만 접근 가능합니다.')
+      history.push('/login')
+    }
+    else{
+      if (!response.second) {
+        alert('관리자만 접근 가능합니다.')
+        history.push('/product-list')
+      } else {
+        setLoading(false)
+      }
+    } 
+  }
+  useEffect(() => {
+    isAdmin()
+  }, [])
+  const history = useHistory()
   const [isOpen, setIsOpen] = useState(true);
 
   const toggle = () => setIsOpen(!isOpen);

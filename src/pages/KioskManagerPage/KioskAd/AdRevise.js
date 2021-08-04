@@ -11,22 +11,30 @@ import {
   FormGroup,
   Label,
   CardBody,
-  Media
+  Media,
+  Spinner
 } from "reactstrap"
 import Dropzone from "react-dropzone"
 import { Link } from "react-router-dom"
 import SweetAlert from "react-bootstrap-sweetalert"
 //Import Breadcrumb
 import Breadcrumbs from "../../../components/Common/Breadcrumb"
-import { useHistory , useLocation } from 'react-router';
+import { useHistory , useLocation } from 'react-router-dom';
 import axios from "axios"
 import { formatDate } from "@fullcalendar/react"
+import styled from "styled-components"
 
+const LoadingBox = styled.div`
+width: 100%;
+align-items: center;
+display: flex;
+flex-direction: column;
+`
 const AdRevise = () => {
   const history = useHistory();
-  const location = useLocation();
+  
   const [isOpen, setIsOpen] = useState(true);
-
+  const [loading, setLoading] = useState(false);
   const toggle = () => setIsOpen(!isOpen);
 
   const [selectedFiles, setselectedFiles] = useState([])
@@ -35,11 +43,37 @@ const AdRevise = () => {
     file : []
   });
   console.log(selectedFiles)
+  const location = useLocation();
+  useEffect(()=>{
+    const data = location.state.value
+  console.log(data)
+  },[location])
+  
   
 
   const [with_save, setwith_save] = useState(false);
   const [with_cancel, setwith_cancel] = useState(false);
   
+  const isAdmin = async () => {
+    setLoading(true);
+    const { data: response } = await axios.get('/api/auth')
+    if(!response.third){
+      alert('회원만 접근 가능합니다.')
+      history.push('/login')
+    }
+    else{
+      if (!response.second) {
+        alert('관리자만 접근 가능합니다.')
+        history.push('/product-list')
+      } else {
+        setLoading(false)
+      }
+    } 
+  }
+  useEffect(() => {
+    isAdmin()
+  }, [])
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     if( !adName ||
@@ -51,7 +85,7 @@ const AdRevise = () => {
         const formData = new FormData();
         formData.append('adName', adName)
         formData.append('image',adFile)
-        axios.post('/api/addad', formData)
+        axios.post('/api/updatead', formData)
         alert("광고가 수정되었습니다.")
         history.push('/ad-list')
       }
@@ -89,6 +123,11 @@ useEffect(()=>{
   return (
     <React.Fragment>
       <div className="page-content">
+      <>
+                      {
+                        loading &&
+                        <LoadingBox><Spinner className="m-1" color="primary" /></LoadingBox>
+                      }
         <Container fluid>
           <Breadcrumbs breadcrumbItem="광고 관리" />
 
@@ -269,6 +308,7 @@ useEffect(()=>{
             </Row>
           </div>
         </Container>
+        </>
       </div>
     </React.Fragment>
   )

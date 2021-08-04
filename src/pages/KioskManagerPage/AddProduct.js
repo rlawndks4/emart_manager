@@ -18,6 +18,13 @@ import SweetAlert from "react-bootstrap-sweetalert"
 import Breadcrumbs from "../../components/Common/Breadcrumb"
 import axios from 'axios'
 import { useHistory , useLocation } from 'react-router';
+import styled from "styled-components"
+const LoadingBox = styled.div`
+width: 100%;
+align-items: center;
+display: flex;
+flex-direction: column;
+`
 const AddProduct = () => {
   const history = useHistory();
   const [itemName, setItemName] = useState('')
@@ -27,8 +34,18 @@ const AddProduct = () => {
   const [selectedDetailFiles, setselectedDetailFiles] = useState([])
   const [selectedQrFiles, setselectedQrFiles] = useState([])
   const [isOpen, setIsOpen] = useState(true);
-
+  
+  const [mainFile, setMainFile] = useState({
+    file : []
+  });
+  const [detailFile, setDetailFile] = useState({
+    file : []
+  });
+  const [qrFile, setQrFile] = useState({
+    file : []
+  });
   const toggle = () => setIsOpen(!isOpen);
+
 
   const [isOpenAddproduct, setIsOpenAddproduct] = useState(false);
   const toggleAddproduct = () => setIsOpenAddproduct(!isOpenAddproduct);
@@ -49,11 +66,12 @@ const AddProduct = () => {
   
   const classList = ["일반 상품", "오늘의 상품"];
   const [selectedclass, setSelectedclass] = useState("일반 상품");
+  const [classification, setClassification] = useState(0);
 
   const brandList = ["kissher", "silit", "happycall", "tefal", "emile henry"];
   const [selectedBrand, setSelectedBrand] = useState("kissher");
  
-  const [userLevel, setUserLevel] = useState(0);
+
   const middleClassList = ["프라이팬", "냄비", "매직핸즈", "주방가전", "생활가전"];
   const [selectedmiddleClass, setSelectedmiddleClass] = useState("프라이팬");
 
@@ -87,24 +105,30 @@ const AddProduct = () => {
      e.preventDefault()
      if( itemName.length==0 ||
        itemNum==0 ||
-       !selectedMainFiles ||
-       !selectedDetailFiles||
-       !selectedQrFiles){
+       !mainFile ||
+       !detailFile||
+       !qrFile){
          alert("필수 입력 사항을 입력하지 않으셨습니다.");
          setwith_save(false)
        }
        else{//brandPk, itemNum, itemName, classification, middleClass, status
          const formData = new FormData();
-         formData.append('mainImage', selectedMainFiles)
-          formData.append('detailImage', selectedDetailFiles)
-          formData.append('qrImage',selectedQrFiles)
+         formData.append('mainImage', mainFile)
+          formData.append('detailImage', detailFile)
+          formData.append('qrImage',qrFile)
+          
           formData.append('brandPk',brandPk)
           formData.append('itemNum',itemNum)
+
           formData.append('itemName',itemName)
-          formData.append('classification', selectedclass)
+          formData.append('classification', classification)
           formData.append('middleClass',selectedmiddleClass)
-          
-         axios.post('/api/addproduct', formData)
+          const headers = {
+            'Content-type': 'multipart/form-data; charset=UTF-8',
+            'Accept': '*/*'
+        }
+         axios.post('/api/addproduct', formData,{headers})
+         console.log(formData)
          alert("상품이 추가되었습니다.")
          history.push('/product-list')
        }
@@ -140,6 +164,14 @@ const AddProduct = () => {
 
     setselectedQrFiles(files)
   }
+  useEffect(()=>{
+    if(selectedclass=="오늘의 상품"){
+      setClassification(1);
+    }
+    else{
+      setClassification(0)
+    }
+  })
   const onChangeItemName = (e) => {
     setItemName(e.target.value)
   }
@@ -155,7 +187,11 @@ const AddProduct = () => {
     const i = Math.floor(Math.log(bytes) / Math.log(k))
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i]
   }
-
+  useEffect(()=>{
+    setMainFile(selectedMainFiles[0])
+    setDetailFile(selectedDetailFiles[0])
+    setQrFile(selectedQrFiles[0])
+  })
   return (
     <React.Fragment>
       <div className="page-content">

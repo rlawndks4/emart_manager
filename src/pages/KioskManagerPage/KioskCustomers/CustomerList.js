@@ -6,6 +6,7 @@ import Breadcrumbs from "../../../components/Common/Breadcrumb"
 import axios from 'axios'
 import styled from "styled-components"
 import SweetAlert from "react-bootstrap-sweetalert"
+import {useHistory, useLocation} from 'react-router';
 
 const CheckBox = styled.input`
 margin: 14px 14px 14px;
@@ -109,6 +110,8 @@ const PageSpan = styled.span`
 
 const CustomerList = (props) => {
 
+  
+  const history = useHistory()
   const [reviseId, setReviseId] = useState('')
   const [revisePw, setRevisePw] = useState('')
   const [reviseUserLevel, setReviseUserLevel] = useState('')
@@ -121,6 +124,27 @@ const CustomerList = (props) => {
   const [pagecolor, setPagecolor] = useState("white");
   const [userId, setUserId] = useState('')
 
+  const isAdmin = async () => {
+    setLoading(true);
+    const { data: response } = await axios.get('/api/auth')
+    if(!response.third){
+      alert('회원만 접근 가능합니다.')
+      history.push('/login')
+    }
+    else{
+     
+        if(!response.first){
+          alert('개발자만 접근 가능합니다.')
+          history.push('/product-list')
+        }else{
+          setLoading(false)
+        }
+      
+    } 
+  }
+  useEffect(() => {
+    isAdmin()
+  }, [])
   function deleteUser(id) {
     setUserId(id)
     console.log(userId)
@@ -201,7 +225,9 @@ const CustomerList = (props) => {
                           <BrandPk><ListText>{post.user_level}</ListText></BrandPk>
                           <Date><ListText>{post.create_time}</ListText></Date>
                           <Modify>
-                            <Link to="/customer-revise" className="px-3 text-primary" >
+                            <Link to="#" className="px-3 text-primary" onClick={()=>{
+
+                            }} >
                               <i className="uil uil-pen font-size-18"></i>
                             </Link>
                           </Modify>

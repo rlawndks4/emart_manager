@@ -6,7 +6,7 @@ import Breadcrumbs from "../../../components/Common/Breadcrumb"
 import axios from 'axios'
 import styled from "styled-components"
 import SweetAlert from "react-bootstrap-sweetalert"
-
+import {useHistory, useLocation} from 'react-router';
 const CheckBox = styled.input`
 margin: 14px 14px 14px;
 `
@@ -124,17 +124,33 @@ const PageSpan = styled.span`
     background-color:black;
   }
 `;
-
+const ListImg = styled.img`
+height: 100px;
+width: 100%;
+`
 const ProductList = () => {
 
-
+  const history = useHistory()
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage, setPostsPerPage] = useState(10);
   const [with_delete, setwith_delete] = useState(false);
   const [pagecolor, setPagecolor] = useState("white");
+  const isAdmin = async () => {
+    setLoading(true);
+    const { data: response } = await axios.get('/api/auth')
 
+    if(!response.third){
+      alert('회원만 접근 가능합니다.')
+      history.push('/login')
+    }else{
+      setLoading(false)
+      }
+    }
+  useEffect(() => {
+    isAdmin()
+  }, [])
   function deleteKiosk(id) {
     
     
@@ -168,7 +184,39 @@ const ProductList = () => {
   for (let i = 1; i <= Math.ceil(posts.length / postsPerPage); i++) {
     pageNumbers.push(i);
   }
-
+  function setClass(cla){
+    if(cla==0){
+      return "일반상품"
+    }
+    else{
+      return "오늘의 상품"
+    }
+  }
+  function setBrand(brd){
+    if(brd==1){
+      return "kissher"
+    }
+    else if(brd==2){
+      return "silit"
+    }
+    else if(brd==3){
+      return "happycall"
+    }
+    else if(brd==4){
+      return "tefal"
+    }
+    else{
+      return "emile henry"
+    }
+  }
+  function setStatus(stt){
+    if(stt==1){
+      return "사용중"
+    }
+    else{
+      return "사용안함"
+    }
+  }
   return (
     <React.Fragment>
       <div className="page-content">
@@ -214,15 +262,23 @@ const ProductList = () => {
                       {currentPosts(posts).map(post => (
                         <Table key={post.pk}>
                           <CheckBox type="checkbox" id="cb1" />
-                          <MainImg><ListText>{post.main_image}</ListText></MainImg>
+                          <MainImg><ListImg src={post.main_image}/></MainImg>
                           <ItemName><ListText>{post.item_name}</ListText></ItemName>
                           <ItemNum><ListText>{post.item_num}</ListText></ItemNum>
-                          <BrandPk><ListText>{post.brand_pk}</ListText></BrandPk>
-                          <Classification><ListText>{post.classification}</ListText></Classification>
-                          <Status><ListText>{post.status}</ListText></Status>
-                          <DetailImg><ListText>{post.detail_image}</ListText></DetailImg>
-                          <QrImg><ListText>{post.qr_image}</ListText></QrImg>
-                          <Modify><Link to="/product-revise" className="px-3 text-primary"><i className="uil uil-pen font-size-18"></i></Link></Modify>
+                          <BrandPk><ListText>{setBrand(post.brand_pk)}</ListText></BrandPk>
+                          <Classification><ListText>{setClass(post.classification)}</ListText></Classification>
+                          <Status><ListText>{setStatus(post.status)}</ListText></Status>
+                          <DetailImg><ListImg src={post.detail_image}/></DetailImg>
+                          <QrImg><ListImg src={post.qr_image}/></QrImg>
+                          <Modify><Link to="#" className="px-3 text-primary" onClick={()=>{
+                              history.push(
+                                {
+                                  pathname : `/product-revise`,
+                                  state : { itemName: post.item_name , itemNum : post.item_num, brandPk : post.brand_pk
+                                  }
+                                }
+                              )
+                          }}><i className="uil uil-pen font-size-18"></i></Link></Modify>
                           <Delete><Link to="#" className="px-3 text-danger" onClick={() => {
                             setwith_delete(true)
                           }}><i className="uil uil-trash-alt font-size-18"></i></Link></Delete>
@@ -282,7 +338,5 @@ const ProductList = () => {
     </React.Fragment>
   )
 }
-
-
 
 export default ProductList

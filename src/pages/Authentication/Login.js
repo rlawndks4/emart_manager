@@ -5,7 +5,7 @@ import { Row, Col, Alert, Container ,CardBody,Card} from "reactstrap"
 
 // Redux
 import { connect } from "react-redux"
-import { withRouter, Link } from "react-router-dom"
+import { withRouter, Link ,useHistory, useLocation} from "react-router-dom"
 
 // availity-reactstrap-validation
 import { AvForm, AvField } from "availity-reactstrap-validation"
@@ -18,6 +18,7 @@ import EmartLogo from "../../assets/images/emart_logo.png"
 import axios from 'axios'
 import { LoginContext } from '../../App'
 const Login = (props) => {
+  const history = useHistory()
   const { ID, setID, PW, setPW, success, setSuccess, signUpFlag, setSignUpFlag } = useContext(LoginContext)
    // handleValidSubmit
    
@@ -32,6 +33,7 @@ const onLogin = async (e) => {
           
         }else{
           alert(response.message)
+          history.push('/product-list')
         }
         
         
@@ -55,7 +57,7 @@ const onLogin = async (e) => {
   return (
     <React.Fragment>
       <div className="home-btn d-none d-sm-block">
-        <Link to="/" className="text-dark">
+        <Link to="/login" className="text-dark">
           <i className="mdi mdi-home-variant h2"></i>
         </Link>
       </div>
@@ -77,7 +79,7 @@ const onLogin = async (e) => {
                         <Alert color="danger">{props.error}</Alert>
                       ) : null}
                       <div className="text-center">
-                        <Link to="/" className="mb-5 d-block auth-logo">
+                        <Link to="/login" className="mb-5 d-block auth-logo">
                           <img src={EmartLogo} alt="" height="24" className="emart_logo" />
                   
                         </Link>

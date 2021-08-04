@@ -11,32 +11,43 @@ import {
 import { withTranslation } from "react-i18next"
 // Redux
 import { connect } from "react-redux"
-import { withRouter, Link } from "react-router-dom"
-
+import { withRouter, Link, useHistory } from "react-router-dom"
+import axios from "axios"
 // users
 import user4 from "../../../assets/images/users/avatar-4.jpg"
 
 const ProfileMenu = props => {
   // Declare a new state variable, which we'll call "menu"
   const [menu, setMenu] = useState(false)
-
-  const [username, setusername] = useState("Admin")
-
-  useEffect(() => {
-    if (localStorage.getItem("authUser")) {
-      if (process.env.REACT_APP_DEFAULTAUTH === "firebase") {
-        const obj = JSON.parse(localStorage.getItem("authUser"))
-        setusername(obj.displayName)
-      } else if (
-        process.env.REACT_APP_DEFAULTAUTH === "fake" ||
-        process.env.REACT_APP_DEFAULTAUTH === "jwt"
-      ) {
-        const obj = JSON.parse(localStorage.getItem("authUser"))
-        setusername(obj.username)
+  const history = useHistory()
+  const [username, setUsername] = useState("Admin")
+  const [userLevel, setUserLevel] = useState("")
+  const isAdmin = async () => {
+  
+    const { data: response } = await axios.get('/api/auth')
+    setUsername(response.id)
+    if(response.first){
+      setUserLevel("개발자")
+    }
+    else{
+      if(response.second){
+        setUserLevel("관리자")
+      }
+      else{
+        if(response.third){
+          setUserLevel("일반회원")
+        }
+        
       }
     }
-  }, [props.success])
-
+  }
+  useEffect(() => {
+    isAdmin()
+  }, [])
+  const onLogout = async () => {
+    axios.post('/api/logout')
+    alert("로그아웃 되었습니다.")
+  }
   return (
     <React.Fragment>
       <Dropdown
@@ -49,35 +60,24 @@ const ProfileMenu = props => {
           id="page-header-user-dropdown"
           tag="button"
         >
-          <img
-            className="rounded-circle header-profile-user"
-            src={user4}
-            alt="Header Avatar"
-          />
-          <span className="d-none d-xl-inline-block ms-1 fw-medium font-size-15">{username}</span>{" "}
-          <i className="uil-angle-down d-none d-xl-inline-block font-size-15"></i>
+          
+          <span>{username}</span>{" "}
+          
         </DropdownToggle>
         <DropdownMenu className="dropdown-menu-end">
-          <DropdownItem tag="a" href="/profile">
+          <DropdownItem tag="a" href="/product-list">
             {" "}
             <i className="uil uil-user-circle font-size-18 align-middle text-muted me-1"></i>
-            {props.t("View Profile")}{" "}
+            {props.t(username)}{" "}
           </DropdownItem>
-          <DropdownItem tag="a" href="/">
-            <i className="uil uil-wallet font-size-18 align-middle me-1 text-muted"></i>
-            {props.t("My Wallet")}
-          </DropdownItem>
-          <DropdownItem tag="a" href="#">
-            <i className="uil uil-cog font-size-18 align-middle me-1 text-muted"></i>
-            {props.t("Settings")}
-            <span className="badge bg-soft-success rounded-pill mt-1 ms-2">03</span>
-          </DropdownItem>
-          <DropdownItem tag="a" href="auth-lock-screen">
+          
+          <DropdownItem>
             <i className="uil uil-lock-alt font-size-18 align-middle me-1 text-muted"></i>
-            {props.t("Lock screen")}
+            {props.t(userLevel)}
           </DropdownItem>
           <div className="dropdown-divider" />
-          <Link to="/login" className="dropdown-item">
+          <Link to="/login" className="dropdown-item"
+          onClick={onLogout}>
             <i className="uil uil-sign-out-alt font-size-18 align-middle me-1 text-muted"></i>
             <span>{props.t("Logout")}</span>
           </Link>

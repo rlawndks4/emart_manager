@@ -120,7 +120,7 @@ const FormAdvanced = () => {
   const [selectedGroup, setselectedGroup] = useState(null)
   const [selectedMulti, setselectedMulti] = useState(null)
   const [selectedMulti1, setselectedMulti1] = useState(null)
-
+console.log(selectedMulti1)
   const onDrag = c1 => {
     setcolor(c1)
   }

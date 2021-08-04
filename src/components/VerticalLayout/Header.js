@@ -83,7 +83,7 @@ const Header = props => {
         <div className="navbar-header">
           <div className="d-flex">
             <div className="navbar-brand-box">
-              <Link to="/kiosk-list" className="logo logo-dark">
+              <Link to="/product-list" className="logo logo-dark">
                 <span className="logo-sm">
                   <img src={EmartLogo} alt="" height="22" />
                 </span>
@@ -92,7 +92,7 @@ const Header = props => {
                 </span>
               </Link>
 
-              <Link to="/list" className="logo logo-light">
+              <Link to="/product-list" className="logo logo-light">
                 <span className="logo-sm">
                   <img src={EmartLogo} alt="" height="22" />
                 </span>
@@ -112,137 +112,9 @@ const Header = props => {
             >
               <i className="fa fa-fw fa-bars" />
             </button>
-
-            {/* <Form className="app-search d-none d-lg-block">
-              <div className="position-relative">
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder={props.t("Search") + "..."}
-                />
-                <span className="uil-search"></span>
-              </div>
-            </Form> */}
           </div>
 
-          <div className="d-flex">
-
-            {/* <Dropdown
-              className="d-inline-block d-lg-none ms-2"
-              onClick={() => {
-                setsearch(!search)
-              }}
-              type="button"
-            >
-              <DropdownToggle
-                className="btn header-item noti-icon waves-effect"
-                id="page-header-search-dropdown"
-                tag="button"
-              > <i className="uil-search" />
-              </DropdownToggle> */}
-              {/* <DropdownMenu className="dropdown-menu-lg dropdown-menu-end p-0">
-                <Form className="p-3">
-                  <div className="form-group m-0">
-                    <div className="input-group">
-                      <Input type="text" className="form-control" placeholder="Search ..." aria-label="Recipient's username" />
-                      <div className="input-group-append">
-                        <Button className="btn btn-primary" type="submit"><i className="mdi mdi-magnify"></i></Button>
-                      </div>
-                    </div>
-                  </div>
-                </Form>
-              </DropdownMenu>
-            </Dropdown> */}
-
-            {/* <LanguageDropdown /> */}
-
-            {/* <Dropdown
-              className="d-none d-lg-inline-block ms-1"
-              isOpen={socialDrp}
-              toggle={() => {
-                setsocialDrp(!socialDrp)
-              }}
-            >
-              <DropdownToggle
-                className="btn header-item noti-icon waves-effect"
-                tag="button"
-              >
-                <i className="uil-apps"></i>
-              </DropdownToggle>
-              <DropdownMenu className="dropdown-menu-lg dropdown-menu-end" right>
-                <div className="px-lg-2">
-                  <Row className="g-0">
-                    <Col>
-                      <Link className="dropdown-icon-item" to="#">
-                        <img src={github} alt="Github" />
-                        <span>GitHub</span>
-                      </Link>
-                    </Col>
-                    <Col>
-                      <Link className="dropdown-icon-item" to="#">
-                        <img src={bitbucket} alt="bitbucket" />
-                        <span>Bitbucket</span>
-                      </Link>
-                    </Col>
-                    <Col>
-                      <Link className="dropdown-icon-item" to="#">
-                        <img src={dribbble} alt="dribbble" />
-                        <span>Dribbble</span>
-                      </Link>
-                    </Col>
-                  </Row>
-
-                  <Row className="g-0">
-                    <Col>
-                      <Link className="dropdown-icon-item" to="#">
-                        <img src={dropbox} alt="dropbox" />
-                        <span>Dropbox</span>
-                      </Link>
-                    </Col>
-                    <Col>
-                      <Link className="dropdown-icon-item" to="#">
-                        <img src={mail_chimp} alt="mail_chimp" />
-                        <span>Mail Chimp</span>
-                      </Link>
-                    </Col>
-                    <Col>
-                      <Link className="dropdown-icon-item" to="#">
-                        <img src={slack} alt="slack" />
-                        <span>Slack</span>
-                      </Link>
-                    </Col>
-                  </Row>
-                </div>
-              </DropdownMenu>
-            </Dropdown>
-
-            <Dropdown className="d-none d-lg-inline-block ms-1">
-              <button
-                type="button"
-                onClick={() => {
-                  toggleFullscreen()
-                }}
-                className="btn header-item noti-icon waves-effect"
-                data-toggle="fullscreen"
-              >
-                <i className="uil-minus-path"></i>
-              </button>
-            </Dropdown>
-
-            <NotificationDropdown /> */}
-
-            <ProfileMenu />
-
-            {/* <div onClick={() => {
-              props.showRightSidebarAction(!props.showRightSidebar)
-            }}
-              className="dropdown d-inline-block">
-              <button type="button" className="btn header-item noti-icon right-bar-toggle waves-effect">
-                <i className="uil-cog"></i>
-              </button>
-            </div> */}
-
-          </div>
+          <ProfileMenu/>
         </div>
       </header>
     </React.Fragment>

@@ -104,7 +104,9 @@ app.post('/api/addproduct', upload.fields([{name : 'mainImage'}, {name : 'detail
 app.post('/api/images', upload.array('images'), (req, res, err) => {
         res.send({message: "파일 전송 완료"})
 })
-app.listen(port, '0.0.0.0', () => {
-        console.log("Server running on port 8001")
+app.listen(port, '0.0.0.0', (err) => {
+        if(err) console.log(err)
+        else
+                console.log("Server running on port 8001")
 })
 

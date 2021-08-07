@@ -13,7 +13,7 @@ app.use(cors());
 require('dotenv').config()
 //passport, jwt
 const jwt = require('jsonwebtoken')
-const { checkLevel, lowLevelException, logRequestResponse } = require('./util')
+const { checkLevel, lowLevelException, nullRequestParamsOrBody, logRequestResponse, isNotNullOrUndefined, namingImagesPath } = require('./util')
 const passport = require('passport');
 const passportConfig = require('./passport');
 
@@ -36,8 +36,8 @@ app.use('/image', express.static('image'));
 app.use('/api', require('./routes/api'))
 
 app.get('/', (req, res) => {
-        console.log("back-end initialized")
-        res.send('back-end initialized')
+    console.log("back-end initialized")
+    res.send('back-end initialized')
 });
 
 app.post('/api/addad', upload.single('image'), (req, res) =>{
@@ -45,21 +45,28 @@ app.post('/api/addad', upload.single('image'), (req, res) =>{
         {
                 const sql = 'INSERT INTO ad_information_tb  (ad_name, ad_image) VALUE (? , ?)'
                 const adName = req.body.adName;
-                const image = "/image/ad/" + req.file.filename;
-                db.query(sql, [adName, image], (err, rows, feild)=>{
-                        logRequestResponse(
-                                req,
-                                {
-                                        query: sql,
-                                        param: [adName, image],
-                                        success: (err) ? false : true 
+                const {image, isNull} = namingImagesPath("ad", req.file)
+                const param = [adName, image]
+                if(isNotNullOrUndefined([adName, req.file.filename]))
+                        db.query(sql, param, (err, rows, feild)=>{
+                                logRequestResponse(
+                                        req,
+                                        {
+                                                query: sql,
+                                                param: param,
+                                                success: (err) ? false : true 
+                                        }
+                                )
+                                if(err) console.log(err)
+                                else{
+                                        res.send(rows);
                                 }
-                        )
-                        if(err) console.log(err)
-                        else{
-                                res.send(rows);
-                        }
-                })
+                        })
+                else
+                {
+                        logRequestResponse(req, nullRequestParamsOrBody)
+                        res.send(nullRequestParamsOrBody)
+                }
         }
         else
         {
@@ -72,30 +79,36 @@ app.post('/api/addproduct', upload.fields([{name : 'mainImage'}, {name : 'detail
         if(checkLevel(req.cookies.token, 0))
         {
                 // fk(1~5), int, string, int, bool(0,1)
-                const {brandPk, itemNum, itemName, classification, middleClass, status} = req.body;
+                console.log(req.files)
+                const {brandPk, itemNum, itemName, classification, middleClass, status} = req.body
                 const sql = 'INSERT INTO item_information_tb (brand_pk, item_num, item_name, classification, middle_class, main_image, detail_image, qr_image, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
-                const mainImage = "/image/item/" + req.files.mainImage[0].filename
-                const detailImage = "/image/detailItem/" + req.files.detailImage[0].filename
-                const qrImage = "/image/qr/" + req.files.qrImage[0].filename
+                const {mainImage, detailImage, qrImage, isNull} = namingImagesPath("product", req.files)
                 const param = [brandPk, itemNum, itemName, classification, middleClass, mainImage, detailImage, qrImage, status]
                 // console.log(req.files)
-                db.query(sql, param, (err, result) => {
-                        logRequestResponse(
-                                req,
-                                {
-                                        query: sql,
-                                        param: param,
-                                        success: (err) ? false : true 
+                if(isNotNullOrUndefined(param))
+                {
+                        db.query(sql, param, (err, result) => {
+                                logRequestResponse(
+                                        req,
+                                        {
+                                                query: sql,
+                                                param: param,
+                                                success: (err) ? false : true 
+                                        }
+                                )
+                                if (err) {
+                                        console.log(err)
                                 }
-                        )
-                        if (err) {
-                                console.log(err)
-                        }
-                        else {
-                                console.log(result)
-                                res.send(result)
-                        }
-                })      
+                                else {
+                                        res.send(result)
+                                }
+                        })
+                }
+                else
+                {
+                        logRequestResponse(req, nullRequestParamsOrBody)
+                        res.send(nullRequestParamsOrBody)
+                }  
         }
         else
                 res.send(lowLevelException)
@@ -104,8 +117,7 @@ app.post('/api/addproduct', upload.fields([{name : 'mainImage'}, {name : 'detail
 app.post('/api/images', upload.array('images'), (req, res, err) => {
         res.send({message: "파일 전송 완료"})
 })
-app.listen(port, '0.0.0.0', (err) => {
-        
+app.listen(port, '0.0.0.0', () => {
         console.log("Server running on port 8001")
 })
 

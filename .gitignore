@@ -1,4 +1,5 @@
-node_modules
-#database
-server/database.json
-server/config
+# node_modules
+# #database
+# server/database.json
+# server/config
+server/node_modules/

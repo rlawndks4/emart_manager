@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
-import React, { createContext, useMemo, useState, useEffect } from "react"
+import React, { createContext, useMemo, useState} from "react"
 
-import { Switch, BrowserRouter as Router, Route } from "react-router-dom"
+import { Switch, BrowserRouter as Router} from "react-router-dom"
 import { connect } from "react-redux"
 
 // Import Routes all
@@ -12,13 +12,12 @@ import Authmiddleware from "./routes/middleware/Authmiddleware"
 
 // layouts Format
 import VerticalLayout from "./components/VerticalLayout/"
-import HorizontalLayout from "./components/HorizontalLayout/"
+
 import NonAuthLayout from "./components/NonAuthLayout"
 // Import scss
 import "./assets/scss/theme.scss"
 
 
-import axios from 'axios'
 
 // Activating fake backend
 export const LoginContext = createContext({

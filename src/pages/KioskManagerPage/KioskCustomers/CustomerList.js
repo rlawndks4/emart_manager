@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Container, Row, Label, Input, Card, Spinner } from "reactstrap"
+import { Col, Container, Row, Card, Spinner } from "reactstrap"
 import { Link } from "react-router-dom"
 //Import Breadcrumb
 import Breadcrumbs from "../../../components/Common/Breadcrumb"
 import axios from 'axios'
 import styled from "styled-components"
 import SweetAlert from "react-bootstrap-sweetalert"
-import {useHistory, useLocation} from 'react-router';
+import {useHistory} from 'react-router';
 
 const CheckBox = styled.input`
 margin: 14px 14px 14px;
@@ -112,17 +112,13 @@ const CustomerList = (props) => {
 
   
   const history = useHistory()
-  const [reviseId, setReviseId] = useState('')
-  const [revisePw, setRevisePw] = useState('')
-  const [reviseUserLevel, setReviseUserLevel] = useState('')
+  const [deleteNum, setDeleteNum] = useState(0)
 
+  const [maxPage, setMaxPage] = useState(0);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [postsPerPage, setPostsPerPage] = useState(10);
   const [with_delete, setwith_delete] = useState(false);
-  const [pagecolor, setPagecolor] = useState("white");
-  const [userId, setUserId] = useState('')
 
   const isAdmin = async () => {
     setLoading(true);
@@ -145,39 +141,46 @@ const CustomerList = (props) => {
   useEffect(() => {
     isAdmin()
   }, [])
-  function deleteUser(id) {
-    setUserId(id)
-    console.log(userId)
-    const { data: response } = axios.post('/api/deleteuser', {
-      id: userId
-    })
-  }
-    
+  
   useEffect(() => {
-    async function fetchData() {
-      setLoading(true);
-      const response = await axios.get('/api/user');
-      setPosts(response.data);
-      setLoading(false);
-    }
-    fetchData()
-  }, []);
-
-  console.log(posts);
-  console.log(posts.length);
-  const indexOfLast = currentPage * postsPerPage;
-  const indexOfFirst = indexOfLast - postsPerPage;
-
-  function currentPosts(tmp) {
-    let currentPosts = 0;
-    currentPosts = tmp.slice(indexOfFirst, indexOfLast);
-    return currentPosts;
+    async function fetchPosts() {
+    setLoading(true);
+    const page = currentPage
+    const{ data: response } = await axios.get(`/api/user/${page}`);
+   
+    setPosts(response.data.result);
+    setMaxPage(response.data.maxPage);
+    setLoading(false);
   }
+  fetchPosts()
+},[]);
 
-  const pageNumbers = [];
-  for (let i = 1; i <= Math.ceil(posts.length / postsPerPage); i++) {
-    pageNumbers.push(i);
+  const onDelete = async (e) => {
+    e.preventDefault()
+    const { data: response } = await axios.post('/api/deleteuser', {
+         pk: deleteNum
+        })
+        alert('삭제되었습니다.')
+        setwith_delete(false)
+        window.location.replace("/customer-list")
+  };
+
+  function onChangePage(num) {
+    async function fetchPosts() {
+    setLoading(true);
+    const page = num
+    setCurrentPage(num)
+    const{ data: response } = await axios.get(`/api/user/${page}`);
+    setPosts(response.data.result);
+    setLoading(false);
   }
+  fetchPosts()
+  };
+  
+   const pageNumbers = [];
+   for (let i = 1; i <= maxPage; i++) {
+     pageNumbers.push(i);
+   }
 
   return (
     <React.Fragment>
@@ -217,25 +220,29 @@ const CustomerList = (props) => {
                         loading &&
                         <LoadingBox><Spinner className="m-1" color="primary" /></LoadingBox>
                       }
-                      {currentPosts(posts).map(post => (
+                      {posts && posts.map(post => (
                         <Table key={post.pk}>
                           <CheckBox type="checkbox" id="cb1" />
                           <ID><ListText>{post.id}</ListText></ID>
                           <PW><ListText>{post.pw}</ListText></PW>
                           <BrandPk><ListText>{post.user_level}</ListText></BrandPk>
-                          <Date><ListText>{post.create_time}</ListText></Date>
+                          <Date><ListText>
+                          
+                          {post.create_time}
+                          
+                          </ListText></Date>
                           <Modify>
-                            <Link to="#" className="px-3 text-primary" onClick={()=>{
-
-                            }} >
+                            <Link to={{
+                            pathname: '/customer-revise',
+                            state: {pk: post.pk, id: post.id}
+                            }}className="px-3 text-primary" >
                               <i className="uil uil-pen font-size-18"></i>
                             </Link>
                           </Modify>
-                          <Delete>
-                            <Link className="px-3 text-danger" onClick={() => { deleteUser(post.id) }}>
-                              <i className="uil uil-trash-alt font-size-18"></i>
-                            </Link>
-                          </Delete>
+                          <Delete><Link to="#" className="px-3 text-danger" onClick={() => {
+                            setDeleteNum(post.pk)
+                            setwith_delete(true)
+                          }}><i className="uil uil-trash-alt font-size-18"></i></Link></Delete>
                         </Table>
                       ))}
 
@@ -253,9 +260,7 @@ const CustomerList = (props) => {
                         <Link to="#" className="btn btn-danger" onClick={() => {
                           setwith_delete(false)
                         }}> <i className="uil uil-times me-1" ></i> 취소 </Link>{" "}
-                        <Link to="#" className="btn btn-success" onClick={() => {
-                          setwith_delete(false)
-                        }}> <i className="uil uil-file-alt me-1" ></i> 확인 </Link>
+                        <Link to="#" className="btn btn-success" onClick={onDelete}> <i className="uil uil-file-alt me-1"></i> 확인 </Link>
                       </SweetAlert>
 
                     ) : null}
@@ -270,15 +275,15 @@ const CustomerList = (props) => {
 
                       <PageBox>
                         <PageUl className="pagination">
-                          <PageLi onClick={() => setCurrentPage(1)}>처음</PageLi>
+                        <PageLi onClick={()=>{onChangePage(1)}}>처음</PageLi>
                           {pageNumbers.map(number => (
                             <PageLi key={number} className="page-item">
-                              <PageSpan onClick={() => setCurrentPage(number)}>
+                              <PageSpan onClick={() => {onChangePage(number)}}>
                                 {number}
                               </PageSpan>
                             </PageLi>
                           ))}
-                          <PageLi onClick={() => setCurrentPage(posts.length / 10)}>마지막</PageLi>
+                          <PageLi onClick={()=>{onChangePage(maxPage)}}>마지막</PageLi>
                         </PageUl>
                       </PageBox>
                     </Row>

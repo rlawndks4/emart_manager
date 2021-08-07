@@ -3,14 +3,11 @@ import {
   Container,
   Row,
   Col,
-  Table,
   Input,
   Collapse,
   Card,
   Form,
-  FormGroup,
   Label,
-  CardBody,
   Media
 } from "reactstrap"
 import { Link } from "react-router-dom"
@@ -19,13 +16,7 @@ import SweetAlert from "react-bootstrap-sweetalert"
 import Breadcrumbs from "../../components/Common/Breadcrumb"
 import axios from "axios"
 import { useHistory } from 'react-router'
-import styled from "styled-components"
-const LoadingBox = styled.div`
-width: 100%;
-align-items: center;
-display: flex;
-flex-direction: column;
-`
+
 const AddCustomers = () => {
   const history = useHistory()
   const [isOpen, setIsOpen] = useState(true);
@@ -33,77 +24,124 @@ const AddCustomers = () => {
   const [with_save, setwith_save] = useState(false);
   const [with_cancel, setwith_cancel] = useState(false);
   const [with_good, setwith_good] = useState(false);
-
+  const [loading, setLoading] = useState(false);
   const [id, setId] = useState('');
   const [pw, setPw] = useState('');
   const [checkId, setCheckId] = useState('');
   const [checkPw, setCheckPw] = useState(false);
   const [checkAddUser, setCheckAddUser] = useState(false);
-  const [userLevel, setUserLevel] = useState(0);
+  const [userLevel, setUserLevel] = useState('');
   const selectList = ["일반유저", "관리자", "개발자"];
   const [selected, setSelected] = useState("일반유저");
+  
 
-  
-  const [selectedBrand, setSelectedBrand] = useState('');
-  
   const [emileHenry, setEmileHenry] = useState(false)
   const [tefal, setTefal] = useState(false)
   const [happyCall, setHappyCall] = useState(false)
   const [silit, setSilit] = useState(false)
   const [kissher, setKissher] = useState(false)
+
+  const [allKioskList, setAllKioskList] = useState([]);
+  const [kioskList, setKioskList] = useState([]);
+  const [selectKiosk, setSelectKiosk] = useState("");
+  const [kioskNameList, setkioskNameList] = useState([]);
   const handleSelect = (e) => {
     setSelected(e.target.value);
   };
 
-
-
-
-  const onSubmit = () => {
-    var brandPk = '['
-    if(kissher){
-      brandPk += "1,"
+const isAdmin = async () => {
+    setLoading(true);
+    const { data: response } = await axios.get('/api/auth')
+    if(!response.third){
+      alert('회원만 접근 가능합니다.')
+      history.push('/login')
     }
-    if(silit){
-      brandPk += "2,"
+    else{
+     
+        if(!response.first){
+          alert('개발자만 접근 가능합니다.')
+          history.push('/product-list')
+        }else{
+          setLoading(false)
+        }
+      
+    } 
+  }
+  useEffect(() => {
+    isAdmin()
+  }, [])
+//제출함수 
+  const onSubmit = async (e) => {
+    e.preventDefault()
+    //이용할 브랜드를 선택하고 그 값들을 배열형태로 저장하여 보냄
+    var brand_pk_list = []
+    var brand_list    = [kissher, silit, happyCall, tefal, emileHenry]
+    for(var i=0; i<brand_list.length; i++)
+    {
+      if(brand_list[i])
+        brand_pk_list.push(i+1)
     }
-    if(happyCall){
-      brandPk += "3,"
-    }
-    if(tefal){
-      brandPk += "4,"
-    }
-    if(emileHenry){
-      brandPk += "5,"
-    }
-    brandPk = brandPk.substring(0, brandPk.length-1)
-    brandPk += "]"
-    console.log(brandPk)
+    
+    var brandPk = JSON.stringify(brand_pk_list)
+    
     // if (checkAddUser) {
     //회원가입
-    axios.post('/api/adduser', {
+    var kioskLi = JSON.stringify(kioskList)
+    const { data: response } =  await axios.post('/api/adduser', {
       id: id,
       pw: pw,
       userLevel: userLevel,
-      brandPk: brandPk
-    }).then(() => {
-      console.log("success")
-      setwith_save(false)
-      setwith_good(true)
-      history.push('/customer-list')
+      brandPk: brandPk,
+      kioskList: kioskLi
     })
-      .catch(err => console.log(err))
-
-    // } else {
-    //   if(checkId===''){
-    //     alert('ID 중복확인을 해주세요.')
-    //   }
-    //   else{
-    //     alert('필수정보가 입력되지 않았습니다.')
-    //   }
-    //   setwith_save(false)
-    // }
+      if(response.result==-200)
+      {
+        alert(response.message)
+        setwith_save(false)
+      }
+      else if(response.result==200){
+        alert("유저가 추가되었습니다.")
+        setwith_save(false)
+        history.push('/customer-list')
+      }
+      else
+      {
+        console.log(response)
+      }
+    
   };
-
+  //키오스크 리스트 모두 출력
+  useEffect(() => {
+    async function fetchPosts() {
+  
+    const{ data: response } = await axios.get('/api/kiosk');
+    console.log(response.data)
+    setAllKioskList(response.data)
+    console.log(allKioskList)
+  }
+  fetchPosts()
+},[]);
+const handleSelectKiosk = (e) => {
+  
+  setSelectKiosk(e.target.value)
+  if(selectKiosk === "" || selectKiosk === undefined){
+    return;
+  }
+  kioskNameList.push(selectKiosk)
+  for(var i = 0; i<allKioskList.length; i++){
+    
+    if(allKioskList[i].kiosk_num==selectKiosk){
+      kioskList.push(allKioskList[i].pk)
+      break;
+    }
+  }
+  console.log(selectKiosk)
+  console.log(kioskList)
+}
+function handlekioskName(arr){
+  var name = JSON.stringify(arr)
+  return name
+}
   useEffect(() => {
     if (
       id.length === 0 ||
@@ -135,19 +173,10 @@ const AddCustomers = () => {
     setCheckPw('')
   };
   
-  const handleCheckId = async () => {
-
-    if (id.length === 0) {
-      setCheckId('')
-    } else {
-      const response = await axios.get(`/api/userid/${id}`)
-      console.log(response.data)
-      // .then(res => console.log(res))
-      //       .catch(err => console.log(err)) //true면 중복
-
-    }
-  }
- 
+    
+  
+  
+  
   const handleEmileHenry = () =>{
     if(!emileHenry){
       setEmileHenry(true)
@@ -188,11 +217,7 @@ const AddCustomers = () => {
       setKissher(false)
     }
   }
-  console.log(emileHenry)
-  console.log(tefal)
-  console.log(happyCall)
-  console.log(silit)
-  console.log(kissher)
+  
   return (
     <React.Fragment>
       <div className="page-content">
@@ -350,6 +375,25 @@ const AddCustomers = () => {
                                   </form>
                                 </div>
                               </Col>
+                              <Col lg={4}>
+                          <div className="mb-3">
+                                  <Label>이용할 키오스크(다중선택 가능)</Label>
+                                  <form >
+                                    <select className="form-control" name="userlevel"
+                                      onChange={handleSelectKiosk} value={selectKiosk}>
+                                      {allKioskList.map(item => (
+                                        <option value={item.kiosk_num} key={item.kiosk_num}>
+                                          {item.kiosk_num}
+                                        </option>
+                                      ))}
+                                    </select>
+                                  </form>
+                                </div>
+                          </Col>
+                          <Col>
+                          <Label>선택한 키오스크</Label>
+                          <div>{handlekioskName(kioskNameList)}</div>
+                          </Col>
                             </Row>
                            
                           </div>

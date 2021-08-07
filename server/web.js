@@ -13,7 +13,7 @@ app.use(cors());
 require('dotenv').config()
 //passport, jwt
 const jwt = require('jsonwebtoken')
-const { checkLevel, lowLevelException, nullRequestParamsOrBody, logRequestResponse, isNotNullOrUndefined, namingImagesPath } = require('./util')
+const { checkLevel, logRequestResponse, isNotNullOrUndefined, namingImagesPath, nullResponse, lowLevelResponse, response } = require('./util')
 const passport = require('passport');
 const passportConfig = require('./passport');
 
@@ -40,83 +40,77 @@ app.get('/', (req, res) => {
     res.send('back-end initialized')
 });
 
+
 app.post('/api/addad', upload.single('image'), (req, res) =>{
-        if(checkLevel(req.cookies.token, 40))
-        {
-                const sql = 'INSERT INTO ad_information_tb  (ad_name, ad_image) VALUE (? , ?)'
-                const adName = req.body.adName;
-                const {image, isNull} = namingImagesPath("ad", req.file)
-                const param = [adName, image]
-                if(isNotNullOrUndefined([adName, req.file.filename]))
-                        db.query(sql, param, (err, rows, feild)=>{
-                                logRequestResponse(
-                                        req,
-                                        {
-                                                query: sql,
-                                                param: param,
-                                                success: (err) ? false : true 
-                                        }
-                                )
-                                if(err) console.log(err)
-                                else{
-                                        res.send(rows);
-                                }
-                        })
-                else
+        try{
+                if(checkLevel(req.cookies.token, 40))
                 {
-                        logRequestResponse(req, nullRequestParamsOrBody)
-                        res.send(nullRequestParamsOrBody)
+                        const sql = 'INSERT INTO ad_information_tb  (ad_name, ad_image) VALUE (? , ?)'
+                        const adName = req.body.adName
+                        const {image, isNull} = namingImagesPath("ad", req.file)
+                        const param = [adName, image]
+                        if(isNotNullOrUndefined([adName, req.file.filename]))
+                        {
+                                db.query(sql, param, (err, rows, feild)=>{
+                                        if (err) {
+                                                console.log(err)
+                                                response(req, res, -200, "광고 추가 실패", [])
+                                        }
+                                        else {
+                                                response(req, res, 200, "광고 추가 성공", [])
+                                        }
+                                })
+                        }
+                        else
+                                nullResponse(res)
                 }
+                else
+                        lowLevelResponse(res)
         }
-        else
+        catch(err)
         {
-                res.send(lowLevelException)
+                console.log(err)
+                response(req, res, -200, "서버 에러 발생", [])
         }
 })
 
 //상품 추가
 app.post('/api/addproduct', upload.fields([{name : 'mainImage'}, {name : 'detailImage'}, {name : 'qrImage'}]), (req, res, next) => {
-        if(checkLevel(req.cookies.token, 0))
-        {
-                // fk(1~5), int, string, int, bool(0,1)
-                console.log(req.files)
-                const {brandPk, itemNum, itemName, classification, middleClass, status} = req.body
-                const sql = 'INSERT INTO item_information_tb (brand_pk, item_num, item_name, classification, middle_class, main_image, detail_image, qr_image, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
-                const {mainImage, detailImage, qrImage, isNull} = namingImagesPath("product", req.files)
-                const param = [brandPk, itemNum, itemName, classification, middleClass, mainImage, detailImage, qrImage, status]
-                // console.log(req.files)
-                if(isNotNullOrUndefined(param))
+        try{
+                if(checkLevel(req.cookies.token, 0))
                 {
-                        db.query(sql, param, (err, result) => {
-                                logRequestResponse(
-                                        req,
-                                        {
-                                                query: sql,
-                                                param: param,
-                                                success: (err) ? false : true 
+                        // fk(1~5), int, string, int, bool(0,1)
+                        console.log(req.files)
+                        const {brandPk, itemNum, itemName, classification, middleClass, status} = req.body
+                        const sql = 'INSERT INTO item_information_tb (brand_pk, item_num, item_name, classification, middle_class, main_image, detail_image, qr_image, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
+                        const {mainImage, detailImage, qrImage, isNull} = namingImagesPath("product", req.files)
+                        const param = [brandPk, itemNum, itemName, classification, middleClass, mainImage, detailImage, qrImage, status]
+                        // console.log(req.files)
+                        if(isNotNullOrUndefined(param))
+                        {
+                                db.query(sql, param, (err, result) => {
+                                        if (err) {
+                                                console.log(err)
+                                                response(req, res, -200, "상품 추가 실패", [])
                                         }
-                                )
-                                if (err) {
-                                        console.log(err)
-                                }
-                                else {
-                                        res.send(result)
-                                }
-                        })
+                                        else {
+                                                response(req, res, 200, "상품 추가 성공", [])
+                                        }
+                                })
+                        }
+                        else
+                                nullResponse(req, res)
                 }
                 else
-                {
-                        logRequestResponse(req, nullRequestParamsOrBody)
-                        res.send(nullRequestParamsOrBody)
-                }  
+                        lowLevelResponse(req, res)
         }
-        else
-                res.send(lowLevelException)
+        catch(err)
+        {
+                console.log(err)
+                response(req, res, -200, "서버 에러 발생", [])
+        }
 })
 
-app.post('/api/images', upload.array('images'), (req, res, err) => {
-        res.send({message: "파일 전송 완료"})
-})
 app.listen(port, '0.0.0.0', () => {
         console.log("Server running on port 8001")
 })

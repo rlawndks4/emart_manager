@@ -1,16 +1,13 @@
-import React, { useState, useEffect, useContext } from "react"
+import React, { useState, useEffect } from "react"
 import {
   Container,
   Row,
   Col,
-  Table,
   Input,
   Collapse,
   Card,
   Form,
-  FormGroup,
   Label,
-  CardBody,
   Media
 } from "reactstrap"
 import SweetAlert from "react-bootstrap-sweetalert"
@@ -18,14 +15,8 @@ import { Link } from "react-router-dom"
 //Import Breadcrumb
 import Breadcrumbs from "../../components/Common/Breadcrumb"
 import axios from 'axios'
-import {useHistory, useLocation} from 'react-router';
-import styled from "styled-components"
-const LoadingBox = styled.div`
-width: 100%;
-align-items: center;
-display: flex;
-flex-direction: column;
-`
+import {useHistory} from 'react-router';
+
 const AddBrand = () => {
   const history = useHistory()
   const [isOpen, setIsOpen] = useState(true);
@@ -41,7 +32,27 @@ const AddBrand = () => {
   const[class4, setClass4] = useState("");
   const[checkAddBrand, setCheckAddBrand] = useState(false);
  
+  const isAdmin = async () => {
+   
+    const { data: response } = await axios.get('/api/auth')
 
+    if(!response.third){
+      alert('회원만 접근 가능합니다.')
+      history.push('/login')
+    }
+    else{
+      if (!response.first) {
+        alert('개발자만 접근 가능합니다.')
+        history.push('/product-list')
+      } else {
+        
+      }
+    } 
+  }
+  useEffect(() => {
+    isAdmin()
+  }, [])
+  
   const onSubmit = async (e) => {
     e.preventDefault()
     if (checkAddBrand) {
@@ -85,8 +96,7 @@ const AddBrand = () => {
   const onChangeClass4 = (e) => {
     setClass4(e.target.value)
   }
-  console.log(brandName)
-  console.log(checkAddBrand)
+
   return (
     <React.Fragment>
       <div className="page-content">

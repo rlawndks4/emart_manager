@@ -11,26 +11,18 @@ import {
   Row,
   Collapse
 } from "reactstrap"
-import Select from "react-select"
+
 import Dropzone from "react-dropzone"
 import SweetAlert from "react-bootstrap-sweetalert"
 //Import Breadcrumb
 import Breadcrumbs from "../../../components/Common/Breadcrumb"
 import axios from 'axios'
 import { useHistory , useLocation } from 'react-router';
-import styled from "styled-components"
-const LoadingBox = styled.div`
-width: 100%;
-align-items: center;
-display: flex;
-flex-direction: column;
-`
-const ProductRevise = () => {
-  const history = useHistory();
 
-  const history2 = useHistory();
-  const location = useLocation();
-  const [loading, setLoading] = useState(false);
+
+const ProductRevise = () => {
+  
+  const history = useHistory();
   const [itemName, setItemName] = useState('')
   const [itemNum, setItemNum] = useState('')
   const [brandPk, setBrandPk] = useState(1)
@@ -38,9 +30,19 @@ const ProductRevise = () => {
   const [selectedDetailFiles, setselectedDetailFiles] = useState([])
   const [selectedQrFiles, setselectedQrFiles] = useState([])
   const [isOpen, setIsOpen] = useState(true);
-
+  const [revisePk, setRevisePk] = useState(0);
+  const [mainFile, setMainFile] = useState({
+    file : []
+  });
+  const [detailFile, setDetailFile] = useState({
+    file : []
+  });
+  const [qrFile, setQrFile] = useState({
+    file : []
+  });
   const toggle = () => setIsOpen(!isOpen);
-console.log(location)
+
+
   const [isOpenAddproduct, setIsOpenAddproduct] = useState(false);
   const toggleAddproduct = () => setIsOpenAddproduct(!isOpenAddproduct);
 
@@ -50,39 +52,40 @@ console.log(location)
   const [isOpenAddQRproduct, setIsOpenAddQRproduct] = useState(false);
   const toggleAddQRproduct = () => setIsOpenAddQRproduct(!isOpenAddQRproduct);
 
-  const [isOpenMetadata, setIsOpenMetadata] = useState(false);
 
-  const toggleMetadata = () => setIsOpenMetadata(!isOpenMetadata);
 
   const [with_save, setwith_save] = useState(false);
   const [with_cancel, setwith_cancel] = useState(false);
 
-  
+  const statusList = ["사용", "사용안함"];
+  const [selectedStatus, setSelectedStatus] = useState("사용");
+  const [statusnum, setStatusNum] = useState(1)
+
   const classList = ["일반 상품", "오늘의 상품"];
   const [selectedclass, setSelectedclass] = useState("일반 상품");
+  const [classification, setClassification] = useState(0);
 
   const brandList = ["kissher", "silit", "happycall", "tefal", "emile henry"];
   const [selectedBrand, setSelectedBrand] = useState("kissher");
  
-  const [userLevel, setUserLevel] = useState(0);
   const middleClassList = ["프라이팬", "냄비", "매직핸즈", "주방가전", "생활가전"];
   const [selectedmiddleClass, setSelectedmiddleClass] = useState("프라이팬");
+  
   const isAdmin = async () => {
-    setLoading(true);
+    
     const { data: response } = await axios.get('/api/auth')
     if(!response.third){
       alert('회원만 접근 가능합니다.')
       history.push('/login')
     }else{
       
-      setLoading(false)
-   
-
       }
     }
+
   useEffect(() => {
     isAdmin()
   }, [])
+//선택한 값 넣어주는 함수
   const handleSelectClass = (e) => {
     setSelectedclass(e.target.value);
   };
@@ -92,6 +95,10 @@ console.log(location)
   const handleSelectMiddleClass = (e) => {
     setSelectedmiddleClass(e.target.value);
   };
+  const handleSelectStatus = (e) => {
+    setSelectedStatus(e.target.value);
+  };
+  //서버에 보낼대 int형으로 저장되므로 브랜드 이름과 번호가 매칭이 되게 구성
   useEffect(()=>{
     if(selectedBrand==='kissher') setBrandPk(1)
       else if(selectedBrand==='silit') setBrandPk(2)
@@ -100,42 +107,62 @@ console.log(location)
       else{
         setBrandPk(5)
       }
+
+      if(selectedStatus==='사용') setStatusNum(1)
+      else{
+        setStatusNum(0)
+      }
+      if(selectedclass==='오늘의 상품') setClassification(1)
+      else{
+        setClassification(0)
+      }
    })
-  console.log(itemName)
-  console.log(itemNum)
-  console.log(selectedmiddleClass)
-  console.log(selectedclass)
-  console.log(brandPk)
-  console.log(selectedMainFiles)
-  console.log(selectedDetailFiles)
-  console.log(selectedQrFiles)
+   const location = useLocation();
+
+  useEffect(()=>{
+    if(typeof location.state != "undefined"){
+      setRevisePk(location.state.pk)
+      setItemName(location.state.name)
+      setItemNum(location.state.num)
+      setSelectedBrand(location.state.brand)
+      setSelectedclass(location.state.class)
+      setSelectedmiddleClass(location.state.middleclass)
+      setSelectedStatus(location.state.status)
+    }
+  },[])
+ 
+//디비에 저장하게 하는 함수
    const handleSubmit = async (e) => {
      e.preventDefault()
-     if( itemName.length==0 ||
-       itemNum==0 ||
-       !selectedMainFiles ||
-       !selectedDetailFiles||
-       !selectedQrFiles){
+     if( itemName.length===0 ||
+       itemNum.length===0 
+       ){
          alert("필수 입력 사항을 입력하지 않으셨습니다.");
          setwith_save(false)
        }
        else{//brandPk, itemNum, itemName, classification, middleClass, status
          const formData = new FormData();
-         formData.append('mainImage', selectedMainFiles)
-          formData.append('detailImage', selectedDetailFiles)
-          formData.append('qrImage',selectedQrFiles)
+         formData.append('mainImage', mainFile)
+          formData.append('detailImage', detailFile)
+          formData.append('qrImage',qrFile)
           formData.append('brandPk',brandPk)
           formData.append('itemNum',itemNum)
+          formData.append('pk',revisePk)
           formData.append('itemName',itemName)
-          formData.append('classification', selectedclass)
+          formData.append('classification', classification)
           formData.append('middleClass',selectedmiddleClass)
-          
-         axios.post('/api/addproduct', formData)
-         alert("상품이 추가되었습니다.")
+          formData.append('status', statusnum)
+          const headers = {
+            'Content-type': 'multipart/form-data; charset=UTF-8',
+            'Accept': '*/*'
+        }
+         axios.post('/api/updateitem', formData,{headers})
+         
+         alert("상품이 수정되었습니다.")
          history.push('/product-list')
        }
    }
-
+//파일 저장 함수
   function handleAcceptedMainFiles(files) {
     files.map(file =>
       Object.assign(file, {
@@ -166,6 +193,15 @@ console.log(location)
 
     setselectedQrFiles(files)
   }
+//상품의 종류도 int형으로 저장되므로 만든 함수
+  useEffect(()=>{
+    if(selectedclass==="오늘의 상품"){
+      setClassification(1);
+    }
+    else{
+      setClassification(0)
+    }
+  })
   const onChangeItemName = (e) => {
     setItemName(e.target.value)
   }
@@ -181,12 +217,18 @@ console.log(location)
     const i = Math.floor(Math.log(bytes) / Math.log(k))
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i]
   }
-
+  //파일을 하나식 담기위해 구성된 함수
+  useEffect(()=>{
+    setMainFile(selectedMainFiles[0])
+    setDetailFile(selectedDetailFiles[0])
+    setQrFile(selectedQrFiles[0])
+  })
+  
   return (
     <React.Fragment>
       <div className="page-content">
         <Container fluid>
-          <Breadcrumbs breadcrumbItem="상품관리" />
+          <Breadcrumbs breadcrumbItem="상품추가" />
           <Row>
             <Col lg="12">
               <div id="addproduct-accordion" className="custom-accordion">
@@ -203,7 +245,7 @@ console.log(location)
                           </div>
                         </div>
                         <div className="flex-1 overflow-hidden">
-                          <h5 className="font-size-16 mb-1">상품 수정</h5>
+                          <h5 className="font-size-16 mb-1">상품 추가</h5>
                           <p className="text-muted text-truncate mb-0">아래의 모든 정보를 입력하세요.</p>
                         </div>
                         <i className="mdi mdi-chevron-up accor-down-icon font-size-24"></i>
@@ -224,6 +266,7 @@ console.log(location)
                                 name="productname"
                                 type="text"
                                 className="form-control"
+                                value={itemName}
                                 onChange={onChangeItemName}
                               />
                             </div>
@@ -236,6 +279,7 @@ console.log(location)
                                 name="productname"
                                 type="text"
                                 className="form-control"
+                                value={itemNum}
                                 onChange={onChangeItemNum}
                               />
                             </div>
@@ -287,7 +331,21 @@ console.log(location)
                                   </form>
                                 </div>
                           </Col>
-                          
+                          <Col md="4">
+                          <div className="mb-3">
+                                  <Label>사용유무</Label>
+                                  <form >
+                                    <select className="form-control" name="userlevel"
+                                      onChange={handleSelectStatus} value={selectedStatus}>
+                                      {statusList.map((item) => (
+                                        <option value={item} key={item}>
+                                          {item}
+                                        </option>
+                                      ))}
+                                    </select>
+                                  </form>
+                                </div>
+                          </Col>
                         </Row>
 
                         

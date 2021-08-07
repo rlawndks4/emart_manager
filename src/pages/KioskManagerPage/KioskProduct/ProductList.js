@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Container, Row, Label, Input, Card, Spinner } from "reactstrap"
+import {  Col, Container, Row,  Card, Spinner } from "reactstrap"
 import { Link } from "react-router-dom"
 //Import Breadcrumb
 import Breadcrumbs from "../../../components/Common/Breadcrumb"
 import axios from 'axios'
 import styled from "styled-components"
 import SweetAlert from "react-bootstrap-sweetalert"
-import {useHistory, useLocation} from 'react-router';
+import {useHistory} from 'react-router';
 const CheckBox = styled.input`
 margin: 14px 14px 14px;
 `
@@ -48,6 +48,11 @@ width: 20%;
   padding: 14px 14px 14px;
 `
 const Classification = styled.th`
+width: 20%;
+  color: black;
+  padding: 14px 14px 14px;
+`
+const MiddleClass = styled.th`
 width: 20%;
   color: black;
   padding: 14px 14px 14px;
@@ -131,16 +136,18 @@ width: 100%;
 const ProductList = () => {
 
   const history = useHistory()
+  const [deleteNum, setDeleteNum] = useState(0)
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [maxPage, setMaxPage] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [postsPerPage, setPostsPerPage] = useState(10);
+ 
   const [with_delete, setwith_delete] = useState(false);
-  const [pagecolor, setPagecolor] = useState("white");
+  const [keyword, setKeyword] = useState('');
+  
   const isAdmin = async () => {
     setLoading(true);
     const { data: response } = await axios.get('/api/auth')
-
     if(!response.third){
       alert('회원만 접근 가능합니다.')
       history.push('/login')
@@ -148,42 +155,60 @@ const ProductList = () => {
       setLoading(false)
       }
     }
+
   useEffect(() => {
     isAdmin()
   }, [])
-  function deleteKiosk(id) {
-    
-    
-    const { data: response } = axios.post('/api/deletekiosk', {
-      
-    })
-   
-  }
+  
   useEffect(() => {
     async function fetchPosts() {
-      setLoading(true);
-      const response = await axios.get('/api/product');
-      setPosts(response.data);
-      setLoading(false);
-    }
-    fetchPosts()
-  }, []);
-
-  console.log(posts);
-
-  const indexOfLast = currentPage * postsPerPage;
-  const indexOfFirst = indexOfLast - postsPerPage;
-
-  function currentPosts(tmp) {
-    let currentPosts = 0;
-    currentPosts = tmp.slice(indexOfFirst, indexOfLast);
-    return currentPosts;
+    setLoading(true);
+    const page = currentPage
+    const{ data: response } = await axios.get(`/api/product/${page}`);
+    setPosts(response.data.result);
+    setMaxPage(response.data.maxPage);
+    setLoading(false);
   }
+  fetchPosts()
+},[]);
 
-  const pageNumbers = [];
-  for (let i = 1; i <= Math.ceil(posts.length / postsPerPage); i++) {
-    pageNumbers.push(i);
+  const onDelete = async (e) => {
+    e.preventDefault()
+    const { data: response } = await axios.post('/api/deleteitem', {
+         pk: deleteNum
+        })
+        alert('삭제되었습니다.')
+        setwith_delete(false)
+        window.location.replace("/product-list")
+  };
+  
+  function onChangePage(num) {
+    async function fetchPosts() {
+    setLoading(true);
+    const page = num
+    const{ data: response } = await axios.get(`/api/product/${page}`);
+    setPosts(response.data.result);
+    setLoading(false);
   }
+  fetchPosts()
+  };
+  // function onSearch(value) {
+  //   async function fetchPosts() {
+  //   setLoading(true);
+  //   const{ data: response } = await axios.get(`/api/product/${1}/${keyword}`);
+  //   setPosts(response.result);
+  //   setLoading(false);
+  // }
+  // fetchPosts()
+  // };
+  
+  
+   const pageNumbers = [];
+   for (let i = 1; i <= maxPage; i++) {
+     pageNumbers.push(i);
+   }
+ 
+
   function setClass(cla){
     if(cla==0){
       return "일반상품"
@@ -209,13 +234,17 @@ const ProductList = () => {
       return "emile henry"
     }
   }
+
   function setStatus(stt){
-    if(stt==1){
+    if(stt===1){
       return "사용중"
     }
     else{
       return "사용안함"
     }
+  }
+  const onChangeSearch = (e) => {
+    setKeyword(e.target.value)
   }
   return (
     <React.Fragment>
@@ -228,12 +257,15 @@ const ProductList = () => {
               <React.Fragment>
                 <div>
                   <Card>
-                    <form className="app-search d-none d-lg-block">
+                    <form className="app-search d-none d-lg-block"
+                    // onSubmit={onSearch}
+                    >
                       <div className="position-relative">
                         <input
                           type="text"
                           className="form-control"
                           placeholder="Search..."
+                          onChange={onChangeSearch}
                         />
                         <span className="uil-search"></span>
                       </div>
@@ -248,6 +280,7 @@ const ProductList = () => {
                       <ItemNum>상품번호</ItemNum>
                       <BrandPk>브랜드</BrandPk>
                       <Classification>분류</Classification>
+                      <MiddleClass>중분류</MiddleClass>
                       <Status>상태</Status>
                       <DetailImg>상세사진</DetailImg>
                       <QrImg>QR</QrImg>
@@ -259,7 +292,7 @@ const ProductList = () => {
                         loading &&
                         <LoadingBox><Spinner className="m-1" color="primary" /></LoadingBox>
                       }
-                      {currentPosts(posts).map(post => (
+                      {posts && posts.map(post => (
                         <Table key={post.pk}>
                           <CheckBox type="checkbox" id="cb1" />
                           <MainImg><ListImg src={post.main_image}/></MainImg>
@@ -267,19 +300,21 @@ const ProductList = () => {
                           <ItemNum><ListText>{post.item_num}</ListText></ItemNum>
                           <BrandPk><ListText>{setBrand(post.brand_pk)}</ListText></BrandPk>
                           <Classification><ListText>{setClass(post.classification)}</ListText></Classification>
+                          <MiddleClass><ListText>{post.middle_class}</ListText></MiddleClass>
                           <Status><ListText>{setStatus(post.status)}</ListText></Status>
                           <DetailImg><ListImg src={post.detail_image}/></DetailImg>
                           <QrImg><ListImg src={post.qr_image}/></QrImg>
-                          <Modify><Link to="#" className="px-3 text-primary" onClick={()=>{
-                              history.push(
-                                {
-                                  pathname : `/product-revise`,
-                                  state : { itemName: post.item_name , itemNum : post.item_num, brandPk : post.brand_pk
-                                  }
-                                }
-                              )
+                          <Modify><Link to={{
+                            pathname: '/product-revise',
+                             state: {pk: post.pk, name: post.item_name, num:post.item_num, brand: setBrand(post.brand_pk),
+                             class: setClass(post.classification), middleclass: post.middle_class ,status:setStatus(post.status)
+                             ,mainImage: post.main_image, detailImage: post.detail_image , qrImage: post.qr_image
+                            }
+                             
+                            
                           }}><i className="uil uil-pen font-size-18"></i></Link></Modify>
                           <Delete><Link to="#" className="px-3 text-danger" onClick={() => {
+                            setDeleteNum(post.pk)
                             setwith_delete(true)
                           }}><i className="uil uil-trash-alt font-size-18"></i></Link></Delete>
                         </Table>
@@ -299,9 +334,7 @@ const ProductList = () => {
                         <Link to="#" className="btn btn-danger" onClick={() => {
                           setwith_delete(false)
                         }}> <i className="uil uil-times me-1" ></i> 취소 </Link>{" "}
-                        <Link to="#" className="btn btn-success" onClick={() => {
-                          setwith_delete(false)
-                        }}> <i className="uil uil-file-alt me-1"></i> 확인 </Link>
+                        <Link to="#" className="btn btn-success" onClick={onDelete}> <i className="uil uil-file-alt me-1"></i> 확인 </Link>
                       </SweetAlert>
 
                     ) : null}
@@ -316,15 +349,15 @@ const ProductList = () => {
 
                       <PageBox>
                         <PageUl className="pagination">
-                          <PageLi onClick={() => setCurrentPage(1)}>처음</PageLi>
+                        <PageLi onClick={()=>{onChangePage(1)}}>처음</PageLi>
                           {pageNumbers.map(number => (
                             <PageLi key={number} className="page-item">
-                              <PageSpan onClick={() => setCurrentPage(number)}>
+                              <PageSpan onClick={() => {onChangePage(number)}}>
                                 {number}
                               </PageSpan>
                             </PageLi>
                           ))}
-                          <PageLi onClick={() => setCurrentPage(posts.length / 10)}>마지막</PageLi>
+                          <PageLi onClick={()=>{onChangePage(maxPage)}}>마지막</PageLi>
                         </PageUl>
                       </PageBox>
                     </Row>

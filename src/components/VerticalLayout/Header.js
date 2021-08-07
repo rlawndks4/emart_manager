@@ -1,30 +1,12 @@
 import PropTypes from 'prop-types'
-import React, { useState } from "react"
+import React from "react"
 
 import { connect } from "react-redux"
-import { Form, Input, Button, Row, Col } from "reactstrap"
 
 import { Link } from "react-router-dom"
 
-// Reactstrap
-import { Dropdown, DropdownToggle, DropdownMenu } from "reactstrap"
-
-// Import menuDropdown
-
-import NotificationDropdown from "../CommonForBoth/TopbarDropdown/NotificationDropdown"
 import ProfileMenu from "../CommonForBoth/TopbarDropdown/ProfileMenu"
 
-import logoSm from "../../assets/images/logo-sm.png"
-import logoDark from "../../assets/images/logo-dark.png"
-import logoLight from "../../assets/images/logo-light.png"
-
-// import images
-import github from "../../assets/images/brands/github.png"
-import bitbucket from "../../assets/images/brands/bitbucket.png"
-import dribbble from "../../assets/images/brands/dribbble.png"
-import dropbox from "../../assets/images/brands/dropbox.png"
-import mail_chimp from "../../assets/images/brands/mail_chimp.png"
-import slack from "../../assets/images/brands/slack.png"
 import EmartLogo from "../../assets/images/emart_logo.png"
 //i18n
 import { withTranslation } from "react-i18next"
@@ -37,37 +19,8 @@ import {
 } from "../../store/actions"
 
 const Header = props => {
-  const [search, setsearch] = useState(false)
-  const [socialDrp, setsocialDrp] = useState(false)
 
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
-
-  function toggleFullscreen() {
-    if (
-      !document.fullscreenElement &&
-      /* alternative standard method */ !document.mozFullScreenElement &&
-      !document.webkitFullscreenElement
-    ) {
-      // current working methods
-      if (document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen()
-      } else if (document.documentElement.mozRequestFullScreen) {
-        document.documentElement.mozRequestFullScreen()
-      } else if (document.documentElement.webkitRequestFullscreen) {
-        document.documentElement.webkitRequestFullscreen(
-          Element.ALLOW_KEYBOARD_INPUT
-        )
-      }
-    } else {
-      if (document.cancelFullScreen) {
-        document.cancelFullScreen()
-      } else if (document.mozCancelFullScreen) {
-        document.mozCancelFullScreen()
-      } else if (document.webkitCancelFullScreen) {
-        document.webkitCancelFullScreen()
-      }
-    }
-  }
 
   function tToggle() {
     props.toggleLeftmenu(!props.leftMenu)

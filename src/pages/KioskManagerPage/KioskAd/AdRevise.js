@@ -3,14 +3,11 @@ import {
   Container,
   Row,
   Col,
-  Table,
   Input,
   Collapse,
   Card,
   Form,
-  FormGroup,
   Label,
-  CardBody,
   Media,
   Spinner
 } from "reactstrap"
@@ -21,8 +18,8 @@ import SweetAlert from "react-bootstrap-sweetalert"
 import Breadcrumbs from "../../../components/Common/Breadcrumb"
 import { useHistory , useLocation } from 'react-router-dom';
 import axios from "axios"
-import { formatDate } from "@fullcalendar/react"
 import styled from "styled-components"
+
 
 const LoadingBox = styled.div`
 width: 100%;
@@ -32,25 +29,19 @@ flex-direction: column;
 `
 const AdRevise = () => {
   const history = useHistory();
-  
+  const [revisePk, setRevisePk] = useState(0);
+  const [reviseImg, setReviseImg] = useState({file : []})
+  const [reviseName, setReviseName] = useState('');
   const [isOpen, setIsOpen] = useState(true);
   const [loading, setLoading] = useState(false);
   const toggle = () => setIsOpen(!isOpen);
-
   const [selectedFiles, setselectedFiles] = useState([])
-  const [adName, setAdName] = useState('');
-  const [adFile, setAdFile] = useState({
-    file : []
-  });
-  console.log(selectedFiles)
-  const location = useLocation();
-  useEffect(()=>{
-    const data = location.state.value
-  console.log(data)
-  },[location])
-  
+  const [adFile, setAdFile] = useState(
+    {file: []}
+  );
   
 
+  
   const [with_save, setwith_save] = useState(false);
   const [with_cancel, setwith_cancel] = useState(false);
   
@@ -74,23 +65,6 @@ const AdRevise = () => {
     isAdmin()
   }, [])
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    if( !adName ||
-      !adFile){
-        alert("필수 입력 사항을 입력하지 않으셨습니다.");
-        setwith_save(false)
-      }
-      else{
-        const formData = new FormData();
-        formData.append('adName', adName)
-        formData.append('image',adFile)
-        axios.post('/api/updatead', formData)
-        alert("광고가 수정되었습니다.")
-        history.push('/ad-list')
-      }
-  }
-
   function handleAcceptedFiles(files) {
     files.map(file =>
       Object.assign(file, {
@@ -102,9 +76,39 @@ const AdRevise = () => {
     setselectedFiles(files)
   }
   
+  const location = useLocation();
+
+  useEffect(()=>{
+    if(typeof location.state != "undefined"){
+      setRevisePk(location.state.pk)
+      setReviseImg(location.state.img)
+      setReviseName(location.state.name)
+    }
+  },[])
+ 
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    if(
+      reviseName.length==0){
+        alert("필수 입력 사항을 입력하지 않으셨습니다.");
+        setwith_save(false)
+      }
+      else{
+        const formData = new FormData();
+        formData.append('adName', reviseName)
+        formData.append('image',adFile)
+        formData.append('pk', revisePk)
+        axios.put('/api/updatead', formData)
+        alert("광고가 수정되었습니다.")
+        history.push('/ad-list')
+      }
+  }
+  
+  
 
   const onChangeAdName = (e) => {
-  setAdName(e.target.value)
+  setReviseName(e.target.value)
 }
 
 useEffect(()=>{
@@ -172,6 +176,7 @@ useEffect(()=>{
                                     type="text"
                                     className="form-control"
                                     placeholder="#123456"
+                                    value={reviseName}
                                     onChange={onChangeAdName}
                                   />
                                 </div>

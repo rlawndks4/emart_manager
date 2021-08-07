@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Container, Row, Label, Input, Card, Spinner } from "reactstrap"
+import { Col, Container, Row, Card, Spinner } from "reactstrap"
 import { Link } from "react-router-dom"
 //Import Breadcrumb
 import Breadcrumbs from "../../../components/Common/Breadcrumb"
@@ -113,7 +113,9 @@ const PageSpan = styled.span`
 const KioskList = () => {
 
   const history = useHistory()
+  const [deleteNum, setDeleteNum] = useState(0)
   const [posts, setPosts] = useState([]);
+  const [maxPage, setMaxPage] = useState(0);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage, setPostsPerPage] = useState(10);
@@ -141,40 +143,45 @@ const KioskList = () => {
   useEffect(() => {
     isAdmin()
   }, [])
-  function deleteKiosk(num) {
-    setkioskNum(num)
-    console.log(kioskNum)
-    const { data: response } = axios.post('/api/deletekiosk', {
-      kioskNum: kioskNum
-    })
-  
-  }
-
+ 
   useEffect(() => {
-    async function fetchData() {
-      setLoading(true);
-      const response = await axios.get('/api/kiosk');
-      setPosts(response.data);
-      setLoading(false);
-    }
-    fetchData()
-  }, []);
+    async function fetchPosts() {
+    setLoading(true);
+    const page = currentPage
+    const{ data: response } = await axios.get(`/api/kiosk/${page}`);
 
-  console.log(posts);
-
-  const indexOfLast = currentPage * postsPerPage;
-  const indexOfFirst = indexOfLast - postsPerPage;
-
-  function currentPosts(tmp) {
-    let currentPosts = 0;
-    currentPosts = tmp.slice(indexOfFirst, indexOfLast);
-    return currentPosts;
+    setPosts(response.data.result);
+    setMaxPage(response.data.maxPage);
+    setLoading(false);
   }
+  fetchPosts()
+},[]);
 
-  const pageNumbers = [];
-  for (let i = 1; i <= Math.ceil(posts.length / postsPerPage); i++) {
-    pageNumbers.push(i);
+  const onDelete = async (e) => {
+    e.preventDefault()
+    const { data: response } = await axios.post('/api/deletekiosk', {
+         pk: deleteNum
+        })
+        alert('삭제되었습니다.')
+        setwith_delete(false)
+        window.location.replace("/kiosk-list")
+  };
+  function onChangePage(num) {
+    async function fetchPosts() {
+    setLoading(true);
+    const page = num
+    setCurrentPage(num)
+    const{ data: response } = await axios.get(`/api/kiosk/${page}`);
+    setPosts(response.data.result);
+    setLoading(false);
   }
+  fetchPosts()
+  };
+  
+   const pageNumbers = [];
+   for (let i = 1; i <= maxPage; i++) {
+     pageNumbers.push(i);
+   }
   
   return (
     <React.Fragment>
@@ -270,7 +277,7 @@ const KioskList = () => {
                         loading &&
                         <LoadingBox><Spinner className="m-1" color="primary" /></LoadingBox>
                       }
-                      {currentPosts(posts).map(post => (
+                      {posts && posts.map(post => (
                         <Table key={post.pk}>
                           <CheckBox type="checkbox" id="cb1" />
                           <KioskNumber><ListText>{post.kiosk_num}</ListText></KioskNumber>
@@ -278,8 +285,15 @@ const KioskList = () => {
                           <Store><ListText>{post.store_name}</ListText></Store>
                           <Date><ListText>{post.create_time}</ListText></Date>
                           <Status><ListText>{post.status}</ListText></Status>
-                          <Modify><Link to="/kiosk-revise" className="px-3 text-primary"><i className="uil uil-pen font-size-18"></i></Link></Modify>
-                          <Delete><Link to="#" className="px-3 text-danger" onClick={() => { deleteKiosk(post.kiosk_num) }}><i className="uil uil-trash-alt font-size-18"></i></Link></Delete>
+                          <Modify><Link to={{
+                            pathname: '/kiosk-revise',
+                            state: {pk: post.pk, num: post.kiosk_num, unique: post.unique_code
+                            , store: post.store_name}
+                            }}className="px-3 text-primary"><i className="uil uil-pen font-size-18"></i></Link></Modify>
+                          <Delete><Link to="#" className="px-3 text-danger" onClick={() => {
+                            setDeleteNum(post.pk)
+                            setwith_delete(true)
+                          }}><i className="uil uil-trash-alt font-size-18"></i></Link></Delete>
                         </Table>
                       ))}
 
@@ -297,9 +311,7 @@ const KioskList = () => {
                         <Link to="#" className="btn btn-danger" onClick={() => {
                           setwith_delete(false)
                         }}> <i className="uil uil-times me-1" ></i> 취소 </Link>{" "}
-                        <Link to="#" className="btn btn-success" onClick={() => {
-                          setwith_delete(false)
-                        }}> <i className="uil uil-file-alt me-1"></i> 확인 </Link>
+                        <Link to="#" className="btn btn-success" onClick={onDelete}> <i className="uil uil-file-alt me-1"></i> 확인 </Link>
                       </SweetAlert>
 
                     ) : null}
@@ -327,15 +339,15 @@ const KioskList = () => {
 
                       <PageBox>
                         <PageUl className="pagination">
-                          <PageLi onClick={() => setCurrentPage(1)}>처음</PageLi>
+                        <PageLi onClick={()=>{onChangePage(1)}}>처음</PageLi>
                           {pageNumbers.map(number => (
                             <PageLi key={number} className="page-item">
-                              <PageSpan onClick={() => setCurrentPage(number)}>
+                              <PageSpan onClick={() => {onChangePage(number)}}>
                                 {number}
                               </PageSpan>
                             </PageLi>
                           ))}
-                          <PageLi onClick={() => setCurrentPage(posts.length / 10)}>마지막</PageLi>
+                          <PageLi onClick={()=>{onChangePage(maxPage)}}>마지막</PageLi>
                         </PageUl>
                       </PageBox>
                     </Row>

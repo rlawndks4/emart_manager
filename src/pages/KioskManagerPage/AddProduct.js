@@ -11,21 +11,17 @@ import {
   Row,
   Collapse
 } from "reactstrap"
-import Select from "react-select"
+
 import Dropzone from "react-dropzone"
 import SweetAlert from "react-bootstrap-sweetalert"
 //Import Breadcrumb
 import Breadcrumbs from "../../components/Common/Breadcrumb"
 import axios from 'axios'
-import { useHistory , useLocation } from 'react-router';
+import { useHistory} from 'react-router';
 import styled from "styled-components"
-const LoadingBox = styled.div`
-width: 100%;
-align-items: center;
-display: flex;
-flex-direction: column;
-`
+
 const AddProduct = () => {
+  
   const history = useHistory();
   const [itemName, setItemName] = useState('')
   const [itemNum, setItemNum] = useState('')
@@ -63,7 +59,10 @@ const AddProduct = () => {
   const [with_save, setwith_save] = useState(false);
   const [with_cancel, setwith_cancel] = useState(false);
 
-  
+  const statusList = ["사용", "사용안함"];
+  const [selectedStatus, setSelectedStatus] = useState("사용");
+  const [statusnum, setStatusNum] = useState(1)
+
   const classList = ["일반 상품", "오늘의 상품"];
   const [selectedclass, setSelectedclass] = useState("일반 상품");
   const [classification, setClassification] = useState(0);
@@ -71,10 +70,24 @@ const AddProduct = () => {
   const brandList = ["kissher", "silit", "happycall", "tefal", "emile henry"];
   const [selectedBrand, setSelectedBrand] = useState("kissher");
  
-
   const middleClassList = ["프라이팬", "냄비", "매직핸즈", "주방가전", "생활가전"];
   const [selectedmiddleClass, setSelectedmiddleClass] = useState("프라이팬");
+  
+  const isAdmin = async () => {
+    
+    const { data: response } = await axios.get('/api/auth')
+    if(!response.third){
+      alert('회원만 접근 가능합니다.')
+      history.push('/login')
+    }else{
+      
+      }
+    }
 
+  useEffect(() => {
+    isAdmin()
+  }, [])
+//선택한 값 넣어주는 함수
   const handleSelectClass = (e) => {
     setSelectedclass(e.target.value);
   };
@@ -84,6 +97,10 @@ const AddProduct = () => {
   const handleSelectMiddleClass = (e) => {
     setSelectedmiddleClass(e.target.value);
   };
+  const handleSelectStatus = (e) => {
+    setSelectedStatus(e.target.value);
+  };
+  //서버에 보낼대 int형으로 저장되므로 브랜드 이름과 번호가 매칭이 되게 구성
   useEffect(()=>{
     if(selectedBrand==='kissher') setBrandPk(1)
       else if(selectedBrand==='silit') setBrandPk(2)
@@ -92,19 +109,17 @@ const AddProduct = () => {
       else{
         setBrandPk(5)
       }
+
+      if(selectedStatus==='사용') setStatusNum(1)
+      else{
+        setStatusNum(0)
+      }
    })
-  console.log(itemName)
-  console.log(itemNum)
-  console.log(selectedmiddleClass)
-  console.log(selectedclass)
-  console.log(brandPk)
-  console.log(selectedMainFiles)
-  console.log(selectedDetailFiles)
-  console.log(selectedQrFiles)
+//디비에 저장하게 하는 함수
    const handleSubmit = async (e) => {
      e.preventDefault()
-     if( itemName.length==0 ||
-       itemNum==0 ||
+     if( itemName.length===0 ||
+       itemNum.length===0 ||
        !mainFile ||
        !detailFile||
        !qrFile){
@@ -119,21 +134,22 @@ const AddProduct = () => {
           
           formData.append('brandPk',brandPk)
           formData.append('itemNum',itemNum)
-
+          
           formData.append('itemName',itemName)
           formData.append('classification', classification)
           formData.append('middleClass',selectedmiddleClass)
+          formData.append('status', statusnum)
           const headers = {
             'Content-type': 'multipart/form-data; charset=UTF-8',
             'Accept': '*/*'
         }
          axios.post('/api/addproduct', formData,{headers})
-         console.log(formData)
+         
          alert("상품이 추가되었습니다.")
          history.push('/product-list')
        }
    }
-
+//파일 저장 함수
   function handleAcceptedMainFiles(files) {
     files.map(file =>
       Object.assign(file, {
@@ -164,8 +180,9 @@ const AddProduct = () => {
 
     setselectedQrFiles(files)
   }
+//상품의 종류도 int형으로 저장되므로 만든 함수
   useEffect(()=>{
-    if(selectedclass=="오늘의 상품"){
+    if(selectedclass==="오늘의 상품"){
       setClassification(1);
     }
     else{
@@ -187,11 +204,13 @@ const AddProduct = () => {
     const i = Math.floor(Math.log(bytes) / Math.log(k))
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i]
   }
+  //파일을 하나식 담기위해 구성된 함수
   useEffect(()=>{
     setMainFile(selectedMainFiles[0])
     setDetailFile(selectedDetailFiles[0])
     setQrFile(selectedQrFiles[0])
   })
+  
   return (
     <React.Fragment>
       <div className="page-content">
@@ -297,7 +316,21 @@ const AddProduct = () => {
                                   </form>
                                 </div>
                           </Col>
-                          
+                          <Col md="4">
+                          <div className="mb-3">
+                                  <Label>사용유무</Label>
+                                  <form >
+                                    <select className="form-control" name="userlevel"
+                                      onChange={handleSelectStatus} value={selectedStatus}>
+                                      {statusList.map((item) => (
+                                        <option value={item} key={item}>
+                                          {item}
+                                        </option>
+                                      ))}
+                                    </select>
+                                  </form>
+                                </div>
+                          </Col>
                         </Row>
 
                         

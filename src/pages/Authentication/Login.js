@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types'
-import React, { useEffect,useState, useContext } from "react"
+import React, { useEffect, useContext } from "react"
 
 import { Row, Col, Alert, Container ,CardBody,Card} from "reactstrap"
 
 // Redux
 import { connect } from "react-redux"
-import { withRouter, Link ,useHistory, useLocation} from "react-router-dom"
+import { withRouter, Link ,useHistory} from "react-router-dom"
 
 // availity-reactstrap-validation
 import { AvForm, AvField } from "availity-reactstrap-validation"
@@ -19,7 +19,7 @@ import axios from 'axios'
 import { LoginContext } from '../../App'
 const Login = (props) => {
   const history = useHistory()
-  const { ID, setID, PW, setPW, success, setSuccess, signUpFlag, setSignUpFlag } = useContext(LoginContext)
+  const { ID, setID, PW, setPW} = useContext(LoginContext)
    // handleValidSubmit
    
 
@@ -29,11 +29,11 @@ const onLogin = async (e) => {
          id: ID, 
          pw: PW
         })
-        if(response.idSuccess){
-          
-        }else{
+        if(response.result==200){
           alert(response.message)
           history.push('/product-list')
+        }else{
+          alert(response.message)
         }
         
         
@@ -52,8 +52,7 @@ const onLogin = async (e) => {
       document.body.className = "";
     };
   });
-  console.log(ID)
-  console.log(PW)
+ 
   return (
     <React.Fragment>
       <div className="home-btn d-none d-sm-block">

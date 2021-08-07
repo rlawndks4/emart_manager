@@ -3,43 +3,21 @@ import {
   Container,
   Row,
   Col,
-  Table,
   Input,
   Collapse,
   Card,
   Form,
-  FormGroup,
   Label,
-  CardBody,
   Media
 } from "reactstrap"
 import SweetAlert from "react-bootstrap-sweetalert"
 import { Link } from "react-router-dom"
-import {useHistory, useLocation} from 'react-router';
+import {useHistory} from 'react-router';
 //Import Breadcrumb
 import Breadcrumbs from "../../../components/Common/Breadcrumb"
-import styled from "styled-components"
 //Import Images
-import img1 from "../../../assets/images/product/img-1.png"
-import img6 from "../../../assets/images/product/img-6.png"
 import axios from "axios";
-const LoadingBox = styled.div`
-width: 100%;
-align-items: center;
-display: flex;
-flex-direction: column;
-`
 
-const orderSummary = [
-  {
-    id: 1,
-    img: img1,
-    productTitle: "Nike N012 Running Shoes",
-    price: 260,
-    qty: 2,
-  },
-  { id: 2, img: img6, productTitle: "Adidas Running Shoes", price: 260, qty: 1 },
-]
 
 const BrandRevise = () => {
   const [loading, setLoading] = useState(false);

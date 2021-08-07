@@ -3,14 +3,11 @@ import {
   Container,
   Row,
   Col,
-  Table,
   Input,
   Collapse,
   Card,
   Form,
-  FormGroup,
   Label,
-  CardBody,
   Media
 } from "reactstrap"
 import Dropzone from "react-dropzone"
@@ -18,19 +15,11 @@ import { Link } from "react-router-dom"
 import SweetAlert from "react-bootstrap-sweetalert"
 //Import Breadcrumb
 import Breadcrumbs from "../../components/Common/Breadcrumb"
-import { useHistory , useLocation } from 'react-router';
+import { useHistory } from 'react-router';
 import axios from "axios"
-import { formatDate } from "@fullcalendar/react"
-import styled from "styled-components"
-const LoadingBox = styled.div`
-width: 100%;
-align-items: center;
-display: flex;
-flex-direction: column;
-`
+
 const AddAd = () => {
   const history = useHistory();
-  const location = useLocation();
   const [isOpen, setIsOpen] = useState(true);
 
   const toggle = () => setIsOpen(!isOpen);
@@ -40,12 +29,32 @@ const AddAd = () => {
   const [adFile, setAdFile] = useState({
     file : []
   });
-  console.log(selectedFiles)
+
   
 
   const [with_save, setwith_save] = useState(false);
   const [with_cancel, setwith_cancel] = useState(false);
-  
+  const [loading, setLoading] = useState(false);
+  const isAdmin = async () => {
+    setLoading(true);
+    const { data: response } = await axios.get('/api/auth')
+    if (!response.third) {
+      alert('회원만 접근 가능합니다.')
+      history.push('/login')
+    }
+    else {
+      if (!response.second) {
+        alert('관리자만 접근 가능합니다.')
+        history.push('/product-list')
+      } else {
+        setLoading(false)
+      }
+    }
+  }
+  useEffect(() => {
+    isAdmin()
+  }, [])
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     if( !adName ||
@@ -63,7 +72,7 @@ const AddAd = () => {
       }
         axios.post('/api/addad', formData,{ headers })
         alert("광고가 추가되었습니다.")
-        history.push('/ad-list')
+        window.location.replace("/ad-list")
       }
   }
 

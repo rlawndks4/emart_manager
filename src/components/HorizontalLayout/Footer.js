@@ -6,14 +6,14 @@ const Footer = () => {
     <React.Fragment>
       <footer className="footer">
         <Container fluid={true}>
-          <Row>
+          {/* <Row>
             <Col md={6}>{new Date().getFullYear()} © Minible.</Col>
             <Col md={6}>
               <div className="text-sm-right d-none d-sm-block">
                 Design & Develop by Themesbrand
               </div>
             </Col>
-          </Row>
+          </Row> */}
         </Container>
       </footer>
     </React.Fragment>

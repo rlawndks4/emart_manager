@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Container, Row, Label, Input, Card, Spinner } from "reactstrap"
+import { Col, Container, Row, Card, Spinner } from "reactstrap"
 import { Link } from "react-router-dom"
 //Import Breadcrumb
 import Breadcrumbs from "../../../components/Common/Breadcrumb"
 import axios from 'axios'
 import styled from "styled-components"
 import SweetAlert from "react-bootstrap-sweetalert"
-import { padStart } from "lodash";
-import {useHistory, useLocation} from 'react-router';
+import {useHistory} from 'react-router';
 
 const CheckBox = styled.input`
 margin: 14px 14px 14px;
@@ -131,12 +130,12 @@ const PageSpan = styled.span`
 const BrandList = () => {
 
   const history = useHistory()
+  const [deleteNum, setDeleteNum] = useState(0)
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [maxPage, setMaxPage] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [postsPerPage, setPostsPerPage] = useState(10);
   const [with_delete, setwith_delete] = useState(false);
-  const [pagecolor, setPagecolor] = useState("white");
   const isAdmin = async () => {
     setLoading(true);
     const { data: response } = await axios.get('/api/auth')
@@ -157,31 +156,36 @@ const BrandList = () => {
   useEffect(() => {
     isAdmin()
   }, [])
+
   useEffect(() => {
     async function fetchPosts() {
-      setLoading(true);
-      const response = await axios.get('/api/brand');
-      setPosts(response.data);
-      setLoading(false);
-    }
-    fetchPosts()
-  }, []);
-
-  console.log(posts);
-
-  const indexOfLast = currentPage * postsPerPage;
-  const indexOfFirst = indexOfLast - postsPerPage;
-
-  function currentPosts(tmp) {
-    let currentPosts = 0;
-    currentPosts = tmp.slice(indexOfFirst, indexOfLast);
-    return currentPosts;
+    setLoading(true);
+    const page = currentPage
+    const{ data: response } = await axios.get(`/api/brand/${page}`);
+   
+    setPosts(response.data.result);
+    setMaxPage(response.data.maxPage);
+    setLoading(false);
   }
+  fetchPosts()
+},[]);
 
-  const pageNumbers = [];
-  for (let i = 1; i <= Math.ceil(posts.length / postsPerPage); i++) {
-    pageNumbers.push(i);
+
+  function onChangePage(num) {
+    async function fetchPosts() {
+    setLoading(true);
+    const page = num
+    const{ data: response } = await axios.get(`/api/brand/${page}`);
+    setPosts(response.data.result);
+    setLoading(false);
   }
+  fetchPosts()
+  };
+
+   const pageNumbers = [];
+   for (let i = 1; i <= maxPage; i++) {
+     pageNumbers.push(i);
+   }
 
   return (
     <React.Fragment>
@@ -224,7 +228,7 @@ const BrandList = () => {
                         loading &&
                         <LoadingBox><Spinner className="m-1" color="primary" /></LoadingBox>
                       }
-                      {currentPosts(posts).map(post => (
+                      {posts && posts.map(post => (
                         <Table key={post.pk}>
                           <CheckBox type="checkbox" id="cb1" />
                           <BrandName><ListText>{post.brand_name}</ListText></BrandName>
@@ -235,6 +239,7 @@ const BrandList = () => {
                           <Date><ListText>{post.create_time}</ListText></Date>
                           <Modify><Link to="/brand-revise" className="px-3 text-primary"><i className="uil uil-pen font-size-18"></i></Link></Modify>
                           <Delete><Link to="#" className="px-3 text-danger" onClick={() => {
+                            setDeleteNum(post.pk)
                             setwith_delete(true)
                           }}><i className="uil uil-trash-alt font-size-18"></i></Link></Delete>
                         </Table>
@@ -271,15 +276,15 @@ const BrandList = () => {
 
                       <PageBox>
                         <PageUl className="pagination">
-                          <PageLi onClick={() => setCurrentPage(1)}>처음</PageLi>
+                        <PageLi onClick={()=>{onChangePage(1)}}>처음</PageLi>
                           {pageNumbers.map(number => (
                             <PageLi key={number} className="page-item">
-                              <PageSpan onClick={() => setCurrentPage(number)}>
+                              <PageSpan onClick={() => {onChangePage(number)}}>
                                 {number}
                               </PageSpan>
                             </PageLi>
                           ))}
-                          <PageLi onClick={() => setCurrentPage(posts.length / 10)}>마지막</PageLi>
+                          <PageLi onClick={()=>{onChangePage(maxPage)}}>마지막</PageLi>
                         </PageUl>
                       </PageBox>
                     </Row>

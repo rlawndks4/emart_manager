@@ -3,14 +3,11 @@ import {
   Container,
   Row,
   Col,
-  Table,
   Input,
   Collapse,
   Card,
   Form,
-  FormGroup,
   Label,
-  CardBody,
   Media
 } from "reactstrap"
 import { Link } from "react-router-dom"
@@ -18,15 +15,11 @@ import SweetAlert from "react-bootstrap-sweetalert"
 //Import Breadcrumb
 import Breadcrumbs from "../../../components/Common/Breadcrumb"
 import axios from "axios"
-import { useHistory } from 'react-router'
-import styled from "styled-components"
-const LoadingBox = styled.div`
-width: 100%;
-align-items: center;
-display: flex;
-flex-direction: column;
-`
+import { useHistory ,useLocation} from 'react-router'
+
 const CustomerRevise = () => {
+  const [revisePk, setRevisePk] = useState(0);
+  const [reviseId, setReviseId] = useState('');
   const [isOpen, setIsOpen] = useState(true);
   const toggle = () => setIsOpen(!isOpen);
   const [with_save, setwith_save] = useState(false);
@@ -39,7 +32,6 @@ const CustomerRevise = () => {
   const [checkPw, setCheckPw] = useState(false);
   const [checkAddUser, setCheckAddUser] = useState(false);
   const [userLevel, setUserLevel] = useState(0);
-  const selectList = ["일반유저", "관리자", "개발자"];
   const [selected, setSelected] = useState("일반유저");
   const isAdmin = async () => {
     setLoading(true);
@@ -62,21 +54,23 @@ const CustomerRevise = () => {
   useEffect(() => {
     isAdmin()
   }, [])
-  const handleSelect = (e) => {
-    setSelected(e.target.value);
-  };
 
   const history = useHistory()
 
+  const location = useLocation();
+
+  useEffect(()=>{
+    if(typeof location.state != "undefined"){
+      setRevisePk(location.state.pk)
+      setReviseId(location.state.id);
+    }
+  },[])
 
   const onSubmit = () => {
     
-    // if (checkAddUser) {
-      //회원가입
-      axios.post('/api/adduser', {
-         id: id, 
-         pw: pw,
-        userLevel: userLevel 
+      axios.put('/api/updateuser', {
+         pk: revisePk, 
+         pw: pw
         }).then(()=>{
           console.log("success")
           setwith_save(false)
@@ -85,15 +79,6 @@ const CustomerRevise = () => {
         })
         .catch(err => console.log(err))
       
-    // } else {
-    //   if(checkId===''){
-    //     alert('ID 중복확인을 해주세요.')
-    //   }
-    //   else{
-    //     alert('필수정보가 입력되지 않았습니다.')
-    //   }
-    //   setwith_save(false)
-    // }
   };
 
   useEffect(() => {
@@ -127,25 +112,8 @@ const CustomerRevise = () => {
     setCheckPw('')
   };
 
-  const handleCheckId = async () => {
-    
-    if (id.length === 0) {
-      setCheckId('')
-    } else {
-      const response = await axios.get(`/api/userid/${id}`)
-      console.log(response.data)
-      // .then(res => console.log(res))
-      //       .catch(err => console.log(err)) //true면 중복
-      
-    }
-  }
-  
-  console.log(id);
-  console.log(pw);
-  console.log(selected);
-  console.log(checkAddUser);
-  console.log(checkId);
-  console.log(userLevel);
+
+ 
   return (
     <React.Fragment>
       <div className="page-content">
@@ -194,7 +162,7 @@ const CustomerRevise = () => {
                                     type="text"
                                     className="form-control"
                                     placeholder="#ABCDEF"
-                                    value={id}
+                                    value={reviseId}
                                     required onChange={onChangeId}
                                   />
                                 </div>
@@ -216,25 +184,9 @@ const CustomerRevise = () => {
                                   />
                                 </div>
                               </Col>
-                              <Col lg={2}>
-                                <div className="mb-3">
-                                  <Label>접근도</Label>
-                                  <form >
-                                    <select className="form-control" name="userlevel"
-                                      onChange={handleSelect} value={selected}>
-                                      {selectList.map((item) => (
-                                        <option value={item} key={item}>
-                                          {item}
-                                        </option>
-                                      ))}
-                                    </select>
-                                  </form>
-                                </div>
-                              </Col>
+                              
                             </Row>
-                            <Col lg={1}>
-                              <Link to="#" className="btn btn-primary" onClick={handleCheckId}>중복확인</Link>
-                            </Col>
+                            
                           </div>
                         </Form>
                       </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react"
+import React, { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import {
   Card,
@@ -16,14 +16,7 @@ import axios from 'axios'
 import Breadcrumbs from "../../components/Common/Breadcrumb"
 import SweetAlert from "react-bootstrap-sweetalert"
 import { useHistory } from 'react-router'
-import { Button } from "bootstrap"
-import styled from "styled-components"
-const LoadingBox = styled.div`
-width: 100%;
-align-items: center;
-display: flex;
-flex-direction: column;
-`
+
 const AddKiosk = () => {
   const history = useHistory()
   
@@ -33,21 +26,37 @@ const AddKiosk = () => {
   const [checkUn, setCheckUn] = useState('');
   const [store, setStore] = useState('');
   const [checkStore, setCheckStore] = useState('');
-  const [addKiosk, setAddKiosk] = useState(false);
 
-  const selectList = ["일반유저", "관리자", "개발자"];
-  const [selected, setSelected] = useState("일반유저");
+  const [loading, setLoading] = useState(false);
+ 
   const [isOpen, setIsOpen] = useState(true);
   const toggle = () => setIsOpen(!isOpen);
   const [with_save, setwith_save] = useState(false);
   const [with_cancel, setwith_cancel] = useState(false);
   const [with_good, setwith_good] = useState(false);
-console.log(kioskNum)
-console.log(uniNum)
-console.log(store)
+  const isAdmin = async () => {
+    setLoading(true);
+    const { data: response } = await axios.get('/api/auth')
+    if(!response.third){
+      alert('회원만 접근 가능합니다.')
+      history.push('/login')
+    }
+    else{
+        if(!response.first){
+          alert('개발자만 접근 가능합니다.')
+          history.push('/product-list')
+        }else{
+          setLoading(false)
+        }
+      
+    } 
+  }
+  useEffect(() => {
+    isAdmin()
+  }, [])
+  //디비에 저장하게 하는 함수
   const onSubmit = () => {
     
-    // if (addKiosk) {   
         axios.post('/api/addkiosk', {
            kioskNum: kioskNum, 
            store: store, 
@@ -60,29 +69,12 @@ console.log(store)
           })
         .catch(err => console.log(err))
         alert('키오스크가 추가되었습니다')
-        
-        
-    // } else {
-    //     alert('필수정보가 입력되지 않았습니다.')
-    //     setwith_save(false)
-    // }
-};
-const handleSelect = (e) => {
-  setSelected(e.target.value);
-};
-const handleCheckKn = async () => {
-  if (kioskNum.length === 0) {
-      setCheckKn('')
-  } else {
-      const { data: overlap } = await axios(`/kiosk`) //true면 중복
-      if (overlap) {
-        setCheckKn('이미 사용중인 번호입니다')
-      } else {
-        setCheckKn('사용가능한 번호입니다')
-      }
-  }
-}
 
+};
+
+
+
+//각정보의 string을 저장하게 하는 함수
   const onChangeKn = (e) => {
     setKioskNum(e.target.value)
     setCheckKn('')
@@ -169,33 +161,9 @@ const handleCheckKn = async () => {
                               />
                             </div>
                           </Col>
-                          <Col md="2">
-                                <div className="mb-3">
-                                  <Label>추가를 원하는 유저</Label>
-                                  <form >
-                                    <select className="form-control" name="userlevel"
-                                      onChange={handleSelect} value={selected}>
-                                      {selectList.map((item) => (
-                                        <option value={item} key={item}>
-                                          {item}
-                                        </option>
-                                      ))}
-                                    </select>
-                                  </form>
-                                </div>
-                              </Col>
-                        </Row>
-                        <Row>
-                          <Col  md="2">
-                          <Link to="#" className="btn btn-primary"
-                          onClick={handleCheckKn}>존재 여부</Link>
-                          </Col>
-                          <Col  md="2">
-                          </Col>
-                          <Col md="2">
                           
-                          </Col>
                         </Row>
+                        
                       </Form>
                     </div>
                   </Collapse>

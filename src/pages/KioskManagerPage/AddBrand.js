@@ -15,8 +15,9 @@ import { Link } from "react-router-dom"
 //Import Breadcrumb
 import Breadcrumbs from "../../components/Common/Breadcrumb"
 import axios from 'axios'
-import {useHistory} from 'react-router';
-
+import { useHistory } from 'react-router';
+import cancel from "./cancel.png"
+import save from "./save.png"
 const AddBrand = () => {
   const history = useHistory()
   const [isOpen, setIsOpen] = useState(true);
@@ -25,60 +26,60 @@ const AddBrand = () => {
   const [with_cancel, setwith_cancel] = useState(false);
   const [with_good, setwith_good] = useState(false);
 
-  const[brandName, setBrandName] = useState("");
-  const[class1, setClass1] = useState("");
-  const[class2, setClass2] = useState("");
-  const[class3, setClass3] = useState("");
-  const[class4, setClass4] = useState("");
-  const[checkAddBrand, setCheckAddBrand] = useState(false);
- 
+  const [brandName, setBrandName] = useState("");
+  const [class1, setClass1] = useState("");
+  const [class2, setClass2] = useState("");
+  const [class3, setClass3] = useState("");
+  const [class4, setClass4] = useState("");
+  const [checkAddBrand, setCheckAddBrand] = useState(false);
+
   const isAdmin = async () => {
-   
+
     const { data: response } = await axios.get('/api/auth')
 
-    if(!response.third){
+    if (!response.third) {
       alert('회원만 접근 가능합니다.')
       history.push('/login')
     }
-    else{
+    else {
       if (!response.first) {
         alert('개발자만 접근 가능합니다.')
         history.push('/product-list')
       } else {
-        
+
       }
-    } 
+    }
   }
   useEffect(() => {
     isAdmin()
   }, [])
-  
+
   const onSubmit = async (e) => {
     e.preventDefault()
     if (checkAddBrand) {
       const res = await axios.post('/api/brand', { brandName, class1, class2, class3, class4 })
         .catch(err => console.log(err))
-        
-        setwith_save(false)
-        setwith_good(true)
-        
+
+      setwith_save(false)
+      setwith_good(true)
+
     } else {
-        alert('필수정보가 입력되지 않았습니다.')
-        setwith_save(false)
+      alert('필수정보가 입력되지 않았습니다.')
+      setwith_save(false)
     }
   };
 
   useEffect(() => {
     if (
-        brandName.length === 0 ||
-        class1.length === 0 ||
-        class2.length === 0 ||
-        class3.length === 0 ||
-        class4.length === 0
+      brandName.length === 0 ||
+      class1.length === 0 ||
+      class2.length === 0 ||
+      class3.length === 0 ||
+      class4.length === 0
     ) {
-        setCheckAddBrand(false)
+      setCheckAddBrand(false)
     } else {
-        setCheckAddBrand(true)
+      setCheckAddBrand(true)
     }
   })
   const onChangeBrand = (e) => {
@@ -120,7 +121,7 @@ const AddBrand = () => {
                             </div>
                           </div>
                           <div className="flex-1 overflow-hidden">
-                            <h5 className="font-size-16 mb-1">브랜드 추가</h5>
+                            <h5 className="font-size-16 mb-1" style={{fontFamily: 'NanumGothic', fontWeight:'bold'}}>브랜드 추가</h5>
                             <p className="text-muted text-truncate mb-0">아래의 모든 정보를 입력하세요.</p>
                           </div>
                           <i className="mdi mdi-chevron-up accor-down-icon font-size-24"></i>
@@ -145,7 +146,7 @@ const AddBrand = () => {
                                     type="text"
                                     className="form-control"
                                     placeholder="Input Brand"
-                                    value = {brandName}
+                                    value={brandName}
                                     required onChange={onChangeBrand}
                                   />
                                 </div>
@@ -243,14 +244,18 @@ const AddBrand = () => {
 
                     {with_save ? (
                       <SweetAlert
-                        title="저장 하시겠습니까?"
-                        warning
-                        showConfirm={false}
-                        style={{
-                          paddingBottom: '42px'
-                        }}
-                      >
-                        <br />
+                       
+                  showConfirm={false}
+                  style={{
+                   paddingBottom: '42px'
+                  }}
+                > 
+                <div style={{paddingBottom:'52px', paddingTop:'30px'}}>
+                <img src={save}/>
+                </div>
+                  
+                  <h3><strong>저장 하시겠습니까?</strong></h3>
+                  <br/>
                         <Link to="#" className="btn btn-danger" onClick={() => {
                           setwith_save(false)
                         }}> <i className="uil uil-times me-1" ></i> 취소 </Link>{" "}
@@ -260,14 +265,18 @@ const AddBrand = () => {
 
                     {with_cancel ? (
                       <SweetAlert
-                        title="취소 하시겠습니까?"
-                        warning
-                        showConfirm={false}
-                        style={{
-                          paddingBottom: '42px'
-                        }}
-                      >
-                        <br />
+                         
+                  showConfirm={false}
+                  style={{
+                    paddingBottom: '42px'
+                  }}
+                >
+                  <div style={{paddingBottom:'52px', paddingTop:'30px'}}>
+                <img src={cancel}/>
+                </div>
+                  
+                  <h3><strong>취소 하시겠습니까?</strong></h3>
+                  <br />
                         <Link to="#" className="btn btn-danger" onClick={() => {
                           setwith_cancel(false)
                         }}> <i className="uil uil-times me-1" ></i> 취소 </Link>{" "}
@@ -279,7 +288,7 @@ const AddBrand = () => {
                     ) : null}
 
 
-                      {with_good ? (
+                    {with_good ? (
                       <SweetAlert
                         title="브랜드가 추가되었습니다."
                         warning
@@ -289,7 +298,7 @@ const AddBrand = () => {
                         }}
                       >
                         <br />
-                        
+
                         <Link to="/brand-list" className="btn btn-primary"> <i className="uil uil-file-alt me-1"></i> 확인 </Link>
                       </SweetAlert>
                     ) : null}

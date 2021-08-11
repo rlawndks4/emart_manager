@@ -16,7 +16,20 @@ import SweetAlert from "react-bootstrap-sweetalert"
 import Breadcrumbs from "../../components/Common/Breadcrumb"
 import axios from "axios"
 import { useHistory } from 'react-router'
-
+import cancel from "./cancel.png"
+import save from "./save.png"
+import styled from "styled-components"
+const UseKioskContainer = styled.div`
+display:flex;
+padding-left: 0;
+`
+const UseKioskContent = styled.div`
+text-decoration: none;
+color: black;
+padding-left: 10px;
+background: none;
+cursor:pointer;
+`
 const AddCustomers = () => {
   const history = useHistory()
   const [isOpen, setIsOpen] = useState(true);
@@ -33,7 +46,7 @@ const AddCustomers = () => {
   const [userLevel, setUserLevel] = useState('');
   const selectList = ["일반유저", "관리자", "개발자"];
   const [selected, setSelected] = useState("일반유저");
-  
+
 
   const [emileHenry, setEmileHenry] = useState(false)
   const [tefal, setTefal] = useState(false)
@@ -42,106 +55,125 @@ const AddCustomers = () => {
   const [kissher, setKissher] = useState(false)
 
   const [allKioskList, setAllKioskList] = useState([]);
-  const [kioskList, setKioskList] = useState([]);
-  const [selectKiosk, setSelectKiosk] = useState("");
-  const [kioskNameList, setkioskNameList] = useState([]);
+  const [kioskNumList, setkioskNumList] = useState([]);
+  const [selectKioskNum, setSelectKioskNum] = useState('');
+  const [kioskPkList, setKioskPkList] = useState([]);
+  const [selectKioskPk, setSelectKioskPk] = useState(0);
+
   const handleSelect = (e) => {
     setSelected(e.target.value);
   };
 
-const isAdmin = async () => {
+  const isAdmin = async () => {
     setLoading(true);
     const { data: response } = await axios.get('/api/auth')
-    if(!response.third){
+    if (!response.third) {
       alert('회원만 접근 가능합니다.')
       history.push('/login')
     }
-    else{
-     
-        if(!response.first){
-          alert('개발자만 접근 가능합니다.')
-          history.push('/product-list')
-        }else{
-          setLoading(false)
-        }
-      
-    } 
+    else {
+
+      if (!response.first) {
+        alert('개발자만 접근 가능합니다.')
+        history.push('/product-list')
+      } else {
+        setLoading(false)
+      }
+
+    }
   }
   useEffect(() => {
     isAdmin()
   }, [])
-//제출함수 
+  //제출함수 
   const onSubmit = async (e) => {
     e.preventDefault()
     //이용할 브랜드를 선택하고 그 값들을 배열형태로 저장하여 보냄
-    var brand_pk_list = []
-    var brand_list    = [kissher, silit, happyCall, tefal, emileHenry]
-    for(var i=0; i<brand_list.length; i++)
-    {
-      if(brand_list[i])
-        brand_pk_list.push(i+1)
+    if (!id.length||
+      !pw.length||
+      kioskPkList.length==0) {
+      alert('필수 값을 입력하지 않았습니다.')
+      setwith_save(false)
     }
-    
-    var brandPk = JSON.stringify(brand_pk_list)
-    
-    // if (checkAddUser) {
-    //회원가입
-    var kioskLi = JSON.stringify(kioskList)
-    const { data: response } =  await axios.post('/api/adduser', {
-      id: id,
-      pw: pw,
-      userLevel: userLevel,
-      brandPk: brandPk,
-      kioskList: kioskLi
-    })
-      if(response.result==-200)
-      {
+    else {
+      var brand_pk_list = []
+      var brand_list = [kissher, silit, happyCall, tefal, emileHenry]
+      for (var i = 0; i < brand_list.length; i++) {
+        if (brand_list[i])
+          brand_pk_list.push(i + 1)
+      }
+
+      var brandPk = JSON.stringify(brand_pk_list)
+
+      // if (checkAddUser) {
+      //회원가입
+      var kioskLi = JSON.stringify(kioskPkList)
+      const { data: response } = await axios.post('/api/adduser', {
+        id: id,
+        pw: pw,
+        userLevel: userLevel,
+        brandPk: brandPk,
+        kioskList: kioskLi
+      })
+      if (response.result == -200) {
         alert(response.message)
         setwith_save(false)
       }
-      else if(response.result==200){
+      else if (response.result == 200) {
         alert("유저가 추가되었습니다.")
         setwith_save(false)
         history.push('/customer-list')
       }
-      else
-      {
+      else {
         console.log(response)
       }
-    
+    }
+
   };
   //키오스크 리스트 모두 출력
   useEffect(() => {
     async function fetchPosts() {
-  
-    const{ data: response } = await axios.get('/api/kiosk');
-    console.log(response.data)
-    setAllKioskList(response.data)
-    console.log(allKioskList)
-  }
-  fetchPosts()
-},[]);
-const handleSelectKiosk = (e) => {
-  
-  setSelectKiosk(e.target.value)
-  if(selectKiosk === "" || selectKiosk === undefined){
-    return;
-  }
-  kioskNameList.push(selectKiosk)
-  for(var i = 0; i<allKioskList.length; i++){
+      const { data: response } = await axios.get('/api/kiosk');
+      console.log(response.data)
+      setAllKioskList(response.data)
+      console.log(allKioskList)
+    }
+    fetchPosts()
+  }, []);
+  const handleSelectKiosk = (e) => {
+    setSelectKioskNum(e.target.value)
     
-    if(allKioskList[i].kiosk_num==selectKiosk){
-      kioskList.push(allKioskList[i].pk)
-      break;
+    for (var i = 0; i < allKioskList.length; i++) {
+      if (allKioskList[i].kiosk_num == e.target.value) {
+
+        for(var j =0; j<kioskNumList.length;j++){
+          if(kioskNumList[j]==e.target.value){
+            break;
+          }
+        }
+        if(j==kioskNumList.length){
+          kioskNumList.push(e.target.value)
+          kioskPkList.push(allKioskList[i].pk)
+        }
+
+      }
     }
   }
-  console.log(selectKiosk)
-  console.log(kioskList)
-}
-function handlekioskName(arr){
-  var name = JSON.stringify(arr)
-  return name
-}
+  function deleteKioskPk(pk) {
+    console.log(pk)
+    for(var i=0;i<kioskNumList.length;i++){
+      console.log(kioskNumList[i])
+      if(kioskNumList[i]==pk){
+        kioskNumList.splice(i, 1);
+        kioskPkList.splice(i, 1);
+        break;
+      }
+    }
+  }
+  console.log(kioskPkList)
+  console.log(kioskNumList)
+  console.log(selectKioskNum)
+  console.log(kioskPkList.length)
   useEffect(() => {
     if (
       id.length === 0 ||
@@ -172,52 +204,52 @@ function handlekioskName(arr){
     setPw(e.target.value)
     setCheckPw('')
   };
-  
-    
-  
-  
-  
-  const handleEmileHenry = () =>{
-    if(!emileHenry){
+
+
+
+
+
+  const handleEmileHenry = () => {
+    if (!emileHenry) {
       setEmileHenry(true)
     }
-    else{
+    else {
       setEmileHenry(false)
     }
   }
-  const handleTefal = () =>{
-    if(!tefal){
+  const handleTefal = () => {
+    if (!tefal) {
       setTefal(true)
     }
-    else{
+    else {
       setTefal(false)
     }
   }
-  const handleHappycall = () =>{
-    if(!happyCall){
+  const handleHappycall = () => {
+    if (!happyCall) {
       setHappyCall(true)
     }
-    else{
+    else {
       setHappyCall(false)
     }
   }
-  const handleSilit = () =>{
-    if(!silit){
+  const handleSilit = () => {
+    if (!silit) {
       setSilit(true)
     }
-    else{
+    else {
       setSilit(false)
     }
   }
-  const handleKissher = () =>{
-    if(!kissher){
+  const handleKissher = () => {
+    if (!kissher) {
       setKissher(true)
     }
-    else{
+    else {
       setKissher(false)
     }
   }
-  
+
   return (
     <React.Fragment>
       <div className="page-content">
@@ -241,7 +273,7 @@ function handlekioskName(arr){
                             </div>
                           </div>
                           <div className="flex-1 overflow-hidden">
-                            <h5 className="font-size-16 mb-1">회원 추가</h5>
+                            <h5 className="font-size-16 mb-1" style={{fontFamily: 'NanumGothic', fontWeight:'bold'}}>회원 추가</h5>
                             <p className="text-muted text-truncate mb-0">아래의 모든 정보를 입력하세요.</p>
                           </div>
                           <i className="mdi mdi-chevron-up accor-down-icon font-size-24"></i>
@@ -320,7 +352,7 @@ function handlekioskName(arr){
                                     >
                                       emile henry
                                     </label>
-                                    <br/>
+                                    <br />
                                     <input
                                       className="form-check-input"
                                       type="checkbox"
@@ -333,7 +365,7 @@ function handlekioskName(arr){
                                     >
                                       tefal
                                     </label>
-                                    <br/>
+                                    <br />
                                     <input
                                       className="form-check-input"
                                       type="checkbox"
@@ -346,7 +378,7 @@ function handlekioskName(arr){
                                     >
                                       happycall
                                     </label>
-                                    <br/>
+                                    <br />
                                     <input
                                       className="form-check-input"
                                       type="checkbox"
@@ -359,7 +391,7 @@ function handlekioskName(arr){
                                     >
                                       silit
                                     </label>
-                                    <br/>
+                                    <br />
                                     <input
                                       className="form-check-input"
                                       type="checkbox"
@@ -376,26 +408,29 @@ function handlekioskName(arr){
                                 </div>
                               </Col>
                               <Col lg={4}>
-                          <div className="mb-3">
+                                <div className="mb-3">
                                   <Label>이용할 키오스크(다중선택 가능)</Label>
                                   <form >
                                     <select className="form-control" name="userlevel"
-                                      onChange={handleSelectKiosk} value={selectKiosk}>
+                                      onChange={handleSelectKiosk}>
                                       {allKioskList.map(item => (
-                                        <option value={item.kiosk_num} key={item.kiosk_num}>
+                                        <option key={item.pk}
+                                        >
                                           {item.kiosk_num}
                                         </option>
                                       ))}
                                     </select>
                                   </form>
                                 </div>
-                          </Col>
-                          <Col>
-                          <Label>선택한 키오스크</Label>
-                          <div>{handlekioskName(kioskNameList)}</div>
-                          </Col>
+                              </Col>
+                              <Col>
+                                <Label>선택한 키오스크</Label>
+                                <UseKioskContainer>{kioskNumList.map(pk => (
+                                  <UseKioskContent onClick={()=>{deleteKioskPk(pk)}}>{pk}</UseKioskContent>
+                                ))}</UseKioskContainer>
+                              </Col>
                             </Row>
-                           
+
                           </div>
                         </Form>
                       </div>
@@ -415,13 +450,17 @@ function handlekioskName(arr){
 
                     {with_save ? (
                       <SweetAlert
-                        title="저장 하시겠습니까?"
-                        warning
+
                         showConfirm={false}
                         style={{
                           paddingBottom: '42px'
                         }}
                       >
+                        <div style={{ paddingBottom: '52px', paddingTop: '30px' }}>
+                          <img src={save} />
+                        </div>
+
+                        <h3><strong>저장 하시겠습니까?</strong></h3>
                         <br />
                         <Link to="#" className="btn btn-danger" onClick={() => {
                           setwith_save(false)
@@ -434,13 +473,17 @@ function handlekioskName(arr){
 
                     {with_cancel ? (
                       <SweetAlert
-                        title="취소 하시겠습니까?"
-                        warning
+
                         showConfirm={false}
                         style={{
                           paddingBottom: '42px'
                         }}
                       >
+                        <div style={{ paddingBottom: '52px', paddingTop: '30px' }}>
+                          <img src={cancel} />
+                        </div>
+
+                        <h3><strong>취소 하시겠습니까?</strong></h3>
                         <br />
                         <Link to="#" className="btn btn-danger" onClick={() => {
                           setwith_cancel(false)

@@ -12,10 +12,11 @@ const Breadcrumb = props => {
 
           <div className="page-title-right">
             <ol className="breadcrumb m-0">
-              <BreadcrumbItem>
+              <BreadcrumbItem >
+              
                 <Link to="#">{props.title}</Link>
               </BreadcrumbItem>
-              
+             
             </ol>
           </div>
         </div>

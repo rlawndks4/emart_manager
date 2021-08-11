@@ -7,6 +7,7 @@ import axios from 'axios'
 import styled from "styled-components"
 import SweetAlert from "react-bootstrap-sweetalert"
 import { useHistory } from 'react-router'
+import { Pagination, PaginationItem, PaginationLink } from "reactstrap"
 const CheckBox = styled.input`
 margin: 14px 14px 14px;
 `
@@ -27,30 +28,34 @@ const Table = styled.table`
   word-break:break-all;
 `
 const KioskNumber = styled.th`
-  width: 20%;
+  width: 15%;
   color: black;
   padding: 14px 14px 14px;
-  
+  text-align: center;
 `
 const UniqueNumber = styled.th`
-width: 20%;
+width: 15%;
   color: black;
   padding: 14px 14px 14px;
+  text-align: center;
 `
 const Store = styled.th`
-width: 20%;
+width: 15%;
   color: black;
   padding: 14px 14px 14px;
+  text-align: center;
 `
 const Date = styled.th`
 width: 20%;
   color: black;
   padding: 14px 14px 14px;
+  text-align: center;
 `
 const Status = styled.th`
-width: 20%;
+width: 15%;
   color: black;
   padding: 14px 14px 14px;
+  text-align: center;
 `
 const Modify = styled.th`
 width: 10%;
@@ -72,44 +77,16 @@ align-items: center;
 display: flex;
 flex-direction: column;
 `
-const PageUl = styled.ul`
-  float:left;
-  list-style: none;
-  text-align:center;
-  border-radius:3px;
-  color:black;
-  padding:1px;
-  
-  background-color: white;
-`;
+const MenuName = styled.div`
+width: 100%;
 
-const PageLi = styled.li`
-  display:inline-block;
-  font-size:17px;
-  font-weight:600;
-  padding:5px;
-  
-  
-  &:hover{
-    cursor:pointer;
-    color:white;
-    background-color:blue;
-  }
-  &:focus::after{
-    color:#ffffff;
-    background-color:#000000;
-  }
-`;
-
-const PageSpan = styled.span`
-  &:hover::after,
-  &:focus::after{
-    border-radius:100%;
-    color:black;
-    background-color:black;
-  }
-`;
-
+`
+const Content1 = styled.div`
+width: 10%;
+`
+const Content2 = styled.div`
+width: 20%;
+`
 const KioskList = () => {
 
   const history = useHistory()
@@ -122,67 +99,146 @@ const KioskList = () => {
   const [with_delete, setwith_delete] = useState(false);
   const [kioskNum, setkioskNum] = useState('')
   const [with_good, setwith_good] = useState(false);
+
+  const [revisePk, setRevisePk] = useState(0)
+  const [firstDate, setFirstDate] = useState('2021-08-01')
+  const [secondDate, setSecondDate] = useState('2021-09-30')
+
+  const [paid, setPaid] = useState(0)
   const isAdmin = async () => {
     setLoading(true);
     const { data: response } = await axios.get('/api/auth')
-    if(!response.third){
+    if (!response.third) {
       alert('회원만 접근 가능합니다.')
       history.push('/login')
     }
-    else{
-      
-        if(!response.first){
-          alert('개발자만 접근 가능합니다.')
-          history.push('/product-list')
-        }else{
-          setLoading(false)
-        }
-      
-    } 
+    else {
+
+      if (!response.second) {
+        alert('관리자만 접근 가능합니다.')
+        history.push('/product-list')
+      } else {
+        setLoading(false)
+      }
+
+    }
   }
   useEffect(() => {
     isAdmin()
   }, [])
- 
+
   useEffect(() => {
     async function fetchPosts() {
-    setLoading(true);
-    const page = currentPage
-    const{ data: response } = await axios.get(`/api/kiosk/${page}`);
+      setLoading(true);
+      const page = currentPage
+      const { data: response } = await axios.get(`/api/kiosk/${page}?status=${paid}&firstdate=${firstDate}&lastdate=${secondDate}`);
 
-    setPosts(response.data.result);
-    setMaxPage(response.data.maxPage);
-    setLoading(false);
-  }
-  fetchPosts()
-},[]);
+      setPosts(response.data.result);
+      setMaxPage(response.data.maxPage);
+      setLoading(false);
+    }
+    fetchPosts()
+  }, []);
 
   const onDelete = async (e) => {
     e.preventDefault()
-    const { data: response } = await axios.post('/api/deletekiosk', {
-         pk: deleteNum
-        })
-        alert('삭제되었습니다.')
-        setwith_delete(false)
-        window.location.replace("/kiosk-list")
+    const { data: res } = await axios.get('/api/auth')
+    if(!res.first){
+      alert('권한이 없습니다.')
+      setwith_delete(false)
+    }
+    else{
+      const { data: response } = await axios.post('/api/deletekiosk', {
+        pk: deleteNum
+      })
+      alert('삭제되었습니다.')
+      setwith_delete(false)
+      window.location.replace("/kiosk-list")
+    }
   };
+
   function onChangePage(num) {
     async function fetchPosts() {
-    setLoading(true);
-    const page = num
-    setCurrentPage(num)
-    const{ data: response } = await axios.get(`/api/kiosk/${page}`);
-    setPosts(response.data.result);
-    setLoading(false);
-  }
-  fetchPosts()
+      setLoading(true);
+      const page = num
+      setCurrentPage(num)
+      const { data: response } = await axios.get(`/api/kiosk/${page}?status=${paid}&firstdate=${firstDate}&lastdate=${secondDate}`);
+      setPosts(response.data.result);
+      setLoading(false);
+    }
+    fetchPosts()
   };
-  
-   const pageNumbers = [];
-   for (let i = 1; i <= maxPage; i++) {
-     pageNumbers.push(i);
-   }
-  
+  function onChangePageColor(num) {
+    if (currentPage == num) {
+      return { background: '#5B73E8', color: '#ffffff' }
+    }
+    else {
+      return { background: '#ffffff', color: '#74788D' }
+    }
+  }
+   function onStatus(num){
+    if(num==1){
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+  async function handleGiveKiosk(num){
+    const { data: res } = await axios.get('/api/auth')
+    if(!res.first){
+      alert('권한이 없습니다.')
+    }
+    else{
+      axios.post('/api/kioskstatus',{
+        pk: num,
+        status: 0
+      }).then(()=>{
+        alert('지급을 완료 하였습니다.')
+        window.location.replace("/kiosk-list")
+      })
+    }
+    
+  }
+  async function handleCancelKiosk(num){
+    const { data: res } = await axios.get('/api/auth')
+    if(!res.first){
+      alert('권한이 없습니다.')
+    }
+    else{
+      axios.post('/api/kioskstatus',{
+        pk: num,
+        status: 1
+      }).then(()=>{
+        alert('지급을 취소 하였습니다.')
+        window.location.replace("/kiosk-list")
+      })
+    }
+  }
+  function onCreateTime(num) {
+    num = num.split('.')[0]
+    num = num.replace('T', ' ')
+    return num
+  }
+  const pageNumbers = [];
+  for (let i = 1; i <= maxPage; i++) {
+    pageNumbers.push(i);
+  }
+  const onChangePaid = (e) => {
+    setPaid(1)
+  }
+  const onChangeUnpaid = (e) => {
+    setPaid(0)
+  }
+
+
+  const onChangeFirst = (e) => {
+    setFirstDate(e.target.value)
+  }
+  const onChangeSecond = (e) => {
+    setSecondDate(e.target.value)
+  }
+ 
   return (
     <React.Fragment>
       <div className="page-content">
@@ -190,14 +246,17 @@ const KioskList = () => {
           <Breadcrumbs breadcrumbItem="키오스크관리" />
           <Row>
             <Col lg="12">
-
+            
               <React.Fragment>
-                <div>
+                <div className="p-4 border-top">
                   <Card>
                     <Row>
-                      <Col lg={2}>
+                   
+                      <Col md="2">
+                        <div className="mb-3" style={{width:'100%', paddingLeft:'30px'}}>
                         <br />
-                        <h5 className="font-size-14 mb-4">  조회결과 순서</h5>
+                        <h5 className="font-size-14 mb-4"><strong>조회결과 순서</strong></h5>
+                        </div>
                       </Col>
                       <Col lg={1}>
                         <br />
@@ -208,7 +267,9 @@ const KioskList = () => {
                           id="exampleRadios1"
                           value="option1"
                           defaultChecked
+                          onChange={onChangeUnpaid}
                         />
+                        {" "}
                         <label
                           className="form-check-label"
                           htmlFor="exampleRadios1"
@@ -224,7 +285,9 @@ const KioskList = () => {
                           name="exampleRadios"
                           id="exampleRadios2"
                           value="option2"
+                          onChange={onChangePaid}
                         />
+                        {" "}
                         <label
                           className="form-check-label"
                           htmlFor="exampleRadios2"
@@ -233,19 +296,13 @@ const KioskList = () => {
                         </label>
                       </Col>
                     </Row>
+
                     <Row>
+                   
                       <Col lg={2}>
+                      <div className="mb-3" style={{width:'100%', paddingLeft:'30px'}}>
                         <br />
-                        <h5 className="font-size-14 mb-4">조회 기간</h5>
-                      </Col>
-                      <Col lg={2}>
-                        <div className="col-md-10">
-                          <input
-                            className="form-control"
-                            type="date"
-                            defaultValue="2021-07-01"
-                            id="example-date-input"
-                          />
+                        <h5 className="font-size-14 mb-4"><strong>조회 기간</strong></h5>
                         </div>
                       </Col>
                       <Col lg={2}>
@@ -253,22 +310,44 @@ const KioskList = () => {
                           <input
                             className="form-control"
                             type="date"
-                            defaultValue="2021-07-31"
+                            defaultValue="2021-08-01"
                             id="example-date-input"
+                            onChange={onChangeFirst}
                           />
                         </div>
+                      </Col>
+
+
+                      <Col lg={2}>
+                        <div className="col-md-10">
+                          <input
+                            className="form-control"
+                            type="date"
+                            defaultValue="2021-09-30"
+                            id="example-date-input"
+                            onChange={onChangeSecond}
+                          />
+                        </div>
+                      </Col>
+                      <Col lg={2}>
+                        <Link to="#" className="btn btn-primary" onClick={() => {
+                          onChangePage(1)
+                        }}>조회하기</Link>
+                        {" "}
+                        <Link to="#" className="btn btn-primary" style={{marginLeft:'10px'}}>추출하기</Link>
                       </Col>
                     </Row>
                   </Card>
                   <div className="table-responsive mb-4">
 
-                    <Table>
+                    <Table style={{background:'#EEF1FD'}}> 
                       <CheckBox type="checkbox" id="cb1" />
                       <KioskNumber>키오스크 NO.</KioskNumber>
                       <UniqueNumber>고유번호</UniqueNumber>
                       <Store>지점</Store>
                       <Date>생성시간</Date>
                       <Status>상태</Status>
+                      <Status></Status>
                       <Modify>수정</Modify>
                       <Delete>삭제</Delete>
                     </Table>
@@ -283,13 +362,44 @@ const KioskList = () => {
                           <KioskNumber><ListText>{post.kiosk_num}</ListText></KioskNumber>
                           <UniqueNumber><ListText>{post.unique_code}</ListText></UniqueNumber>
                           <Store><ListText>{post.store_name}</ListText></Store>
-                          <Date><ListText>{post.create_time}</ListText></Date>
-                          <Status><ListText>{post.status}</ListText></Status>
+                          <Date><ListText>{onCreateTime(post.create_time)}</ListText></Date>
+                          <Status>
+                            {
+                              onStatus(post.status) ?
+                              <ListText>완료</ListText>
+                              :
+                              <>
+                              <ListText>미지급</ListText>
+                              </>
+                            }
+                          </Status>
+                          <Status style={{padding:'none important!'}}>
+                          {
+                            onStatus(post.status) ?
+                            <div>
+                              
+                            <Link to="#" className="btn btn-primary" ><strong>지급완료</strong></Link>
+                            {" "}
+                            <Link to="#" className="btn btn-primary" onClick={()=>{
+                              handleCancelKiosk(post.pk)
+                            }}><strong>취소</strong></Link>
+                            </div>
+                            :
+                            <>
+                            <Link to="#" className="btn btn-primary" onClick={()=>{
+                              handleGiveKiosk(post.pk)
+                            }}><strong>지급하기</strong></Link>
+                            </>
+                          }
+                          </Status>
+
                           <Modify><Link to={{
                             pathname: '/kiosk-revise',
-                            state: {pk: post.pk, num: post.kiosk_num, unique: post.unique_code
-                            , store: post.store_name}
-                            }}className="px-3 text-primary"><i className="uil uil-pen font-size-18"></i></Link></Modify>
+                            state: {
+                              pk: post.pk, num: post.kiosk_num, unique: post.unique_code
+                              , store: post.store_name
+                            }
+                          }} className="px-3 text-primary"><i className="uil uil-pen font-size-18"></i></Link></Modify>
                           <Delete><Link to="#" className="px-3 text-danger" onClick={() => {
                             setDeleteNum(post.pk)
                             setwith_delete(true)
@@ -298,6 +408,7 @@ const KioskList = () => {
                       ))}
 
                     </>
+                    
                     {with_delete ? (
                       <SweetAlert
                         title="정말 삭제하시겠습니까?"
@@ -326,7 +437,7 @@ const KioskList = () => {
                       >
                         <br />
 
-                        <Link to="/kiosk-list" className="btn btn-primary" onClick={()=>{setwith_good(false)}}> <i className="uil uil-file-alt me-1"></i> 확인 </Link>
+                        <Link to="/kiosk-list" className="btn btn-primary" onClick={() => { setwith_good(false) }}> <i className="uil uil-file-alt me-1"></i> 확인 </Link>
                       </SweetAlert>
                     ) : null}
                     <Row className="row mb-4">
@@ -338,17 +449,21 @@ const KioskList = () => {
                     <Row className="row mb-4">
 
                       <PageBox>
-                        <PageUl className="pagination">
-                        <PageLi onClick={()=>{onChangePage(1)}}>처음</PageLi>
+                        <Pagination aria-label="Page navigation example">
+                          <PaginationItem>
+                            <PaginationLink onClick={() => { onChangePage(1) }}>처음</PaginationLink>
+                          </PaginationItem>
                           {pageNumbers.map(number => (
-                            <PageLi key={number} className="page-item">
-                              <PageSpan onClick={() => {onChangePage(number)}}>
+                            <PaginationItem key={number} >
+                              <PaginationLink onClick={() => { onChangePage(number) }} style={onChangePageColor(number)}>
                                 {number}
-                              </PageSpan>
-                            </PageLi>
+                              </PaginationLink>
+                            </PaginationItem>
                           ))}
-                          <PageLi onClick={()=>{onChangePage(maxPage)}}>마지막</PageLi>
-                        </PageUl>
+                          <PaginationItem>
+                            <PaginationLink onClick={() => { onChangePage(maxPage) }}>마지막</PaginationLink>
+                          </PaginationItem>
+                        </Pagination>
                       </PageBox>
                     </Row>
                   </div>

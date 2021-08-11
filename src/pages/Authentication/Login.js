@@ -17,6 +17,7 @@ import { loginUser, apiError, socialLogin } from "../../store/actions"
 import EmartLogo from "../../assets/images/emart_logo.png"
 import axios from 'axios'
 import { LoginContext } from '../../App'
+
 const Login = (props) => {
   const history = useHistory()
   const { ID, setID, PW, setPW} = useContext(LoginContext)
@@ -31,7 +32,16 @@ const onLogin = async (e) => {
         })
         if(response.result==200){
           alert(response.message)
-          history.push('/product-list')
+          const { data: res } = await axios.get('/api/auth')
+          if (res.first) {
+            history.push('/kiosk-list')
+          }
+          else if(res.second){
+            history.push('/brand-list')
+          }
+          else {
+            history.push('product-list')
+          }
         }else{
           alert(response.message)
         }
@@ -54,7 +64,7 @@ const onLogin = async (e) => {
   });
  
   return (
-    <React.Fragment>
+    <React.Fragment >
       <div className="home-btn d-none d-sm-block">
         <Link to="/login" className="text-dark">
           <i className="mdi mdi-home-variant h2"></i>
@@ -63,7 +73,7 @@ const onLogin = async (e) => {
       <div className="account-pages my-5 pt-sm-5">
         <Container>
           
-          <Row className="align-items-center justify-content-center">
+          <Row className="align-items-center justify-content-center" >
             <Col md={8} lg={6} xl={5}>
               <Card>
 
@@ -79,7 +89,7 @@ const onLogin = async (e) => {
                       ) : null}
                       <div className="text-center">
                         <Link to="/login" className="mb-5 d-block auth-logo">
-                          <img src={EmartLogo} alt="" height="24" className="emart_logo" />
+                          <img src={EmartLogo} alt="" height="33" className="emart_logo" />
                   
                         </Link>
                       </div>
@@ -88,19 +98,18 @@ const onLogin = async (e) => {
                           name="email"
                           label="ID"
                           className="form-control"
-                          placeholder="Enter email"
+                          placeholder="아이디를 입력하세요."
                           type="text"
-                          required onChange={handleIDChange}
+                          onChange={handleIDChange}
                         />
                       </div>
                       <div className="mb-3">
                         <AvField
                           name="password"
                           label="PW"
-                          value="123456"
                           type="password"
-                          required onChange={handlePWChange}
-                          placeholder="Enter Password"
+                          onChange={handlePWChange}
+                          placeholder="비밀번호를 입력하세요."
                         />
                       </div>
                       <div className="form-check">

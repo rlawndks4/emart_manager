@@ -17,11 +17,12 @@ import SweetAlert from "react-bootstrap-sweetalert"
 //Import Breadcrumb
 import Breadcrumbs from "../../components/Common/Breadcrumb"
 import axios from 'axios'
-import { useHistory} from 'react-router';
-import styled from "styled-components"
-
+import { useHistory } from 'react-router';
+import cancel from "./cancel.png"
+import save from "./save.png"
+import Select from "react-select"
 const AddProduct = () => {
-  
+
   const history = useHistory();
   const [itemName, setItemName] = useState('')
   const [itemNum, setItemNum] = useState('')
@@ -30,15 +31,15 @@ const AddProduct = () => {
   const [selectedDetailFiles, setselectedDetailFiles] = useState([])
   const [selectedQrFiles, setselectedQrFiles] = useState([])
   const [isOpen, setIsOpen] = useState(true);
-  
+
   const [mainFile, setMainFile] = useState({
-    file : []
+    file: []
   });
   const [detailFile, setDetailFile] = useState({
-    file : []
+    file: []
   });
   const [qrFile, setQrFile] = useState({
-    file : []
+    file: []
   });
   const toggle = () => setIsOpen(!isOpen);
 
@@ -59,8 +60,8 @@ const AddProduct = () => {
   const [with_save, setwith_save] = useState(false);
   const [with_cancel, setwith_cancel] = useState(false);
 
-  const statusList = ["사용", "사용안함"];
-  const [selectedStatus, setSelectedStatus] = useState("사용");
+  const statusList = ["판매중", "품절"];
+  const [selectedStatus, setSelectedStatus] = useState("판매중");
   const [statusnum, setStatusNum] = useState(1)
 
   const classList = ["일반 상품", "오늘의 상품"];
@@ -69,87 +70,108 @@ const AddProduct = () => {
 
   const brandList = ["kissher", "silit", "happycall", "tefal", "emile henry"];
   const [selectedBrand, setSelectedBrand] = useState("kissher");
- 
-  const middleClassList = ["프라이팬", "냄비", "매직핸즈", "주방가전", "생활가전"];
-  const [selectedmiddleClass, setSelectedmiddleClass] = useState("프라이팬");
-  
+
+
+  const [middleClassList, setMiddleClassList] = useState([]);
+  const [selectedmiddleClass, setSelectedmiddleClass] = useState('');
+
   const isAdmin = async () => {
-    
+
     const { data: response } = await axios.get('/api/auth')
-    if(!response.third){
+    if (!response.third) {
       alert('회원만 접근 가능합니다.')
       history.push('/login')
-    }else{
-      
-      }
+    } else {
+
     }
+  }
 
   useEffect(() => {
     isAdmin()
   }, [])
-//선택한 값 넣어주는 함수
+  //선택한 값 넣어주는 함수
   const handleSelectClass = (e) => {
     setSelectedclass(e.target.value);
   };
-  const handleSelectBrand = (e) => {
+  const handleSelectBrand = async (e) => {
     setSelectedBrand(e.target.value);
+    if (e.target.value === 'kissher') setBrandPk(1)
+    else if (e.target.value === 'silit') setBrandPk(2)
+    else if (e.target.value === 'happycall') setBrandPk(3)
+    else if (e.target.value === 'tefal') setBrandPk(4)
+    else {
+      setBrandPk(5)
+    }
+    const {data:response} = await axios.get(`/api/allbrand/${e.target.value}`)
+    setMiddleClassList(response.data)
   };
+ useEffect(()=>{
+  async function fetchPosts() {
+  const {data:response} = await axios.get(`/api/allbrand/${'kissher'}`)
+  console.log(response.data)
+  setMiddleClassList(response.data)
+  }
+  fetchPosts()
+ },[])
+
+  // function onChangeBrand(num) {
+  //   async function fetchPosts() {
+  //     const brandPk = num
+  //     const {data:response} = await axios.get(`/api/allbrand/${brandPk}`)
+  //     setMiddleClassList(response.data)
+  //   }
+  //   fetchPosts()
+  // };
   const handleSelectMiddleClass = (e) => {
     setSelectedmiddleClass(e.target.value);
   };
+console.log(selectedmiddleClass)
   const handleSelectStatus = (e) => {
     setSelectedStatus(e.target.value);
   };
   //서버에 보낼대 int형으로 저장되므로 브랜드 이름과 번호가 매칭이 되게 구성
-  useEffect(()=>{
-    if(selectedBrand==='kissher') setBrandPk(1)
-      else if(selectedBrand==='silit') setBrandPk(2)
-      else if(selectedBrand==='happycall') setBrandPk(3)
-      else if(selectedBrand==='tefal') setBrandPk(4)
-      else{
-        setBrandPk(5)
-      }
+  useEffect(() => {
+    if (selectedStatus === '판매중') setStatusNum(1)
+    else {
+      setStatusNum(0)
+    }
+  })
 
-      if(selectedStatus==='사용') setStatusNum(1)
-      else{
-        setStatusNum(0)
+  //디비에 저장하게 하는 함수
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    if (!itemName.length||
+      !itemNum.length||
+      !mainFile ||
+      !detailFile ||
+      !qrFile) {
+      alert("필수 입력 사항을 입력하지 않으셨습니다.");
+      setwith_save(false)
+    }
+    else {//brandPk, itemNum, itemName, classification, middleClass, status
+      const formData = new FormData();
+      formData.append('mainImage', mainFile)
+      formData.append('detailImage', detailFile)
+      formData.append('qrImage', qrFile)
+
+      formData.append('brandPk', brandPk)
+      formData.append('itemNum', itemNum)
+
+      formData.append('itemName', itemName)
+      formData.append('classification', classification)
+      formData.append('middleClass', selectedmiddleClass)
+      formData.append('status', statusnum)
+      const headers = {
+        'Content-type': 'multipart/form-data; charset=UTF-8',
+        'Accept': '*/*'
       }
-   })
-//디비에 저장하게 하는 함수
-   const handleSubmit = async (e) => {
-     e.preventDefault()
-     if( itemName.length===0 ||
-       itemNum.length===0 ||
-       !mainFile ||
-       !detailFile||
-       !qrFile){
-         alert("필수 입력 사항을 입력하지 않으셨습니다.");
-         setwith_save(false)
-       }
-       else{//brandPk, itemNum, itemName, classification, middleClass, status
-         const formData = new FormData();
-         formData.append('mainImage', mainFile)
-          formData.append('detailImage', detailFile)
-          formData.append('qrImage',qrFile)
-          
-          formData.append('brandPk',brandPk)
-          formData.append('itemNum',itemNum)
-          
-          formData.append('itemName',itemName)
-          formData.append('classification', classification)
-          formData.append('middleClass',selectedmiddleClass)
-          formData.append('status', statusnum)
-          const headers = {
-            'Content-type': 'multipart/form-data; charset=UTF-8',
-            'Accept': '*/*'
-        }
-         axios.post('/api/addproduct', formData,{headers})
-         
-         alert("상품이 추가되었습니다.")
-         history.push('/product-list')
-       }
-   }
-//파일 저장 함수
+      axios.post('/api/addproduct', formData, { headers })
+
+      alert("상품이 추가되었습니다.")
+      history.push('/product-list')
+    }
+  }
+  //파일 저장 함수
   function handleAcceptedMainFiles(files) {
     files.map(file =>
       Object.assign(file, {
@@ -180,12 +202,12 @@ const AddProduct = () => {
 
     setselectedQrFiles(files)
   }
-//상품의 종류도 int형으로 저장되므로 만든 함수
-  useEffect(()=>{
-    if(selectedclass==="오늘의 상품"){
+  //상품의 종류도 int형으로 저장되므로 만든 함수
+  useEffect(() => {
+    if (selectedclass === "오늘의 상품") {
       setClassification(1);
     }
-    else{
+    else {
       setClassification(0)
     }
   })
@@ -205,12 +227,12 @@ const AddProduct = () => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i]
   }
   //파일을 하나식 담기위해 구성된 함수
-  useEffect(()=>{
+  useEffect(() => {
     setMainFile(selectedMainFiles[0])
     setDetailFile(selectedDetailFiles[0])
     setQrFile(selectedQrFiles[0])
   })
-  
+ 
   return (
     <React.Fragment>
       <div className="page-content">
@@ -232,7 +254,7 @@ const AddProduct = () => {
                           </div>
                         </div>
                         <div className="flex-1 overflow-hidden">
-                          <h5 className="font-size-16 mb-1">상품 추가</h5>
+                          <h5 className="font-size-16 mb-1" style={{fontFamily: 'NanumGothic', fontWeight:'bold'}}>상품 추가</h5>
                           <p className="text-muted text-truncate mb-0">아래의 모든 정보를 입력하세요.</p>
                         </div>
                         <i className="mdi mdi-chevron-up accor-down-icon font-size-24"></i>
@@ -244,10 +266,10 @@ const AddProduct = () => {
                   <Collapse isOpen={isOpen}>
                     <div className="p-4 border-top">
                       <Form>
-                      <Row>
+                        <Row>
                           <Col md="4">
                             <div className="mb-3">
-                              <Label htmlFor="productname">상품명</Label>
+                              <Label htmlFor="productname" style={{fontWeight:'1000'}}>상품명</Label>
                               <Input
                                 id="productname"
                                 name="productname"
@@ -259,7 +281,7 @@ const AddProduct = () => {
                           </Col>
                           <Col md="4">
                             <div className="mb-3">
-                              <Label htmlFor="productname">상품번호</Label>
+                              <Label htmlFor="productname" style={{fontWeight:'1000'}}>상품번호</Label>
                               <Input
                                 id="productname"
                                 name="productname"
@@ -270,70 +292,77 @@ const AddProduct = () => {
                             </div>
                           </Col>
                           <Col md="4">
-                          <div className="mb-3">
-                                  <Label>중분류</Label>
-                                  <form >
-                                    <select className="form-control" name="userlevel"
-                                      onChange={handleSelectMiddleClass} value={selectedmiddleClass}>
-                                      {middleClassList.map((item) => (
-                                        <option value={item} key={item}>
-                                          {item}
-                                        </option>
-                                      ))}
-                                    </select>
-                                  </form>
-                                </div>
+                            <div className="mb-3">
+                              <Label style={{fontWeight:'1000'}}>중분류</Label>
+                              <form >
+                                <select className="form-control" name="userlevel"
+                                  onChange={handleSelectMiddleClass} value={selectedmiddleClass}> 
+                                    <option>
+                                      {middleClassList.middle_class_1}
+                                    </option>
+                                    <option>
+                                      {middleClassList.middle_class_2}
+                                    </option>
+                                    <option>
+                                      {middleClassList.middle_class_3}
+                                    </option>
+                                    <option>
+                                      {middleClassList.middle_class_4}
+                                    </option>
+                                </select>
+                              </form>
+                            </div>
                           </Col>
                         </Row>
                         <Row>
                           <Col md="4">
-                          <div className="mb-3">
-                                  <Label>상품분류</Label>
-                                  <form >
-                                    <select className="form-control" name="userlevel"
-                                      onChange={handleSelectClass} value={selectedclass}>
-                                      {classList.map((item) => (
-                                        <option value={item} key={item}>
-                                          {item}
-                                        </option>
-                                      ))}
-                                    </select>
-                                  </form>
-                                </div>
+                            <div className="mb-3">
+                              <Label style={{fontWeight:'1000'}}>상품분류</Label>
+                              <form >
+                                <select className="form-control" name="userlevel"
+                                  onChange={handleSelectClass} value={selectedclass}>
+                                  {classList.map((item) => (
+                                    <option value={item} key={item}>
+                                      {item}
+                                    </option>
+                                  ))}
+                                </select>
+                              </form>
+                            </div>
                           </Col>
                           <Col md="4">
-                          <div className="mb-3">
-                                  <Label>브랜드</Label>
-                                  <form >
-                                    <select className="form-control" name="userlevel"
-                                      onChange={handleSelectBrand} value={selectedBrand}>
-                                      {brandList.map((item) => (
-                                        <option value={item} key={item}>
-                                          {item}
-                                        </option>
-                                      ))}
-                                    </select>
-                                  </form>
-                                </div>
+                            <div className="mb-3">
+                              <Label style={{fontWeight:'1000'}}>브랜드</Label>
+                              <form >
+                                <select className="form-control" name="userlevel"
+                                  onChange={handleSelectBrand} value={selectedBrand}>
+                                  {brandList.map((item) => (
+                                    <option value={item} key={item}>
+                                      {item}
+                                    </option>
+                                  ))}
+                                </select>
+                              </form>
+                            </div>
                           </Col>
                           <Col md="4">
-                          <div className="mb-3">
-                                  <Label>사용유무</Label>
-                                  <form >
-                                    <select className="form-control" name="userlevel"
-                                      onChange={handleSelectStatus} value={selectedStatus}>
-                                      {statusList.map((item) => (
-                                        <option value={item} key={item}>
-                                          {item}
-                                        </option>
-                                      ))}
-                                    </select>
-                                  </form>
-                                </div>
+                            <div className="mb-3">
+                              <Label style={{fontWeight:'1000'}}>상태</Label>
+                              <form >
+                                <select className="form-control" name="userlevel"
+                                  onChange={handleSelectStatus} value={selectedStatus}>
+                                  {statusList.map((item) => (
+                                    <option value={item} key={item}>
+                                      {item}
+                                    </option>
+                                  ))}
+                                </select>
+                              </form>
+                            </div>
                           </Col>
                         </Row>
 
-                        
+
 
 
                       </Form>
@@ -356,7 +385,7 @@ const AddProduct = () => {
                         <div className="flex-1 overflow-hidden">
                           <h5 className="font-size-16 mb-1">메인 사진</h5>
                           <p className="text-muted text-truncate mb-0">상품이미지를 등록해 주세요.
-                            <br />상품사진은 430x315 사이즈로 PG,PNG 파일 이미지만 등록 가능합니다.</p>
+                            <br />상품사진은 430x315 사이즈로 JPG,PNG 파일 이미지만 등록 가능합니다.</p>
                         </div>
                         <i className="mdi mdi-chevron-up accor-down-icon font-size-24"></i>
                       </Media>
@@ -443,7 +472,7 @@ const AddProduct = () => {
                         <div className="flex-1 overflow-hidden">
                           <h5 className="font-size-16 mb-1">상세 사진</h5>
                           <p className="text-muted text-truncate mb-0">상세 사진을 등록해 주세요.
-                            <br />상품사진은 430x315 사이즈로 PG,PNG 파일 이미지만 등록 가능합니다.</p>
+                            <br />상품사진은 430x315 사이즈로 JPG,PNG 파일 이미지만 등록 가능합니다.</p>
                         </div>
                         <i className="mdi mdi-chevron-up accor-down-icon font-size-24"></i>
                       </Media>
@@ -529,7 +558,7 @@ const AddProduct = () => {
                         <div className="flex-1 overflow-hidden">
                           <h5 className="font-size-16 mb-1">QR 코드 사진</h5>
                           <p className="text-muted text-truncate mb-0">QR 코드 사진을 등록해 주세요.
-                            <br />상품사진은 430x315 사이즈로 PG,PNG 파일 이미지만 등록 가능합니다.</p>
+                            <br />상품사진은 430x315 사이즈로 JPG,PNG 파일 이미지만 등록 가능합니다.</p>
                         </div>
                         <i className="mdi mdi-chevron-up accor-down-icon font-size-24"></i>
                       </Media>
@@ -607,11 +636,7 @@ const AddProduct = () => {
             </Col>
           </Row>
           <Row>
-            {/* <Col>
-                    <Link to="/ecommerce-products" className="btn btn-link text-muted">
-                      <i className="uil uil-arrow-left me-1"></i> Continue Shopping
-                    </Link>
-                  </Col> */}
+           
             <Col>
               <div className="text-sm-end mt-2 mt-sm-0">
                 <Link to="#" className="btn btn-danger" onClick={() => {
@@ -624,14 +649,18 @@ const AddProduct = () => {
 
               {with_save ? (
                 <SweetAlert
-                  title="저장 하시겠습니까?"
-                  warning
-                  showConfirm={false}
-                  style={{
-                    paddingBottom: '42px'
-                  }}
-                >
-                  <br />
+                 
+                showConfirm={false}
+                style={{
+                 paddingBottom: '42px'
+                }}
+              > 
+              <div style={{paddingBottom:'52px', paddingTop:'30px'}}>
+              <img src={save}/>
+              </div>
+                
+                <h3><strong>저장 하시겠습니까?</strong></h3>
+                <br/>
                   <Link to="#" className="btn btn-danger" onClick={() => {
                     setwith_save(false)
                   }}> <i className="uil uil-times me-1" ></i> 취소 </Link>{" "}
@@ -641,14 +670,18 @@ const AddProduct = () => {
 
               {with_cancel ? (
                 <SweetAlert
-                  title="취소 하시겠습니까?"
-                  warning
-                  showConfirm={false}
-                  style={{
-                    paddingBottom: '42px'
-                  }}
-                >
-                  <br />
+                   
+                showConfirm={false}
+                style={{
+                  paddingBottom: '42px'
+                }}
+              >
+                <div style={{paddingBottom:'52px', paddingTop:'30px'}}>
+              <img src={cancel}/>
+              </div>
+                
+                <h3><strong>취소 하시겠습니까?</strong></h3>
+                <br />
                   <Link to="#" className="btn btn-danger" onClick={() => {
                     setwith_cancel(false)
                   }}> <i className="uil uil-times me-1" ></i> 취소 </Link>{" "}

@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
-import {  Col, Container, Row,  Card, Spinner } from "reactstrap"
+import { Col, Container, Row, Card, Spinner } from "reactstrap"
 import { Link } from "react-router-dom"
 //Import Breadcrumb
 import Breadcrumbs from "../../../components/Common/Breadcrumb"
 import axios from 'axios'
 import styled from "styled-components"
 import SweetAlert from "react-bootstrap-sweetalert"
-import {useHistory} from 'react-router';
+import { useHistory } from 'react-router';
+import { AvForm } from "availity-reactstrap-validation"
+import { Pagination, PaginationItem, PaginationLink } from "reactstrap"
 const CheckBox = styled.input`
 margin: 14px 14px 14px;
 `
@@ -30,47 +32,55 @@ const MainImg = styled.th`
   width: 20%;
   color: black;
   padding: 14px 14px 14px;
-  
+  text-align:center;
 `
 const ItemName = styled.th`
 width: 20%;
   color: black;
   padding: 14px 14px 14px;
+  text-align:center;
 `
 const ItemNum = styled.th`
 width: 20%;
   color: black;
   padding: 14px 14px 14px;
+  text-align:center;
 `
 const BrandPk = styled.th`
 width: 20%;
   color: black;
   padding: 14px 14px 14px;
+  text-align:center;
 `
 const Classification = styled.th`
 width: 20%;
   color: black;
   padding: 14px 14px 14px;
+  text-align:center;
 `
 const MiddleClass = styled.th`
 width: 20%;
   color: black;
   padding: 14px 14px 14px;
+  text-align:center;
 `
 const Status = styled.th`
 width: 20%;
   color: black;
   padding: 14px 14px 14px;
+  text-align:center;
 `
 const DetailImg = styled.th`
 width: 20%;
   color: black;
   padding: 14px 14px 14px;
+  text-align:center;
 `
 const QrImg = styled.th`
 width: 20%;
   color: black;
   padding: 14px 14px 14px;
+  text-align:center;
 `
 const Modify = styled.th`
 width: 10%;
@@ -92,46 +102,10 @@ align-items: center;
 display: flex;
 flex-direction: column;
 `
-const PageUl = styled.ul`
-  float:left;
-  list-style: none;
-  text-align:center;
-  border-radius:3px;
-  color:black;
-  padding:1px;
-  
-  background-color: white;
-`;
 
-const PageLi = styled.li`
-  display:inline-block;
-  font-size:17px;
-  font-weight:600;
-  padding:5px;
-  
-  
-  &:hover{
-    cursor:pointer;
-    color:white;
-    background-color:blue;
-  }
-  &:focus::after{
-    color:#ffffff;
-    background-color:#000000;
-  }
-`;
-
-const PageSpan = styled.span`
-  &:hover::after,
-  &:focus::after{
-    border-radius:100%;
-    color:black;
-    background-color:black;
-  }
-`;
 const ListImg = styled.img`
-height: 100px;
-width: 100%;
+height: auto;
+width: 40%;
 `
 const ProductList = () => {
 
@@ -141,110 +115,111 @@ const ProductList = () => {
   const [loading, setLoading] = useState(false);
   const [maxPage, setMaxPage] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
- 
+  const [search, setSearch] = useState('')
   const [with_delete, setwith_delete] = useState(false);
-  const [keyword, setKeyword] = useState('');
-  
+
+
   const isAdmin = async () => {
     setLoading(true);
     const { data: response } = await axios.get('/api/auth')
-    if(!response.third){
+    if (!response.third) {
       alert('회원만 접근 가능합니다.')
       history.push('/login')
-    }else{
+    } else {
       setLoading(false)
-      }
     }
+  }
 
   useEffect(() => {
     isAdmin()
   }, [])
-  
+
   useEffect(() => {
     async function fetchPosts() {
-    setLoading(true);
-    const page = currentPage
-    const{ data: response } = await axios.get(`/api/product/${page}`);
-    setPosts(response.data.result);
-    setMaxPage(response.data.maxPage);
-    setLoading(false);
-  }
-  fetchPosts()
-},[]);
+      setLoading(true);
+      const page = currentPage
+      const { data: response } = await axios.get(`/api/product/${page}?keyword=${search}`);
+      setPosts(response.data.result);
+      setMaxPage(response.data.maxPage);
+      setLoading(false);
+    }
+    fetchPosts()
+  }, []);
 
   const onDelete = async (e) => {
     e.preventDefault()
     const { data: response } = await axios.post('/api/deleteitem', {
-         pk: deleteNum
-        })
-        alert('삭제되었습니다.')
-        setwith_delete(false)
-        window.location.replace("/product-list")
+      pk: deleteNum
+    })
+    alert('삭제되었습니다.')
+    setwith_delete(false)
+    window.location.replace("/product-list")
   };
-  
+
   function onChangePage(num) {
     async function fetchPosts() {
-    setLoading(true);
-    const page = num
-    const{ data: response } = await axios.get(`/api/product/${page}`);
-    setPosts(response.data.result);
-    setLoading(false);
-  }
-  fetchPosts()
+      setLoading(true);
+      const page = num
+      setCurrentPage(num)
+      const { data: response } = await axios.get(`/api/product/${page}?keyword=${search}`);
+      setPosts(response.data.result);
+      setLoading(false);
+    }
+    fetchPosts()
   };
-  // function onSearch(value) {
-  //   async function fetchPosts() {
-  //   setLoading(true);
-  //   const{ data: response } = await axios.get(`/api/product/${1}/${keyword}`);
-  //   setPosts(response.result);
-  //   setLoading(false);
-  // }
-  // fetchPosts()
-  // };
-  
-  
-   const pageNumbers = [];
-   for (let i = 1; i <= maxPage; i++) {
-     pageNumbers.push(i);
-   }
- 
+  function onChangePageColor(num) {
+    if (currentPage == num) {
+      return { background: '#5B73E8', color: '#ffffff' }
+    }
+    else {
+      return { background: '#ffffff', color: '#74788D' }
+    }
+  }
 
-  function setClass(cla){
-    if(cla==0){
+
+console.log(maxPage)
+  const pageNumbers = [];
+  for (let i = 1; i <= maxPage; i++) {
+    pageNumbers.push(i);
+  }
+
+
+  function setClass(cla) {
+    if (cla == 0) {
       return "일반상품"
     }
-    else{
+    else {
       return "오늘의 상품"
     }
   }
-  function setBrand(brd){
-    if(brd==1){
+  function setBrand(brd) {
+    if (brd == 1) {
       return "kissher"
     }
-    else if(brd==2){
+    else if (brd == 2) {
       return "silit"
     }
-    else if(brd==3){
+    else if (brd == 3) {
       return "happycall"
     }
-    else if(brd==4){
+    else if (brd == 4) {
       return "tefal"
     }
-    else{
+    else {
       return "emile henry"
     }
   }
 
-  function setStatus(stt){
-    if(stt===1){
-      return "사용중"
+  function setStatus(stt) {
+    if (stt === 1) {
+      return "판매중"
     }
-    else{
-      return "사용안함"
+    else {
+      return "품절"
     }
   }
-  const onChangeSearch = (e) => {
-    setKeyword(e.target.value)
+  const onSearch = (e) => {
+    setSearch(e.target.value)
   }
   return (
     <React.Fragment>
@@ -257,23 +232,22 @@ const ProductList = () => {
               <React.Fragment>
                 <div>
                   <Card>
-                    <form className="app-search d-none d-lg-block"
-                    // onSubmit={onSearch}
-                    >
+                    <AvForm className="app-search d-none d-lg-block" onSubmit={() => { onChangePage(1) }}>
                       <div className="position-relative">
                         <input
                           type="text"
                           className="form-control"
                           placeholder="Search..."
-                          onChange={onChangeSearch}
+                          value={search}
+                          onChange={onSearch}
                         />
                         <span className="uil-search"></span>
                       </div>
-                    </form>
+                    </AvForm>
                   </Card>
                   <div className="table-responsive mb-4">
 
-                    <Table>
+                    <Table style={{background:'#EEF1FD'}}>
                       <CheckBox type="checkbox" id="cb1" />
                       <MainImg>메인사진</MainImg>
                       <ItemName>상품명</ItemName>
@@ -295,23 +269,24 @@ const ProductList = () => {
                       {posts && posts.map(post => (
                         <Table key={post.pk}>
                           <CheckBox type="checkbox" id="cb1" />
-                          <MainImg><ListImg src={post.main_image}/></MainImg>
+                          <MainImg><ListImg src={"http://emart.cafe24app.com" + post.main_image} /></MainImg>
                           <ItemName><ListText>{post.item_name}</ListText></ItemName>
                           <ItemNum><ListText>{post.item_num}</ListText></ItemNum>
                           <BrandPk><ListText>{setBrand(post.brand_pk)}</ListText></BrandPk>
                           <Classification><ListText>{setClass(post.classification)}</ListText></Classification>
                           <MiddleClass><ListText>{post.middle_class}</ListText></MiddleClass>
                           <Status><ListText>{setStatus(post.status)}</ListText></Status>
-                          <DetailImg><ListImg src={post.detail_image}/></DetailImg>
-                          <QrImg><ListImg src={post.qr_image}/></QrImg>
+                          <DetailImg><ListImg src={"http://emart.cafe24app.com" + post.detail_image} /></DetailImg>
+                          <QrImg><ListImg src={"http://emart.cafe24app.com" + post.qr_image} /></QrImg>
                           <Modify><Link to={{
                             pathname: '/product-revise',
-                             state: {pk: post.pk, name: post.item_name, num:post.item_num, brand: setBrand(post.brand_pk),
-                             class: setClass(post.classification), middleclass: post.middle_class ,status:setStatus(post.status)
-                             ,mainImage: post.main_image, detailImage: post.detail_image , qrImage: post.qr_image
+                            state: {
+                              pk: post.pk, name: post.item_name, num: post.item_num, brand: setBrand(post.brand_pk),
+                              class: setClass(post.classification), middleclass: post.middle_class, status: setStatus(post.status)
+                              , mainImage: post.main_image, detailImage: post.detail_image, qrImage: post.qr_image
                             }
-                             
-                            
+
+
                           }}><i className="uil uil-pen font-size-18"></i></Link></Modify>
                           <Delete><Link to="#" className="px-3 text-danger" onClick={() => {
                             setDeleteNum(post.pk)
@@ -348,17 +323,21 @@ const ProductList = () => {
                     <Row className="row mb-4">
 
                       <PageBox>
-                        <PageUl className="pagination">
-                        <PageLi onClick={()=>{onChangePage(1)}}>처음</PageLi>
+                        <Pagination aria-label="Page navigation example">
+                          <PaginationItem>
+                            <PaginationLink onClick={() => { onChangePage(1) }}>처음</PaginationLink>
+                          </PaginationItem>
                           {pageNumbers.map(number => (
-                            <PageLi key={number} className="page-item">
-                              <PageSpan onClick={() => {onChangePage(number)}}>
+                            <PaginationItem key={number} >
+                              <PaginationLink onClick={() => { onChangePage(number) }} style={onChangePageColor(number)}>
                                 {number}
-                              </PageSpan>
-                            </PageLi>
+                              </PaginationLink>
+                            </PaginationItem>
                           ))}
-                          <PageLi onClick={()=>{onChangePage(maxPage)}}>마지막</PageLi>
-                        </PageUl>
+                          <PaginationItem>
+                            <PaginationLink onClick={() => { onChangePage(maxPage) }}>마지막</PaginationLink>
+                          </PaginationItem>
+                        </Pagination>
                       </PageBox>
                     </Row>
                   </div>

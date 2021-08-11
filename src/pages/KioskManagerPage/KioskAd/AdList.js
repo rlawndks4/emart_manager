@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
-import {  Col, Container, Row, Card, Spinner } from "reactstrap"
+import { Col, Container, Row, Card, Spinner } from "reactstrap"
 import { Link, useHistory } from "react-router-dom"
 //Import Breadcrumb
 import Breadcrumbs from "../../../components/Common/Breadcrumb"
 import axios from 'axios'
 import styled from "styled-components"
 import SweetAlert from "react-bootstrap-sweetalert"
+import { AvForm } from "availity-reactstrap-validation"
+
+import { Pagination, PaginationItem, PaginationLink } from "reactstrap"
 
 const CheckBox = styled.input`
 margin: 14px 14px 14px;
@@ -27,20 +30,22 @@ const Table = styled.table`
   word-break:break-all;
 `
 const AdName = styled.th`
-  width: 20%;
+  width: 15%;
   color: black;
   padding: 14px 14px 14px;
-  
+  text-align: center;
 `
 const AdImg = styled.th`
 width: 20%;
   color: black;
   padding: 14px 14px 14px;
+  text-align: center;
 `
 const Date = styled.th`
-width: 20%;
+  width: 20%;
   color: black;
   padding: 14px 14px 14px;
+  text-align: center;
 `
 const Modify = styled.th`
 width: 10%;
@@ -73,35 +78,10 @@ const PageUl = styled.ul`
   background-color: white;
 `;
 
-const PageLi = styled.li`
-  display:inline-block;
-  font-size:17px;
-  font-weight:600;
-  padding:5px;
-  
-  
-  &:hover{
-    cursor:pointer;
-    color:white;
-    background-color:blue;
-  }
-  &:focus::after{
-    color:#ffffff;
-    background-color:#000000;
-  }
-`;
 
-const PageSpan = styled.span`
-  &:hover::after,
-  &:focus::after{
-    border-radius:100%;
-    color:black;
-    background-color:black;
-  }
-`;
 const ListImg = styled.img`
-height: 100px;
-width: 100%;
+height: auto;
+width: 50%;
 `
 
 const AdList = () => {
@@ -110,6 +90,7 @@ const AdList = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const [search, setSearch] = useState('')
   const [maxPage, setMaxPage] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -117,7 +98,7 @@ const AdList = () => {
   const [with_delete, setwith_delete] = useState(false);
 
   const isAdmin = async () => {
-    setLoading(true);
+
     const { data: response } = await axios.get('/api/auth')
     if (!response.third) {
       alert('회원만 접근 가능합니다.')
@@ -128,7 +109,7 @@ const AdList = () => {
         alert('관리자만 접근 가능합니다.')
         history.push('/product-list')
       } else {
-        setLoading(false)
+
       }
     }
   }
@@ -138,69 +119,88 @@ const AdList = () => {
 
   useEffect(() => {
     async function fetchPosts() {
-    setLoading(true);
-    const page = currentPage
-    const{ data: response } = await axios.get(`/api/ad/${page}`);
-   
-    setPosts(response.data.result);
-    setMaxPage(response.data.maxPage);
-    setLoading(false);
+      setLoading(true);
+      const page = currentPage
+      const { data: response } = await axios.get(`/api/ad/${page}?keyword=${search}`);
+
+      setPosts(response.data.result);
+      setMaxPage(response.data.maxPage);
+      setLoading(false);
+    }
+    fetchPosts()
+  }, []);
+
+  const onSearch = (e) => {
+    setSearch(e.target.value)
   }
-  fetchPosts()
-},[]);
-
-
   const onDelete = async (e) => {
     e.preventDefault()
     const { data: response } = await axios.post('/api/deletead', {
-         pk: deleteNum
-        })
-        alert('삭제되었습니다.')
-        setwith_delete(false)
-        window.location.replace("/ad-list")
+      pk: deleteNum
+    })
+    alert('삭제되었습니다.')
+    setwith_delete(false)
+    window.location.replace("/ad-list")
   };
+
+
 
   function onChangePage(num) {
     async function fetchPosts() {
-    setLoading(true);
-    const page = num
-    setCurrentPage(num)
-    const{ data: response } = await axios.get(`/api/ad/${page}`);
-    setPosts(response.data.result);
-    setLoading(false);
-  }
-  fetchPosts()
+      setLoading(true);
+      const page = num
+      setCurrentPage(num)
+      const { data: response } = await axios.get(`/api/ad/${page}?keyword=${search}`);
+      setPosts(response.data.result);
+      setLoading(false);
+    }
+    fetchPosts()
   };
- 
-  
-   const pageNumbers = [];
-   for (let i = 1; i <= maxPage; i++) {
-     pageNumbers.push(i);
-   }
+  function onChangePageColor(num) {
+    if (currentPage == num) {
+      return { background: '#5B73E8', color: '#ffffff' }
+    }
+    else {
+      return { background: '#ffffff', color: '#74788D' }
+    }
+  }
+  function onCreateTime(num) {
+    num = num.split('.')[0]
+    num = num.replace('T', ' ')
+    return num
+  }
+  const pageNumbers = [];
+  for (let i = 1; i <= maxPage; i++) {
+    pageNumbers.push(i);
+  }
 
   return (
     <React.Fragment>
+
       <div className="page-content">
         <Container fluid>
+
           <Breadcrumbs breadcrumbItem="광고관리" />
           <Row>
             <Col lg="12">
               <React.Fragment>
                 <div>
                   <Card>
-                    <form className="app-search d-none d-lg-block">
+                    <AvForm className="app-search d-none d-lg-block" onSubmit={() => { onChangePage(1) }}>
                       <div className="position-relative">
                         <input
                           type="text"
                           className="form-control"
                           placeholder="Search..."
+                          value={search}
+                          onChange={onSearch}
                         />
                         <span className="uil-search"></span>
                       </div>
-                    </form>
+                    </AvForm>
                   </Card>
                   <div className="table-responsive mb-4">
-                    <Table>
+                    <Table style={{background:'#EEF1FD'}}>
                       <CheckBox type="checkbox" id="cb1" />
                       <AdName>광고명</AdName>
                       <AdImg>광고사진</AdImg>
@@ -217,8 +217,8 @@ const AdList = () => {
                         <Table key={post.pk}>
                           <CheckBox type="checkbox" id="cb1" />
                           <AdName><ListText>{post.ad_name}</ListText></AdName>
-                          <AdImg><ListImg src={post.ad_image} /></AdImg>
-                          <Date><ListText>{post.create_time}</ListText></Date>
+                          <AdImg><ListImg src={"http://emart.cafe24app.com" + post.ad_image} /></AdImg>
+                          <Date><ListText>{onCreateTime(post.create_time)}</ListText></Date>
                           <Modify><Link to={{
                             pathname: '/ad-revise',
                             state: { pk: post.pk, name: post.ad_name, img: post.ad_image }
@@ -251,19 +251,24 @@ const AdList = () => {
                         <Link to="/add-ad" className="btn btn-primary">+ 추가하기</Link>
                       </div>
                     </Row>
+
                     <Row className="row mb-4">
                       <PageBox>
-                        <PageUl className="pagination">
-                          <PageLi onClick={()=>{onChangePage(1)}}>처음</PageLi>
+                        <Pagination aria-label="Page navigation example">
+                          <PaginationItem>
+                            <PaginationLink onClick={() => { onChangePage(1) }}>처음</PaginationLink>
+                          </PaginationItem>
                           {pageNumbers.map(number => (
-                            <PageLi key={number} className="page-item">
-                              <PageSpan onClick={() => {onChangePage(number)}}>
+                            <PaginationItem key={number} >
+                              <PaginationLink onClick={() => { onChangePage(number) }} style={onChangePageColor(number)}>
                                 {number}
-                              </PageSpan>
-                            </PageLi>
+                              </PaginationLink>
+                            </PaginationItem>
                           ))}
-                          <PageLi onClick={()=>{onChangePage(maxPage)}}>마지막</PageLi>
-                        </PageUl>
+                          <PaginationItem>
+                            <PaginationLink onClick={() => { onChangePage(maxPage) }}>마지막</PaginationLink>
+                          </PaginationItem>
+                        </Pagination>
                       </PageBox>
                     </Row>
                   </div>
@@ -271,12 +276,15 @@ const AdList = () => {
               </React.Fragment>
             </Col>
           </Row>
+
         </Container>
       </div>
+
     </React.Fragment>
   )
 }
 
-
+//페이지 선택시 텍스트 색깔 #ffffff 배경 #5B73E8
+//선택 안할시 텍스트 색깔 #74788D 배경 #ffffff
 
 export default AdList

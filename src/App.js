@@ -67,6 +67,7 @@ const App = (props) => {
       <Router>
         
         <Switch>
+          
         {authRoutes.map((route, idx) => (
             <Authmiddleware
               path={route.path}
@@ -87,6 +88,7 @@ const App = (props) => {
               exact
             />
           ))}
+         
         </Switch>
 
       </Router>

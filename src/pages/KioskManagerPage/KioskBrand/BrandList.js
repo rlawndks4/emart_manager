@@ -6,8 +6,8 @@ import Breadcrumbs from "../../../components/Common/Breadcrumb"
 import axios from 'axios'
 import styled from "styled-components"
 import SweetAlert from "react-bootstrap-sweetalert"
-import {useHistory} from 'react-router';
-
+import { useHistory } from 'react-router';
+import { AvForm } from "availity-reactstrap-validation"
 const CheckBox = styled.input`
 margin: 14px 14px 14px;
 `
@@ -31,43 +31,43 @@ const BrandName = styled.th`
   width: 15%;
   color: black;
   padding: 14px 14px 14px;
-  
+  text-align:center;
 `
 const Class1 = styled.th`
   width: 11%;
   color: black;
   padding: 14px 14px 14px;
-  
+  text-align:center;
 `
 const Class2 = styled.th`
   width: 11%;
   color: black;
   padding: 14px 14px 14px;
-  
+  text-align:center;
 `
 const Class3 = styled.th`
   width: 11%;
   color: black;
   padding: 14px 14px 14px;
-  
+  text-align:center;
 `
 const Class4 = styled.th`
   width: 11%;
   color: black;
   padding: 14px 14px 14px;
-  
+  text-align:center;
 `
-const Class5 = styled.th`
+const Status = styled.th`
   width: 11%;
   color: black;
   padding: 14px 14px 14px;
-  
+  text-align:center;
 `
 const Date = styled.th`
   width: 15%;
   color: black;
   padding: 14px 14px 14px;
-  
+  text-align:center;
 `
 const Modify = styled.th`
 width: 7.5%;
@@ -136,22 +136,23 @@ const BrandList = () => {
   const [maxPage, setMaxPage] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [with_delete, setwith_delete] = useState(false);
+  const [search, setSearch] = useState('')
   const isAdmin = async () => {
     setLoading(true);
     const { data: response } = await axios.get('/api/auth')
 
-    if(!response.third){
+    if (!response.third) {
       alert('회원만 접근 가능합니다.')
       history.push('/login')
     }
-    else{
+    else {
       if (!response.second) {
         alert('관리자만 접근 가능합니다.')
         history.push('/product-list')
       } else {
         setLoading(false)
       }
-    } 
+    }
   }
   useEffect(() => {
     isAdmin()
@@ -159,33 +160,47 @@ const BrandList = () => {
 
   useEffect(() => {
     async function fetchPosts() {
-    setLoading(true);
-    const page = currentPage
-    const{ data: response } = await axios.get(`/api/brand/${page}`);
-   
-    setPosts(response.data.result);
-    setMaxPage(response.data.maxPage);
-    setLoading(false);
+      setLoading(true);
+      const page = currentPage
+      const { data: response } = await axios.get(`/api/brand/${page}?keyword=${search}`);
+
+      setPosts(response.data.result);
+      setMaxPage(response.data.maxPage);
+      setLoading(false);
+    }
+    fetchPosts()
+  }, []);
+
+  function setStatus(stt) {
+    if (stt === 1) {
+      return "사용중"
+    }
+    else {
+      return "사용안함"
+    }
   }
-  fetchPosts()
-},[]);
-
-
+  const onSearch = (e) => {
+    setSearch(e.target.value)
+  }
   function onChangePage(num) {
     async function fetchPosts() {
-    setLoading(true);
-    const page = num
-    const{ data: response } = await axios.get(`/api/brand/${page}`);
-    setPosts(response.data.result);
-    setLoading(false);
-  }
-  fetchPosts()
+      setLoading(true);
+      const page = num
+      const { data: response } = await axios.get(`/api/brand/${page}?keyword=${search}`);
+      setPosts(response.data.result);
+      setLoading(false);
+    }
+    fetchPosts()
   };
-
-   const pageNumbers = [];
-   for (let i = 1; i <= maxPage; i++) {
-     pageNumbers.push(i);
-   }
+  function onCreateTime(num) {
+    num = num.split('.')[0]
+    num = num.replace('T', ' ')
+    return num
+  }
+  const pageNumbers = [];
+  for (let i = 1; i <= maxPage; i++) {
+    pageNumbers.push(i);
+  }
 
   return (
     <React.Fragment>
@@ -198,27 +213,29 @@ const BrandList = () => {
               <React.Fragment>
                 <div>
                   <Card>
-                    <form className="app-search d-none d-lg-block">
+                    <AvForm className="app-search d-none d-lg-block" onSubmit={() => { onChangePage(1) }}>
                       <div className="position-relative">
                         <input
                           type="text"
                           className="form-control"
                           placeholder="Search..."
+                          value={search}
+                          onChange={onSearch}
                         />
                         <span className="uil-search"></span>
                       </div>
-                    </form>
+                    </AvForm>
                   </Card>
                   <div className="table-responsive mb-4">
 
-                    <Table>
+                    <Table style={{background:'#EEF1FD'}}>
                       <CheckBox type="checkbox" id="cb1" />
                       <BrandName>브랜드</BrandName>
                       <Class1>중분류1</Class1>
                       <Class2>중분류2</Class2>
                       <Class3>중분류3</Class3>
                       <Class4>중분류4</Class4>
-              
+                      <Status>상태</Status>
                       <Date>생성시간</Date>
                       <Modify>수정</Modify>
                       <Delete>삭제</Delete>
@@ -236,12 +253,19 @@ const BrandList = () => {
                           <Class2><ListText>{post.middle_class_2}</ListText></Class2>
                           <Class3><ListText>{post.middle_class_3}</ListText></Class3>
                           <Class4><ListText>{post.middle_class_4}</ListText></Class4>
-                          <Date><ListText>{post.create_time}</ListText></Date>
-                          <Modify><Link to="/brand-revise" className="px-3 text-primary"><i className="uil uil-pen font-size-18"></i></Link></Modify>
-                          <Delete><Link to="#" className="px-3 text-danger" onClick={() => {
-                            setDeleteNum(post.pk)
-                            setwith_delete(true)
-                          }}><i className="uil uil-trash-alt font-size-18"></i></Link></Delete>
+                          <Status><ListText>{setStatus(post.status)}</ListText></Status>
+                          <Date><ListText>{onCreateTime(post.create_time)}</ListText></Date>
+                          <Modify><Link to={{
+                            pathname:'/brand-revise',
+                            state: {pk: post.pk , name: post.brand_name ,class1:post.middle_class_1
+                              ,class2:post.middle_class_2 ,class3:post.middle_class_3 ,class4 :post.middle_class_4,
+                            status: setStatus(post.status)}
+                          }} className="px-3 text-primary"><i className="uil uil-pen font-size-18"></i></Link></Modify>
+                          <Delete><Link to="#" className="px-3 text-danger"
+                          // onClick={() => {
+                          //   setDeleteNum(post.pk)
+                          //   setwith_delete(true)}}
+                          ><i className="uil uil-trash-alt font-size-18"></i></Link></Delete>
                         </Table>
                       ))}
 
@@ -266,7 +290,7 @@ const BrandList = () => {
 
                     ) : null}
 
-                    <Row className="row mb-4">
+                    {/* <Row className="row mb-4">
                       <div className="col text-end">
                         <Link to="/add-brand" className="btn btn-primary">+ 추가하기</Link>
                       </div>
@@ -287,7 +311,7 @@ const BrandList = () => {
                           <PageLi onClick={()=>{onChangePage(maxPage)}}>마지막</PageLi>
                         </PageUl>
                       </PageBox>
-                    </Row>
+                    </Row> */}
                   </div>
                 </div>
               </React.Fragment>

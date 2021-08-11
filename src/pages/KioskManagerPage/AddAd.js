@@ -17,7 +17,8 @@ import SweetAlert from "react-bootstrap-sweetalert"
 import Breadcrumbs from "../../components/Common/Breadcrumb"
 import { useHistory } from 'react-router';
 import axios from "axios"
-
+import cancel from "./cancel.png"
+import save from "./save.png"
 const AddAd = () => {
   const history = useHistory();
   const [isOpen, setIsOpen] = useState(true);
@@ -27,10 +28,8 @@ const AddAd = () => {
   const [selectedFiles, setselectedFiles] = useState([])
   const [adName, setAdName] = useState('');
   const [adFile, setAdFile] = useState({
-    file : []
+    file: []
   });
-
-  
 
   const [with_save, setwith_save] = useState(false);
   const [with_cancel, setwith_cancel] = useState(false);
@@ -57,23 +56,25 @@ const AddAd = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if( !adName ||
-      !adFile){
-        alert("필수 입력 사항을 입력하지 않으셨습니다.");
-        setwith_save(false)
+    if (!adName ||
+      !adFile) {
+      alert("필수 입력 사항을 입력하지 않으셨습니다.");
+      setwith_save(false)
+    }
+    else {
+      
+      let formData = new FormData();
+      formData.append('adName', adName)
+      formData.append('image', adFile)
+      
+      const config = {
+        header: {'Content-type': 'multipart/form-data; charset=UTF-8',
+        'Accept': '*/*'}
       }
-      else{
-        const formData = new FormData();
-        formData.append('adName', adName)
-        formData.append('image',adFile)
-        const headers = {
-          'Content-type': 'multipart/form-data; charset=UTF-8',
-          'Accept': '*/*'
-      }
-        axios.post('/api/addad', formData,{ headers })
-        alert("광고가 추가되었습니다.")
-        window.location.replace("/ad-list")
-      }
+      axios.post('/api/addad', formData, config)
+      alert("광고가 추가되었습니다.")
+      history.push('/ad-list')
+    }
   }
 
   function handleAcceptedFiles(files) {
@@ -86,15 +87,15 @@ const AddAd = () => {
     )
     setselectedFiles(files)
   }
-  
+
 
   const onChangeAdName = (e) => {
-  setAdName(e.target.value)
-}
+    setAdName(e.target.value)
+  }
 
-useEffect(()=>{
-  setAdFile(selectedFiles[0]);
-})
+  useEffect(() => {
+    setAdFile(selectedFiles[0]);
+  })
 
   function formatBytes(bytes, decimals = 2) {
     if (bytes === 0) return "0 Bytes"
@@ -127,7 +128,7 @@ useEffect(()=>{
                             </div>
                           </div>
                           <div className="flex-1 overflow-hidden">
-                            <h5 className="font-size-16 mb-1">광고 추가</h5>
+                            <h5 className="font-size-16 mb-1" style={{fontFamily: 'NanumGothic', fontWeight:'bold'}}>광고 추가</h5>
                             <p className="text-muted text-truncate mb-0">아래의 모든 정보를 입력하세요.</p>
                           </div>
                           <i className="mdi mdi-chevron-up accor-down-icon font-size-24"></i>
@@ -145,7 +146,7 @@ useEffect(()=>{
                                     htmlFor="billing-name"
 
                                     className="form-label"
-                                  >
+                                    style={{fontWeight:'1000'}}>
                                     광고명
                                   </Label>
                                   <Input
@@ -173,7 +174,7 @@ useEffect(()=>{
                                           <input {...getInputProps()} />
                                           <div className="dz-message needsclick">
                                             <div className="mb-3">
-                                              <i className="display-4 text-muted uil uil-cloud-upload"></i>
+                                              <i className="display-4 text-muted uil uil-cloud-upload" ></i>
                                             </div>
                                             <h4>사진을 업로드 해주세요.</h4>
                                           </div>
@@ -220,8 +221,8 @@ useEffect(()=>{
                               </div>
 
                             </Row>
-                            
-                            
+
+
                           </div>
                         </Form>
                       </div>
@@ -245,14 +246,18 @@ useEffect(()=>{
 
                     {with_save ? (
                       <SweetAlert
-                        title="저장 하시겠습니까?"
-                        warning
-                        showConfirm={false}
-                        style={{
-                          paddingBottom: '42px'
-                        }}
-                      >
-                        <br />
+                       
+                  showConfirm={false}
+                  style={{
+                   paddingBottom: '42px'
+                  }}
+                > 
+                <div style={{paddingBottom:'52px', paddingTop:'30px'}}>
+                <img src={save}/>
+                </div>
+                  
+                  <h3><strong>저장 하시겠습니까?</strong></h3>
+                  <br/>
                         <Link to="#" className="btn btn-danger" onClick={() => {
                           setwith_save(false)
                         }}> <i className="uil uil-times me-1" ></i> 취소 </Link>{" "}
@@ -262,14 +267,18 @@ useEffect(()=>{
 
                     {with_cancel ? (
                       <SweetAlert
-                        title="취소 하시겠습니까?"
-                        warning
-                        showConfirm={false}
-                        style={{
-                          paddingBottom: '42px'
-                        }}
-                      >
-                        <br />
+                         
+                  showConfirm={false}
+                  style={{
+                    paddingBottom: '42px'
+                  }}
+                >
+                  <div style={{paddingBottom:'52px', paddingTop:'30px'}}>
+                <img src={cancel}/>
+                </div>
+                  
+                  <h3><strong>취소 하시겠습니까?</strong></h3>
+                  <br />
                         <Link to="#" className="btn btn-danger" onClick={() => {
                           setwith_cancel(false)
                         }}> <i className="uil uil-times me-1" ></i> 취소 </Link>{" "}

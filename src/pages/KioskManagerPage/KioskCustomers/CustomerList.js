@@ -225,7 +225,7 @@ const CustomerList = (props) => {
                   </Card>
                   <div className="table-responsive mb-4">
 
-                    <Table style={{background:'#EEF1FD'}}>
+                    <Table style={{ background: '#EEF1FD' }}>
                       <CheckBox type="checkbox" id="cb1" />
                       <ID>ID</ID>
                       <PW>PW</PW>

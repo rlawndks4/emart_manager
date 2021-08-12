@@ -228,7 +228,7 @@ const BrandList = () => {
                   </Card>
                   <div className="table-responsive mb-4">
 
-                    <Table style={{background:'#EEF1FD'}}>
+                    <Table style={{ background: '#EEF1FD' }}>
                       <CheckBox type="checkbox" id="cb1" />
                       <BrandName>브랜드</BrandName>
                       <Class1>중분류1</Class1>
@@ -256,10 +256,12 @@ const BrandList = () => {
                           <Status><ListText>{setStatus(post.status)}</ListText></Status>
                           <Date><ListText>{onCreateTime(post.create_time)}</ListText></Date>
                           <Modify><Link to={{
-                            pathname:'/brand-revise',
-                            state: {pk: post.pk , name: post.brand_name ,class1:post.middle_class_1
-                              ,class2:post.middle_class_2 ,class3:post.middle_class_3 ,class4 :post.middle_class_4,
-                            status: setStatus(post.status)}
+                            pathname: '/brand-revise',
+                            state: {
+                              pk: post.pk, name: post.brand_name, class1: post.middle_class_1
+                              , class2: post.middle_class_2, class3: post.middle_class_3, class4: post.middle_class_4,
+                              status: setStatus(post.status)
+                            }
                           }} className="px-3 text-primary"><i className="uil uil-pen font-size-18"></i></Link></Modify>
                           <Delete><Link to="#" className="px-3 text-danger"
                           // onClick={() => {

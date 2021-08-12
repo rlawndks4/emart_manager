@@ -51,7 +51,7 @@ const AddCustomers = () => {
   const [allBrandList, setAllBrandList] = useState([]);
   const [brandNameList, setBrandNameList] = useState([]);
 
-  const [deleteBrand, setDeleteBrand] = useState('')
+
   const [selectBrandName, setSelectBrandName] = useState('');
   const [brandPkList, setBrandPkList] = useState([]);
 
@@ -84,9 +84,9 @@ const AddCustomers = () => {
   const onSubmit = async (e) => {
     e.preventDefault()
     //이용할 브랜드를 선택하고 그 값들을 배열형태로 저장하여 보냄
-    if (!id.length||
-      !pw.length||
-      brandPkList.length==0) {
+    if (!id.length ||
+      !pw.length ||
+      brandPkList.length == 0) {
       alert('필수 값을 입력하지 않았습니다.')
       setwith_save(false)
     }
@@ -105,9 +105,9 @@ const AddCustomers = () => {
         setwith_save(false)
       }
       else if (response.result == 200) {
-        alert("유저가 추가되었습니다.")
         setwith_save(false)
-        history.push('/customer-list')
+        setwith_good(true)
+
       }
       else {
         console.log(response)
@@ -123,30 +123,27 @@ const AddCustomers = () => {
     }
     fetchPosts()
   }, []);
-console.log(allBrandList)
-console.log(selectBrandName)
-console.log(brandPkList)
-console.log(brandNameList)
+
   const handleSelectBrand = (e) => {
     setSelectBrandName(e.target.value)
     console.log(e.target.value)
     for (var i = 0; i < allBrandList.length; i++) {
       if (allBrandList[i].brand_name == e.target.value) {
 
-        for(var j =0; j<brandNameList.length;j++){
-          if(brandNameList[j]==e.target.value){
+        for (var j = 0; j < brandNameList.length; j++) {
+          if (brandNameList[j] == e.target.value) {
             break;
           }
         }
-        if(j==brandNameList.length){
-          brandNameList.push( e.target.value)
+        if (j == brandNameList.length) {
+          brandNameList.push(e.target.value)
           brandPkList.push(allBrandList[i].pk)
         }
 
       }
     }
   }
-  
+
   useEffect(() => {
     if (
       id.length === 0 ||
@@ -202,7 +199,7 @@ console.log(brandNameList)
                             </div>
                           </div>
                           <div className="flex-1 overflow-hidden">
-                            <h5 className="font-size-16 mb-1" style={{fontFamily: 'NanumGothic', fontWeight:'bold'}}>회원 추가</h5>
+                            <h5 className="font-size-16 mb-1" style={{ fontFamily: 'NanumGothic', fontWeight: 'bold' }}>회원 추가</h5>
                             <p className="text-muted text-truncate mb-0">아래의 모든 정보를 입력하세요.</p>
                           </div>
                           <i className="mdi mdi-chevron-up accor-down-icon font-size-24"></i>
@@ -265,13 +262,13 @@ console.log(brandNameList)
                                   </form>
                                 </div>
                               </Col>
-                              
+
                               <Col lg={2}>
                                 <div className="mb-3">
                                   <Label>브랜드</Label>
                                   <form >
                                     <select className="form-control" name="userlevel"
-                                      onChange={handleSelectBrand} > 
+                                      onChange={handleSelectBrand} >
                                       <option>===== 선택 =====</option>
                                       {allBrandList.map(item => (
                                         <option key={item.pk}
@@ -358,7 +355,7 @@ console.log(brandNameList)
                     {with_good ? (
                       <SweetAlert
                         title="회원이 추가되었습니다."
-                        warning
+                        success
                         showConfirm={false}
                         style={{
                           paddingBottom: '42px'

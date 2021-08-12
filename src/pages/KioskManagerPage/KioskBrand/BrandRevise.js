@@ -55,7 +55,7 @@ const BrandRevise = () => {
   const [class3, setClass3] = useState('')
   const [class4, setClass4] = useState('')
   const [status, setStatus] = useState('')
-  const statusList = ['사용중','사용안함'];
+  const statusList = ['사용중', '사용안함'];
   const [statusNum, setStatusNum] = useState(0)
   const location = useLocation();
 
@@ -71,10 +71,10 @@ const BrandRevise = () => {
     }
   }, [])
   const onSubmit = () => {
-    if (!brandName.length||
-      !class1.length||
-      !class2.length||
-      !class3.length||
+    if (!brandName.length ||
+      !class1.length ||
+      !class2.length ||
+      !class3.length ||
       !class4.length) {
       alert('필수 값을 입력하지 않았습니다.')
       setwith_save(false)
@@ -98,15 +98,15 @@ const BrandRevise = () => {
 
 
   };
- useEffect(()=>{
-   if(status=='사용중'){
-    setStatusNum(1)
-   }
-   else{
-    setStatusNum(0)
-   }
- })
- console.log(statusNum)
+  useEffect(() => {
+    if (status == '사용중') {
+      setStatusNum(1)
+    }
+    else {
+      setStatusNum(0)
+    }
+  })
+  console.log(statusNum)
   const onChangeClass1 = (e) => {
     setClass1(e.target.value)
   }
@@ -145,7 +145,7 @@ const BrandRevise = () => {
                             </div>
                           </div>
                           <div className="flex-1 overflow-hidden">
-                            <h5 className="font-size-16 mb-1" style={{fontFamily: 'NanumGothic', fontWeight:'bold'}}>브랜드 수정</h5>
+                            <h5 className="font-size-16 mb-1" style={{ fontFamily: 'NanumGothic', fontWeight: 'bold' }}>브랜드 수정</h5>
                             <p className="text-muted text-truncate mb-0">아래의 모든 정보를 입력하세요.</p>
                           </div>
                           <i className="mdi mdi-chevron-up accor-down-icon font-size-24"></i>
@@ -163,7 +163,7 @@ const BrandRevise = () => {
                                     htmlFor="billing-name"
 
                                     className="form-label"
-                                    style={{fontWeight:'1000'}}>
+                                    style={{ fontWeight: '1000' }}>
                                     브랜드
                                   </Label>
                                   <Input
@@ -172,7 +172,7 @@ const BrandRevise = () => {
                                     id="billing-name"
                                     placeholder="#ABCDEF"
                                     value={brandName}
-                                    
+
                                   />
                                 </div>
                               </Col>
@@ -182,7 +182,7 @@ const BrandRevise = () => {
                                     htmlFor="billing-email-address"
 
                                     className="form-label"
-                                    style={{fontWeight:'1000'}}>
+                                    style={{ fontWeight: '1000' }}>
                                     중분류1
                                   </Label>
                                   <Input
@@ -201,7 +201,7 @@ const BrandRevise = () => {
                                     htmlFor="billing-phone"
 
                                     className="form-label"
-                                    style={{fontWeight:'1000'}}>
+                                    style={{ fontWeight: '1000' }}>
                                     중분류2
                                   </Label>
                                   <input
@@ -220,7 +220,7 @@ const BrandRevise = () => {
                                     htmlFor="billing-phone"
 
                                     className="form-label"
-                                    style={{fontWeight:'1000'}}>
+                                    style={{ fontWeight: '1000' }}>
                                     중분류3
                                   </Label>
                                   <input
@@ -239,7 +239,7 @@ const BrandRevise = () => {
                                     htmlFor="billing-phone"
 
                                     className="form-label"
-                                    style={{fontWeight:'1000'}}>
+                                    style={{ fontWeight: '1000' }}>
                                     중분류4
                                   </Label>
                                   <input
@@ -257,19 +257,19 @@ const BrandRevise = () => {
                                   <Label
                                     htmlFor="billing-phone"
                                     className="form-label"
-                                    style={{fontWeight:'1000'}}>
+                                    style={{ fontWeight: '1000' }}>
                                     상태
                                   </Label>
                                   <form >
-                                  <select className="form-control" name="userlevel"
-                                  onChange={handleSelectStatus} value={status}>
-                                  {statusList.map((item) => (
-                                    <option value={item} key={item}>
-                                      {item}
-                                    </option>
-                                  ))}
-                                </select>
-                              </form>
+                                    <select className="form-control" name="userlevel"
+                                      onChange={handleSelectStatus} value={status}>
+                                      {statusList.map((item) => (
+                                        <option value={item} key={item}>
+                                          {item}
+                                        </option>
+                                      ))}
+                                    </select>
+                                  </form>
                                 </div>
                               </Col>
                             </Row>
@@ -348,7 +348,7 @@ const BrandRevise = () => {
                     {with_good ? (
                       <SweetAlert
                         title="브랜드가 수정되었습니다."
-                        warning
+                        success
                         showConfirm={false}
                         style={{
                           paddingBottom: '42px'

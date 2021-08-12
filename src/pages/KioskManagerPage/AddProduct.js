@@ -59,6 +59,7 @@ const AddProduct = () => {
 
   const [with_save, setwith_save] = useState(false);
   const [with_cancel, setwith_cancel] = useState(false);
+  const [with_good, setwith_good] = useState(false);
 
   const statusList = ["판매중", "품절"];
   const [selectedStatus, setSelectedStatus] = useState("판매중");
@@ -102,17 +103,17 @@ const AddProduct = () => {
     else {
       setBrandPk(5)
     }
-    const {data:response} = await axios.get(`/api/allbrand/${e.target.value}`)
+    const { data: response } = await axios.get(`/api/allbrand/${e.target.value}`)
     setMiddleClassList(response.data)
   };
- useEffect(()=>{
-  async function fetchPosts() {
-  const {data:response} = await axios.get(`/api/allbrand/${'kissher'}`)
-  console.log(response.data)
-  setMiddleClassList(response.data)
-  }
-  fetchPosts()
- },[])
+  useEffect(() => {
+    async function fetchPosts() {
+      const { data: response } = await axios.get(`/api/allbrand/${'kissher'}`)
+      console.log(response.data)
+      setMiddleClassList(response.data)
+    }
+    fetchPosts()
+  }, [])
 
   // function onChangeBrand(num) {
   //   async function fetchPosts() {
@@ -125,7 +126,7 @@ const AddProduct = () => {
   const handleSelectMiddleClass = (e) => {
     setSelectedmiddleClass(e.target.value);
   };
-console.log(selectedmiddleClass)
+  console.log(selectedmiddleClass)
   const handleSelectStatus = (e) => {
     setSelectedStatus(e.target.value);
   };
@@ -140,8 +141,8 @@ console.log(selectedmiddleClass)
   //디비에 저장하게 하는 함수
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!itemName.length||
-      !itemNum.length||
+    if (!itemName.length ||
+      !itemNum.length ||
       !mainFile ||
       !detailFile ||
       !qrFile) {
@@ -167,8 +168,8 @@ console.log(selectedmiddleClass)
       }
       axios.post('/api/addproduct', formData, { headers })
 
-      alert("상품이 추가되었습니다.")
-      history.push('/product-list')
+      setwith_save(false)
+      setwith_good(true)
     }
   }
   //파일 저장 함수
@@ -232,7 +233,7 @@ console.log(selectedmiddleClass)
     setDetailFile(selectedDetailFiles[0])
     setQrFile(selectedQrFiles[0])
   })
- 
+
   return (
     <React.Fragment>
       <div className="page-content">
@@ -254,7 +255,7 @@ console.log(selectedmiddleClass)
                           </div>
                         </div>
                         <div className="flex-1 overflow-hidden">
-                          <h5 className="font-size-16 mb-1" style={{fontFamily: 'NanumGothic', fontWeight:'bold'}}>상품 추가</h5>
+                          <h5 className="font-size-16 mb-1" style={{ fontFamily: 'NanumGothic', fontWeight: 'bold' }}>상품 추가</h5>
                           <p className="text-muted text-truncate mb-0">아래의 모든 정보를 입력하세요.</p>
                         </div>
                         <i className="mdi mdi-chevron-up accor-down-icon font-size-24"></i>
@@ -269,7 +270,7 @@ console.log(selectedmiddleClass)
                         <Row>
                           <Col md="4">
                             <div className="mb-3">
-                              <Label htmlFor="productname" style={{fontWeight:'1000'}}>상품명</Label>
+                              <Label htmlFor="productname" style={{ fontWeight: '1000' }}>상품명</Label>
                               <Input
                                 id="productname"
                                 name="productname"
@@ -281,7 +282,7 @@ console.log(selectedmiddleClass)
                           </Col>
                           <Col md="4">
                             <div className="mb-3">
-                              <Label htmlFor="productname" style={{fontWeight:'1000'}}>상품번호</Label>
+                              <Label htmlFor="productname" style={{ fontWeight: '1000' }}>상품번호</Label>
                               <Input
                                 id="productname"
                                 name="productname"
@@ -293,22 +294,22 @@ console.log(selectedmiddleClass)
                           </Col>
                           <Col md="4">
                             <div className="mb-3">
-                              <Label style={{fontWeight:'1000'}}>중분류</Label>
+                              <Label style={{ fontWeight: '1000' }}>중분류</Label>
                               <form >
                                 <select className="form-control" name="userlevel"
-                                  onChange={handleSelectMiddleClass} value={selectedmiddleClass}> 
-                                    <option>
-                                      {middleClassList.middle_class_1}
-                                    </option>
-                                    <option>
-                                      {middleClassList.middle_class_2}
-                                    </option>
-                                    <option>
-                                      {middleClassList.middle_class_3}
-                                    </option>
-                                    <option>
-                                      {middleClassList.middle_class_4}
-                                    </option>
+                                  onChange={handleSelectMiddleClass} value={selectedmiddleClass}>
+                                  <option>
+                                    {middleClassList.middle_class_1}
+                                  </option>
+                                  <option>
+                                    {middleClassList.middle_class_2}
+                                  </option>
+                                  <option>
+                                    {middleClassList.middle_class_3}
+                                  </option>
+                                  <option>
+                                    {middleClassList.middle_class_4}
+                                  </option>
                                 </select>
                               </form>
                             </div>
@@ -317,7 +318,7 @@ console.log(selectedmiddleClass)
                         <Row>
                           <Col md="4">
                             <div className="mb-3">
-                              <Label style={{fontWeight:'1000'}}>상품분류</Label>
+                              <Label style={{ fontWeight: '1000' }}>상품분류</Label>
                               <form >
                                 <select className="form-control" name="userlevel"
                                   onChange={handleSelectClass} value={selectedclass}>
@@ -332,7 +333,7 @@ console.log(selectedmiddleClass)
                           </Col>
                           <Col md="4">
                             <div className="mb-3">
-                              <Label style={{fontWeight:'1000'}}>브랜드</Label>
+                              <Label style={{ fontWeight: '1000' }}>브랜드</Label>
                               <form >
                                 <select className="form-control" name="userlevel"
                                   onChange={handleSelectBrand} value={selectedBrand}>
@@ -347,7 +348,7 @@ console.log(selectedmiddleClass)
                           </Col>
                           <Col md="4">
                             <div className="mb-3">
-                              <Label style={{fontWeight:'1000'}}>상태</Label>
+                              <Label style={{ fontWeight: '1000' }}>상태</Label>
                               <form >
                                 <select className="form-control" name="userlevel"
                                   onChange={handleSelectStatus} value={selectedStatus}>
@@ -636,7 +637,7 @@ console.log(selectedmiddleClass)
             </Col>
           </Row>
           <Row>
-           
+
             <Col>
               <div className="text-sm-end mt-2 mt-sm-0">
                 <Link to="#" className="btn btn-danger" onClick={() => {
@@ -649,18 +650,18 @@ console.log(selectedmiddleClass)
 
               {with_save ? (
                 <SweetAlert
-                 
-                showConfirm={false}
-                style={{
-                 paddingBottom: '42px'
-                }}
-              > 
-              <div style={{paddingBottom:'52px', paddingTop:'30px'}}>
-              <img src={save}/>
-              </div>
-                
-                <h3><strong>저장 하시겠습니까?</strong></h3>
-                <br/>
+
+                  showConfirm={false}
+                  style={{
+                    paddingBottom: '42px'
+                  }}
+                >
+                  <div style={{ paddingBottom: '52px', paddingTop: '30px' }}>
+                    <img src={save} />
+                  </div>
+
+                  <h3><strong>저장 하시겠습니까?</strong></h3>
+                  <br />
                   <Link to="#" className="btn btn-danger" onClick={() => {
                     setwith_save(false)
                   }}> <i className="uil uil-times me-1" ></i> 취소 </Link>{" "}
@@ -670,18 +671,18 @@ console.log(selectedmiddleClass)
 
               {with_cancel ? (
                 <SweetAlert
-                   
-                showConfirm={false}
-                style={{
-                  paddingBottom: '42px'
-                }}
-              >
-                <div style={{paddingBottom:'52px', paddingTop:'30px'}}>
-              <img src={cancel}/>
-              </div>
-                
-                <h3><strong>취소 하시겠습니까?</strong></h3>
-                <br />
+
+                  showConfirm={false}
+                  style={{
+                    paddingBottom: '42px'
+                  }}
+                >
+                  <div style={{ paddingBottom: '52px', paddingTop: '30px' }}>
+                    <img src={cancel} />
+                  </div>
+
+                  <h3><strong>취소 하시겠습니까?</strong></h3>
+                  <br />
                   <Link to="#" className="btn btn-danger" onClick={() => {
                     setwith_cancel(false)
                   }}> <i className="uil uil-times me-1" ></i> 취소 </Link>{" "}
@@ -691,7 +692,20 @@ console.log(selectedmiddleClass)
                 </SweetAlert>
 
               ) : null}
+              {with_good ? (
+                <SweetAlert
+                  title="상품이 추가되었습니다."
+                  success
+                  showConfirm={false}
+                  style={{
+                    paddingBottom: '42px'
+                  }}
+                >
+                  <br />
 
+                  <Link to="/product-list" className="btn btn-primary"> <i className="uil uil-file-alt me-1"></i> 확인 </Link>
+                </SweetAlert>
+              ) : null}
             </Col>
 
           </Row>

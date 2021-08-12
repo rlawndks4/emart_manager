@@ -8,7 +8,7 @@ import styled from "styled-components"
 import SweetAlert from "react-bootstrap-sweetalert"
 import { useHistory } from 'react-router'
 import { Pagination, PaginationItem, PaginationLink } from "reactstrap"
-import {  CSVDownload } from "react-csv";
+import { CSVDownload } from "react-csv";
 import XLSX from "xlsx";
 const CheckBox = styled.input`
 margin: 14px 14px 14px;
@@ -103,7 +103,7 @@ const KioskList = () => {
   const [secondDate, setSecondDate] = useState('2021-09-30')
   const [exelPost, setExelPost] = useState([])
   const [paid, setPaid] = useState(0)
-  const headers =[
+  const headers = [
     { label: "Kiosk Number", key: "kiosk_num" },
     { label: "Store Name", key: "store_name" },
     { label: "Unique Code", key: "unoque_code" },
@@ -224,11 +224,11 @@ const KioskList = () => {
       })
     }
   }
-  function getExcel(){
-      const dataWS = XLSX.utils.json_to_sheet(exelPost);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, dataWS, "nameData");
-      XLSX.writeFile(wb, "kiosk.xlsx");
+  function getExcel() {
+    const dataWS = XLSX.utils.json_to_sheet(exelPost);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, dataWS, "nameData");
+    XLSX.writeFile(wb, "emart_kiosk.xlsx");
   }
   function onCreateTime(num) {
     num = num.split('.')[0]
@@ -352,7 +352,7 @@ const KioskList = () => {
                         <Link to="#" className="btn btn-primary" style={{ marginLeft: '10px' }} onClick={
                           getExcel
                         }>
-                         추출하기
+                          추출하기
                         </Link>
                       </Col>
                     </Row>

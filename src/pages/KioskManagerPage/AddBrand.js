@@ -121,7 +121,7 @@ const AddBrand = () => {
                             </div>
                           </div>
                           <div className="flex-1 overflow-hidden">
-                            <h5 className="font-size-16 mb-1" style={{fontFamily: 'NanumGothic', fontWeight:'bold'}}>브랜드 추가</h5>
+                            <h5 className="font-size-16 mb-1" style={{ fontFamily: 'NanumGothic', fontWeight: 'bold' }}>브랜드 추가</h5>
                             <p className="text-muted text-truncate mb-0">아래의 모든 정보를 입력하세요.</p>
                           </div>
                           <i className="mdi mdi-chevron-up accor-down-icon font-size-24"></i>
@@ -244,18 +244,18 @@ const AddBrand = () => {
 
                     {with_save ? (
                       <SweetAlert
-                       
-                  showConfirm={false}
-                  style={{
-                   paddingBottom: '42px'
-                  }}
-                > 
-                <div style={{paddingBottom:'52px', paddingTop:'30px'}}>
-                <img src={save}/>
-                </div>
-                  
-                  <h3><strong>저장 하시겠습니까?</strong></h3>
-                  <br/>
+
+                        showConfirm={false}
+                        style={{
+                          paddingBottom: '42px'
+                        }}
+                      >
+                        <div style={{ paddingBottom: '52px', paddingTop: '30px' }}>
+                          <img src={save} />
+                        </div>
+
+                        <h3><strong>저장 하시겠습니까?</strong></h3>
+                        <br />
                         <Link to="#" className="btn btn-danger" onClick={() => {
                           setwith_save(false)
                         }}> <i className="uil uil-times me-1" ></i> 취소 </Link>{" "}
@@ -265,18 +265,18 @@ const AddBrand = () => {
 
                     {with_cancel ? (
                       <SweetAlert
-                         
-                  showConfirm={false}
-                  style={{
-                    paddingBottom: '42px'
-                  }}
-                >
-                  <div style={{paddingBottom:'52px', paddingTop:'30px'}}>
-                <img src={cancel}/>
-                </div>
-                  
-                  <h3><strong>취소 하시겠습니까?</strong></h3>
-                  <br />
+
+                        showConfirm={false}
+                        style={{
+                          paddingBottom: '42px'
+                        }}
+                      >
+                        <div style={{ paddingBottom: '52px', paddingTop: '30px' }}>
+                          <img src={cancel} />
+                        </div>
+
+                        <h3><strong>취소 하시겠습니까?</strong></h3>
+                        <br />
                         <Link to="#" className="btn btn-danger" onClick={() => {
                           setwith_cancel(false)
                         }}> <i className="uil uil-times me-1" ></i> 취소 </Link>{" "}

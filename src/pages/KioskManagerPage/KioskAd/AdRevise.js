@@ -45,7 +45,7 @@ const AdRevise = () => {
 
   const [with_save, setwith_save] = useState(false);
   const [with_cancel, setwith_cancel] = useState(false);
-
+  const [with_good, setwith_good] = useState(false);
   const isAdmin = async () => {
     setLoading(true);
     const { data: response } = await axios.get('/api/auth')
@@ -101,8 +101,9 @@ const AdRevise = () => {
       formData.append('image', adFile)
       formData.append('pk', revisePk)
       axios.put('/api/updatead', formData)
-      alert("광고가 수정되었습니다.")
-      history.push('/ad-list')
+      setwith_save(false)
+      setwith_good(true)
+
     }
   }
 
@@ -152,7 +153,7 @@ const AdRevise = () => {
                               </div>
                             </div>
                             <div className="flex-1 overflow-hidden">
-                              <h5 className="font-size-16 mb-1" style={{fontFamily: 'NanumGothic', fontWeight:'bold'}}>광고 수정</h5>
+                              <h5 className="font-size-16 mb-1" style={{ fontFamily: 'NanumGothic', fontWeight: 'bold' }}>광고 수정</h5>
                               <p className="text-muted text-truncate mb-0">아래의 모든 정보를 입력하세요.</p>
                             </div>
                             <i className="mdi mdi-chevron-up accor-down-icon font-size-24"></i>
@@ -170,7 +171,7 @@ const AdRevise = () => {
                                       htmlFor="billing-name"
 
                                       className="form-label"
-                                      style={{fontWeight:'1000'}}>
+                                      style={{ fontWeight: '1000' }}>
                                       광고명
                                     </Label>
                                     <Input
@@ -271,18 +272,18 @@ const AdRevise = () => {
 
                       {with_save ? (
                         <SweetAlert
-                         
-                  showConfirm={false}
-                  style={{
-                   paddingBottom: '42px'
-                  }}
-                > 
-                <div style={{paddingBottom:'52px', paddingTop:'30px'}}>
-                <img src={save}/>
-                </div>
-                  
-                  <h3><strong>저장 하시겠습니까?</strong></h3>
-                  <br/>
+
+                          showConfirm={false}
+                          style={{
+                            paddingBottom: '42px'
+                          }}
+                        >
+                          <div style={{ paddingBottom: '52px', paddingTop: '30px' }}>
+                            <img src={save} />
+                          </div>
+
+                          <h3><strong>저장 하시겠습니까?</strong></h3>
+                          <br />
                           <Link to="#" className="btn btn-danger" onClick={() => {
                             setwith_save(false)
                           }}> <i className="uil uil-times me-1" ></i> 취소 </Link>{" "}
@@ -292,18 +293,18 @@ const AdRevise = () => {
 
                       {with_cancel ? (
                         <SweetAlert
-                           
-                  showConfirm={false}
-                  style={{
-                    paddingBottom: '42px'
-                  }}
-                >
-                  <div style={{paddingBottom:'52px', paddingTop:'30px'}}>
-                <img src={cancel}/>
-                </div>
-                  
-                  <h3><strong>취소 하시겠습니까?</strong></h3>
-                  <br />
+
+                          showConfirm={false}
+                          style={{
+                            paddingBottom: '42px'
+                          }}
+                        >
+                          <div style={{ paddingBottom: '52px', paddingTop: '30px' }}>
+                            <img src={cancel} />
+                          </div>
+
+                          <h3><strong>취소 하시겠습니까?</strong></h3>
+                          <br />
                           <Link to="#" className="btn btn-danger" onClick={() => {
                             setwith_cancel(false)
                           }}> <i className="uil uil-times me-1" ></i> 취소 </Link>{" "}
@@ -313,7 +314,20 @@ const AdRevise = () => {
                         </SweetAlert>
 
                       ) : null}
+                      {with_good ? (
+                        <SweetAlert
+                          title="광고가 수정되었습니다."
+                          success
+                          showConfirm={false}
+                          style={{
+                            paddingBottom: '42px'
+                          }}
+                        >
+                          <br />
 
+                          <Link to="/ad-list" className="btn btn-primary"> <i className="uil uil-file-alt me-1"></i> 확인 </Link>
+                        </SweetAlert>
+                      ) : null}
                     </Col>
 
                   </Row>

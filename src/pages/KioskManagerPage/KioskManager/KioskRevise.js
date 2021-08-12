@@ -71,28 +71,28 @@ const KioskRevise = () => {
 
 
   const onSubmit = () => {
-    if(!kioskNum.length||
-      !uniNum.length||
-      !store.length){
-        alert('필수 값을 입력하지 않았습니다.')
+    if (!kioskNum.length ||
+      !uniNum.length ||
+      !store.length) {
+      alert('필수 값을 입력하지 않았습니다.')
+      setwith_save(false)
+    }
+    else {
+      axios.put('/api/updatekiosk', {
+        num: kioskNum,
+        uniNum: uniNum,
+        store: store,
+        pk: revisePk
+      }).then(() => {
+        console.log("success")
         setwith_save(false)
-      }
-      else{
-        axios.put('/api/updatekiosk', {
-          num: kioskNum,
-          uniNum: uniNum,
-          store: store,
-          pk: revisePk
-        }).then(() => {
-          console.log("success")
-          setwith_save(false)
-          setwith_good(true)
-          history.push('/kiosk-list')
-        })
-          .catch(err => console.log(err))
-        alert('키오스크가 수정되었습니다.')
-      }
-    
+        setwith_good(true)
+
+      })
+        .catch(err => console.log(err))
+
+    }
+
 
   };
 
@@ -131,7 +131,7 @@ const KioskRevise = () => {
                           </div>
                         </div>
                         <div className="flex-1 overflow-hidden">
-                          <h5 className="font-size-16 mb-1" style={{fontFamily: 'NanumGothic', fontWeight:'bold'}}>키오스크 수정</h5>
+                          <h5 className="font-size-16 mb-1" style={{ fontFamily: 'NanumGothic', fontWeight: 'bold' }}>키오스크 수정</h5>
                           <p className="text-muted text-truncate mb-0">아래의 모든 정보를 입력하세요.</p>
                         </div>
                         <i className="mdi mdi-chevron-up accor-down-icon font-size-24"></i>
@@ -147,7 +147,7 @@ const KioskRevise = () => {
                         <Row>
                           <Col md="2">
                             <div className="mb-3">
-                              <Label htmlFor="productname" style={{fontWeight:'1000'}} >키오스크 No.</Label>
+                              <Label htmlFor="productname" style={{ fontWeight: '1000' }} >키오스크 No.</Label>
                               <Input
                                 type="text"
                                 className="form-control"
@@ -159,7 +159,7 @@ const KioskRevise = () => {
                           </Col>
                           <Col md="2">
                             <div className="mb-3">
-                              <Label htmlFor="productname" style={{fontWeight:'1000'}}>고유번호</Label>
+                              <Label htmlFor="productname" style={{ fontWeight: '1000' }}>고유번호</Label>
                               <Input
                                 type="text"
                                 className="form-control"
@@ -171,7 +171,7 @@ const KioskRevise = () => {
                           </Col>
                           <Col md="2">
                             <div className="mb-3">
-                              <Label htmlFor="productname" style={{fontWeight:'1000'}}>지점</Label>
+                              <Label htmlFor="productname" style={{ fontWeight: '1000' }}>지점</Label>
                               <Input
                                 type="text"
                                 className="form-control"
@@ -205,18 +205,18 @@ const KioskRevise = () => {
 
               {with_save ? (
                 <SweetAlert
-                  
-                showConfirm={false}
-                style={{
-                 paddingBottom: '42px'
-                }}
-              > 
-              <div style={{paddingBottom:'52px', paddingTop:'30px'}}>
-              <img src={save}/>
-              </div>
-                
-                <h3><strong>저장 하시겠습니까?</strong></h3>
-                <br/>
+
+                  showConfirm={false}
+                  style={{
+                    paddingBottom: '42px'
+                  }}
+                >
+                  <div style={{ paddingBottom: '52px', paddingTop: '30px' }}>
+                    <img src={save} />
+                  </div>
+
+                  <h3><strong>저장 하시겠습니까?</strong></h3>
+                  <br />
                   <Link to="#" className="btn btn-danger" onClick={() => {
                     setwith_save(false)
                   }}> <i className="uil uil-times me-1" ></i> 취소 </Link>{" "}
@@ -227,18 +227,18 @@ const KioskRevise = () => {
 
               {with_cancel ? (
                 <SweetAlert
-                   
-                showConfirm={false}
-                style={{
-                  paddingBottom: '42px'
-                }}
-              >
-                <div style={{paddingBottom:'52px', paddingTop:'30px'}}>
-              <img src={cancel}/>
-              </div>
-                
-                <h3><strong>취소 하시겠습니까?</strong></h3>
-                <br />
+
+                  showConfirm={false}
+                  style={{
+                    paddingBottom: '42px'
+                  }}
+                >
+                  <div style={{ paddingBottom: '52px', paddingTop: '30px' }}>
+                    <img src={cancel} />
+                  </div>
+
+                  <h3><strong>취소 하시겠습니까?</strong></h3>
+                  <br />
                   <Link to="#" className="btn btn-danger" onClick={() => {
                     setwith_cancel(false)
                   }}> <i className="uil uil-times me-1" ></i> 취소 </Link>{" "}
@@ -250,8 +250,8 @@ const KioskRevise = () => {
               ) : null}
               {with_good ? (
                 <SweetAlert
-                  title="키오스크가 추가되었습니다."
-                  warning
+                  title="키오스크가 수정되었습니다."
+                  success
                   showConfirm={false}
                   style={{
                     paddingBottom: '42px'
@@ -259,7 +259,7 @@ const KioskRevise = () => {
                 >
                   <br />
 
-                  <Link to="/customer-list" className="btn btn-primary"> <i className="uil uil-file-alt me-1"></i> 확인 </Link>
+                  <Link to="/kiosk-list" className="btn btn-primary"> <i className="uil uil-file-alt me-1"></i> 확인 </Link>
                 </SweetAlert>
               ) : null}
             </Col>

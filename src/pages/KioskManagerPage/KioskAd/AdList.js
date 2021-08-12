@@ -200,7 +200,7 @@ const AdList = () => {
                     </AvForm>
                   </Card>
                   <div className="table-responsive mb-4">
-                    <Table style={{background:'#EEF1FD'}}>
+                    <Table style={{ background: '#EEF1FD' }}>
                       <CheckBox type="checkbox" id="cb1" />
                       <AdName>광고명</AdName>
                       <AdImg>광고사진</AdImg>

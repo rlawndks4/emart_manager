@@ -336,7 +336,7 @@ const CustomerRevise = () => {
                     {with_good ? (
                       <SweetAlert
                         title="회원이 수정되었습니다."
-                        warning
+                        success
                         showConfirm={false}
                         style={{
                           paddingBottom: '42px'

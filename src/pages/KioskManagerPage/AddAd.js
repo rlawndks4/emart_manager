@@ -33,6 +33,7 @@ const AddAd = () => {
 
   const [with_save, setwith_save] = useState(false);
   const [with_cancel, setwith_cancel] = useState(false);
+  const [with_good, setwith_good] = useState(false);
   const [loading, setLoading] = useState(false);
   const isAdmin = async () => {
     setLoading(true);
@@ -56,34 +57,36 @@ const AddAd = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    const {data: response} = await axios('/api/howmanyad')
-    if(!response.data){
+    const { data: response } = await axios('/api/howmanyad')
+    if (!response.data) {
       alert('이미 광고가 존재합니다. 삭제 후 진행해 주세요.')
       setwith_save(false)
       history.push('/ad-list')
     }
-    else{
+    else {
       if (!adName ||
         !adFile) {
         alert("필수 입력 사항을 입력하지 않으셨습니다.");
         setwith_save(false)
       }
       else {
-        
+
         let formData = new FormData();
         formData.append('adName', adName)
         formData.append('image', adFile)
-        
+
         const config = {
-          header: {'Content-type': 'multipart/form-data; charset=UTF-8',
-          'Accept': '*/*'}
+          header: {
+            'Content-type': 'multipart/form-data; charset=UTF-8',
+            'Accept': '*/*'
+          }
         }
         axios.post('/api/addad', formData, config)
-        alert("광고가 추가되었습니다.")
-        history.push('/ad-list')
+        setwith_save(false)
+        setwith_good(true)
       }
     }
-    
+
   }
 
   function handleAcceptedFiles(files) {
@@ -137,7 +140,7 @@ const AddAd = () => {
                             </div>
                           </div>
                           <div className="flex-1 overflow-hidden">
-                            <h5 className="font-size-16 mb-1" style={{fontFamily: 'NanumGothic', fontWeight:'bold'}}>광고 관리</h5>
+                            <h5 className="font-size-16 mb-1" style={{ fontFamily: 'NanumGothic', fontWeight: 'bold' }}>광고 관리</h5>
                             <p className="text-muted text-truncate mb-0">아래의 모든 정보를 입력하세요.</p>
                           </div>
                           <i className="mdi mdi-chevron-up accor-down-icon font-size-24"></i>
@@ -155,7 +158,7 @@ const AddAd = () => {
                                     htmlFor="billing-name"
 
                                     className="form-label"
-                                    style={{fontWeight:'1000'}}>
+                                    style={{ fontWeight: '1000' }}>
                                     광고명
                                   </Label>
                                   <Input
@@ -255,18 +258,18 @@ const AddAd = () => {
 
                     {with_save ? (
                       <SweetAlert
-                       
-                  showConfirm={false}
-                  style={{
-                   paddingBottom: '42px'
-                  }}
-                > 
-                <div style={{paddingBottom:'52px', paddingTop:'30px'}}>
-                <img src={save}/>
-                </div>
-                  
-                  <h3><strong>저장 하시겠습니까?</strong></h3>
-                  <br/>
+
+                        showConfirm={false}
+                        style={{
+                          paddingBottom: '42px'
+                        }}
+                      >
+                        <div style={{ paddingBottom: '52px', paddingTop: '30px' }}>
+                          <img src={save} />
+                        </div>
+
+                        <h3><strong>저장 하시겠습니까?</strong></h3>
+                        <br />
                         <Link to="#" className="btn btn-danger" onClick={() => {
                           setwith_save(false)
                         }}> <i className="uil uil-times me-1" ></i> 취소 </Link>{" "}
@@ -276,18 +279,18 @@ const AddAd = () => {
 
                     {with_cancel ? (
                       <SweetAlert
-                         
-                  showConfirm={false}
-                  style={{
-                    paddingBottom: '42px'
-                  }}
-                >
-                  <div style={{paddingBottom:'52px', paddingTop:'30px'}}>
-                <img src={cancel}/>
-                </div>
-                  
-                  <h3><strong>취소 하시겠습니까?</strong></h3>
-                  <br />
+
+                        showConfirm={false}
+                        style={{
+                          paddingBottom: '42px'
+                        }}
+                      >
+                        <div style={{ paddingBottom: '52px', paddingTop: '30px' }}>
+                          <img src={cancel} />
+                        </div>
+
+                        <h3><strong>취소 하시겠습니까?</strong></h3>
+                        <br />
                         <Link to="#" className="btn btn-danger" onClick={() => {
                           setwith_cancel(false)
                         }}> <i className="uil uil-times me-1" ></i> 취소 </Link>{" "}
@@ -297,7 +300,20 @@ const AddAd = () => {
                       </SweetAlert>
 
                     ) : null}
+                    {with_good ? (
+                      <SweetAlert
+                        title="광고가 추가되었습니다."
+                        success
+                        showConfirm={false}
+                        style={{
+                          paddingBottom: '42px'
+                        }}
+                      >
+                        <br />
 
+                        <Link to="/ad-list" className="btn btn-primary"> <i className="uil uil-file-alt me-1"></i> 확인 </Link>
+                      </SweetAlert>
+                    ) : null}
                   </Col>
 
                 </Row>

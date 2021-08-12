@@ -177,7 +177,7 @@ const ProductList = () => {
   }
 
 
-console.log(maxPage)
+  console.log(maxPage)
   const pageNumbers = [];
   for (let i = 1; i <= maxPage; i++) {
     pageNumbers.push(i);
@@ -247,7 +247,7 @@ console.log(maxPage)
                   </Card>
                   <div className="table-responsive mb-4">
 
-                    <Table style={{background:'#EEF1FD'}}>
+                    <Table style={{ background: '#EEF1FD' }}>
                       <CheckBox type="checkbox" id="cb1" />
                       <MainImg>메인사진</MainImg>
                       <ItemName>상품명</ItemName>

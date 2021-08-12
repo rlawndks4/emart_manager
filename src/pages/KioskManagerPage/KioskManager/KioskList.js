@@ -9,6 +9,7 @@ import SweetAlert from "react-bootstrap-sweetalert"
 import { useHistory } from 'react-router'
 import { Pagination, PaginationItem, PaginationLink } from "reactstrap"
 import {  CSVDownload } from "react-csv";
+import XLSX from "xlsx";
 const CheckBox = styled.input`
 margin: 14px 14px 14px;
 `
@@ -223,7 +224,12 @@ const KioskList = () => {
       })
     }
   }
-
+  function getExcel(){
+      const dataWS = XLSX.utils.json_to_sheet(exelPost);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, dataWS, "nameData");
+      XLSX.writeFile(wb, "kiosk.xlsx");
+  }
   function onCreateTime(num) {
     num = num.split('.')[0]
     num = num.replace('T', ' ')
@@ -343,13 +349,10 @@ const KioskList = () => {
                           onChangePage(1)
                         }}>조회하기</Link>
                         {" "}
-                        <Link to="#" className="btn btn-primary" style={{ marginLeft: '10px' }} >
-                          {/* <CSVDownload
-                            headers={headers}
-                            data={exelPost}
-                            filename="kiosk.csv"
-                            target="_blank"
-                          ></CSVDownload>추출하기 */}
+                        <Link to="#" className="btn btn-primary" style={{ marginLeft: '10px' }} onClick={
+                          getExcel
+                        }>
+                         추출하기
                         </Link>
                       </Col>
                     </Row>

@@ -393,9 +393,9 @@ const ProductRevise = () => {
                           </div>
                         </div>
                         <div className="flex-1 overflow-hidden">
-                          <h5 className="font-size-16 mb-1">메인 사진</h5>
-                          <p className="text-muted text-truncate mb-0">메인사진을 등록해 주세요.
-                            <br />이미지는 430x315 사이즈로 JPG,PNG 파일 이미지만 등록 가능합니다.</p>
+                          <h5 className="font-size-16 mb-1">메인 이미지</h5>
+                          <p className="text-muted text-truncate mb-0">메인 이미지를 등록해 주세요.
+                            <br />이미지는 238x238 사이즈로 JPG,PNG 파일 이미지만 등록 가능합니다.</p>
                         </div>
                         <i className="mdi mdi-chevron-up accor-down-icon font-size-24"></i>
                       </Media>
@@ -421,7 +421,7 @@ const ProductRevise = () => {
                                   <div className="mb-3">
                                     <i className="display-4 text-muted uil uil-cloud-upload"></i>
                                   </div>
-                                  <h4>사진을 업로드 해주세요.</h4>
+                                  <h4>이미지를 업로드 해주세요.</h4>
                                 </div>
                               </div>
                             </div>
@@ -480,9 +480,9 @@ const ProductRevise = () => {
                           </div>
                         </div>
                         <div className="flex-1 overflow-hidden">
-                          <h5 className="font-size-16 mb-1">상세 사진</h5>
-                          <p className="text-muted text-truncate mb-0">상세 사진을 등록해 주세요.
-                            <br />이미지는 430x315 사이즈로 JPG,PNG 파일 이미지만 등록 가능합니다.</p>
+                          <h5 className="font-size-16 mb-1">상세 이미지</h5>
+                          <p className="text-muted text-truncate mb-0">상세 이미지를 등록해 주세요.
+                            <br />이미지는 1000x1000 사이즈로 JPG,PNG 파일 이미지만 등록 가능합니다.</p>
                         </div>
                         <i className="mdi mdi-chevron-up accor-down-icon font-size-24"></i>
                       </Media>
@@ -508,7 +508,7 @@ const ProductRevise = () => {
                                   <div className="mb-3">
                                     <i className="display-4 text-muted uil uil-cloud-upload"></i>
                                   </div>
-                                  <h4>사진을 업로드 해주세요.</h4>
+                                  <h4>이미지를 업로드 해주세요.</h4>
                                 </div>
                               </div>
                             </div>
@@ -566,9 +566,9 @@ const ProductRevise = () => {
                           </div>
                         </div>
                         <div className="flex-1 overflow-hidden">
-                          <h5 className="font-size-16 mb-1">QR 코드 사진</h5>
-                          <p className="text-muted text-truncate mb-0">QR 코드 사진을 등록해 주세요.
-                            <br />이미지는 430x315 사이즈로 JPG,PNG 파일 이미지만 등록 가능합니다.</p>
+                          <h5 className="font-size-16 mb-1">QR 코드 이미지</h5>
+                          <p className="text-muted text-truncate mb-0">QR 코드 이미지를 등록해 주세요.
+                            <br />이미지는 320x320 사이즈로 JPG,PNG 파일 이미지만 등록 가능합니다.</p>
                         </div>
                         <i className="mdi mdi-chevron-up accor-down-icon font-size-24"></i>
                       </Media>
@@ -594,7 +594,7 @@ const ProductRevise = () => {
                                   <div className="mb-3">
                                     <i className="display-4 text-muted uil uil-cloud-upload"></i>
                                   </div>
-                                  <h4>사진을 업로드 해주세요.</h4>
+                                  <h4>이미지를 업로드 해주세요.</h4>
                                 </div>
                               </div>
                             </div>

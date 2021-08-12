@@ -8,6 +8,7 @@ import styled from "styled-components"
 import SweetAlert from "react-bootstrap-sweetalert"
 import { useHistory } from 'react-router'
 import { Pagination, PaginationItem, PaginationLink } from "reactstrap"
+import {  CSVDownload } from "react-csv";
 const CheckBox = styled.input`
 margin: 14px 14px 14px;
 `
@@ -77,15 +78,11 @@ align-items: center;
 display: flex;
 flex-direction: column;
 `
-const MenuName = styled.div`
-width: 100%;
-
-`
-const Content1 = styled.div`
-width: 10%;
-`
-const Content2 = styled.div`
-width: 20%;
+const ButtonConstent = styled.div`
+font-size:18px;
+@media screen and (max-width:950px) {
+  font-size:8px;
+}
 `
 const KioskList = () => {
 
@@ -103,8 +100,14 @@ const KioskList = () => {
   const [revisePk, setRevisePk] = useState(0)
   const [firstDate, setFirstDate] = useState('2021-08-01')
   const [secondDate, setSecondDate] = useState('2021-09-30')
-
+  const [exelPost, setExelPost] = useState([])
   const [paid, setPaid] = useState(0)
+  const headers =[
+    { label: "Kiosk Number", key: "kiosk_num" },
+    { label: "Store Name", key: "store_name" },
+    { label: "Unique Code", key: "unoque_code" },
+    { label: "Status", key: "status" }
+  ]
   const isAdmin = async () => {
     setLoading(true);
     const { data: response } = await axios.get('/api/auth')
@@ -114,8 +117,8 @@ const KioskList = () => {
     }
     else {
 
-      if (!response.second) {
-        alert('관리자만 접근 가능합니다.')
+      if (!response.first) {
+        alert('개발자만 접근 가능합니다.')
         history.push('/product-list')
       } else {
         setLoading(false)
@@ -132,9 +135,11 @@ const KioskList = () => {
       setLoading(true);
       const page = currentPage
       const { data: response } = await axios.get(`/api/kiosk/${page}?status=${paid}&firstdate=${firstDate}&lastdate=${secondDate}`);
-
       setPosts(response.data.result);
       setMaxPage(response.data.maxPage);
+      const { data: res } = await axios.get(`/api/kiosk/${0}?status=${paid}&firstdate=${firstDate}&lastdate=${secondDate}`);
+
+      setExelPost(res.data.result);
       setLoading(false);
     }
     fetchPosts()
@@ -143,11 +148,11 @@ const KioskList = () => {
   const onDelete = async (e) => {
     e.preventDefault()
     const { data: res } = await axios.get('/api/auth')
-    if(!res.first){
+    if (!res.first) {
       alert('권한이 없습니다.')
       setwith_delete(false)
     }
-    else{
+    else {
       const { data: response } = await axios.post('/api/deletekiosk', {
         pk: deleteNum
       })
@@ -163,11 +168,14 @@ const KioskList = () => {
       const page = num
       setCurrentPage(num)
       const { data: response } = await axios.get(`/api/kiosk/${page}?status=${paid}&firstdate=${firstDate}&lastdate=${secondDate}`);
+      const { data: res } = await axios.get(`/api/kiosk/${0}?status=${paid}&firstdate=${firstDate}&lastdate=${secondDate}`);
       setPosts(response.data.result);
+      setExelPost(res.data.result);
       setLoading(false);
     }
     fetchPosts()
   };
+
   function onChangePageColor(num) {
     if (currentPage == num) {
       return { background: '#5B73E8', color: '#ffffff' }
@@ -176,45 +184,46 @@ const KioskList = () => {
       return { background: '#ffffff', color: '#74788D' }
     }
   }
-   function onStatus(num){
-    if(num==1){
+  function onStatus(num) {
+    if (num == 1) {
       return true;
     }
-    else{
+    else {
       return false;
     }
   }
-  async function handleGiveKiosk(num){
+  async function handleGiveKiosk(num) {
     const { data: res } = await axios.get('/api/auth')
-    if(!res.first){
+    if (!res.first) {
       alert('권한이 없습니다.')
     }
-    else{
-      axios.post('/api/kioskstatus',{
+    else {
+      axios.post('/api/kioskstatus', {
         pk: num,
         status: 0
-      }).then(()=>{
+      }).then(() => {
         alert('지급을 완료 하였습니다.')
         window.location.replace("/kiosk-list")
       })
     }
-    
+
   }
-  async function handleCancelKiosk(num){
+  async function handleCancelKiosk(num) {
     const { data: res } = await axios.get('/api/auth')
-    if(!res.first){
+    if (!res.first) {
       alert('권한이 없습니다.')
     }
-    else{
-      axios.post('/api/kioskstatus',{
+    else {
+      axios.post('/api/kioskstatus', {
         pk: num,
         status: 1
-      }).then(()=>{
+      }).then(() => {
         alert('지급을 취소 하였습니다.')
         window.location.replace("/kiosk-list")
       })
     }
   }
+
   function onCreateTime(num) {
     num = num.split('.')[0]
     num = num.replace('T', ' ')
@@ -238,7 +247,7 @@ const KioskList = () => {
   const onChangeSecond = (e) => {
     setSecondDate(e.target.value)
   }
- 
+
   return (
     <React.Fragment>
       <div className="page-content">
@@ -246,16 +255,16 @@ const KioskList = () => {
           <Breadcrumbs breadcrumbItem="키오스크관리" />
           <Row>
             <Col lg="12">
-            
+
               <React.Fragment>
                 <div className="p-4 border-top">
                   <Card>
                     <Row>
-                   
+
                       <Col md="2">
-                        <div className="mb-3" style={{width:'100%', paddingLeft:'30px'}}>
-                        <br />
-                        <h5 className="font-size-14 mb-4"><strong>조회결과 순서</strong></h5>
+                        <div className="mb-3" style={{ width: '100%', paddingLeft: '30px' }}>
+                          <br />
+                          <h5 className="font-size-14 mb-4"><strong>조회결과 순서</strong></h5>
                         </div>
                       </Col>
                       <Col lg={1}>
@@ -298,11 +307,11 @@ const KioskList = () => {
                     </Row>
 
                     <Row>
-                   
+
                       <Col lg={2}>
-                      <div className="mb-3" style={{width:'100%', paddingLeft:'30px'}}>
-                        <br />
-                        <h5 className="font-size-14 mb-4"><strong>조회 기간</strong></h5>
+                        <div className="mb-3" style={{ width: '100%', paddingLeft: '30px' }}>
+                          <br />
+                          <h5 className="font-size-14 mb-4"><strong>조회 기간</strong></h5>
                         </div>
                       </Col>
                       <Col lg={2}>
@@ -334,13 +343,20 @@ const KioskList = () => {
                           onChangePage(1)
                         }}>조회하기</Link>
                         {" "}
-                        <Link to="#" className="btn btn-primary" style={{marginLeft:'10px'}}>추출하기</Link>
+                        <Link to="#" className="btn btn-primary" style={{ marginLeft: '10px' }} >
+                          {/* <CSVDownload
+                            headers={headers}
+                            data={exelPost}
+                            filename="kiosk.csv"
+                            target="_blank"
+                          ></CSVDownload>추출하기 */}
+                        </Link>
                       </Col>
                     </Row>
                   </Card>
                   <div className="table-responsive mb-4">
 
-                    <Table style={{background:'#EEF1FD'}}> 
+                    <Table style={{ background: '#EEF1FD' }}>
                       <CheckBox type="checkbox" id="cb1" />
                       <KioskNumber>키오스크 NO.</KioskNumber>
                       <UniqueNumber>고유번호</UniqueNumber>
@@ -366,31 +382,32 @@ const KioskList = () => {
                           <Status>
                             {
                               onStatus(post.status) ?
-                              <ListText>완료</ListText>
-                              :
-                              <>
-                              <ListText>미지급</ListText>
-                              </>
+                                <ListText>완료</ListText>
+                                :
+                                <>
+                                  <ListText>미지급</ListText>
+                                </>
                             }
                           </Status>
-                          <Status style={{padding:'none important!'}}>
-                          {
-                            onStatus(post.status) ?
-                            <div>
-                              
-                            <Link to="#" className="btn btn-primary" ><strong>지급완료</strong></Link>
-                            {" "}
-                            <Link to="#" className="btn btn-primary" onClick={()=>{
-                              handleCancelKiosk(post.pk)
-                            }}><strong>취소</strong></Link>
-                            </div>
-                            :
-                            <>
-                            <Link to="#" className="btn btn-primary" onClick={()=>{
-                              handleGiveKiosk(post.pk)
-                            }}><strong>지급하기</strong></Link>
-                            </>
-                          }
+                          <Status style={{ padding: 'none important!', width: '20% important!' }}>
+                            {
+                              onStatus(post.status) ?
+                                <div style={{ width: '100%' }}>
+                                  <ButtonConstent>
+                                    <Link to="#" className="btn btn-primary" style={{ width: '45%' }}><strong>지급완료</strong></Link>
+                                    {" "}
+                                    <Link to="#" className="btn btn-primary" onClick={() => {
+                                      handleCancelKiosk(post.pk)
+                                    }} style={{ width: '45%' }}><strong>취소</strong></Link>
+                                  </ButtonConstent>
+                                </div>
+                                :
+                                <>
+                                  <Link to="#" className="btn btn-primary" onClick={() => {
+                                    handleGiveKiosk(post.pk)
+                                  }}><strong>지급하기</strong></Link>
+                                </>
+                            }
                           </Status>
 
                           <Modify><Link to={{
@@ -408,7 +425,7 @@ const KioskList = () => {
                       ))}
 
                     </>
-                    
+
                     {with_delete ? (
                       <SweetAlert
                         title="정말 삭제하시겠습니까?"

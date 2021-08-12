@@ -19,11 +19,11 @@ import { useHistory } from 'react-router'
 import cancel from "./cancel.png"
 import save from "./save.png"
 import styled from "styled-components"
-const UseKioskContainer = styled.div`
+const UseBrandContainer = styled.div`
 display:flex;
 padding-left: 0;
 `
-const UseKioskContent = styled.div`
+const UseBrandContent = styled.div`
 text-decoration: none;
 color: black;
 padding-left: 10px;
@@ -48,17 +48,12 @@ const AddCustomers = () => {
   const [selected, setSelected] = useState("일반유저");
 
 
-  const [emileHenry, setEmileHenry] = useState(false)
-  const [tefal, setTefal] = useState(false)
-  const [happyCall, setHappyCall] = useState(false)
-  const [silit, setSilit] = useState(false)
-  const [kissher, setKissher] = useState(false)
+  const [allBrandList, setAllBrandList] = useState([]);
+  const [brandNameList, setBrandNameList] = useState([]);
 
-  const [allKioskList, setAllKioskList] = useState([]);
-  const [kioskNumList, setkioskNumList] = useState([]);
-  const [selectKioskNum, setSelectKioskNum] = useState('');
-  const [kioskPkList, setKioskPkList] = useState([]);
-  const [selectKioskPk, setSelectKioskPk] = useState(0);
+  const [deleteBrand, setDeleteBrand] = useState('')
+  const [selectBrandName, setSelectBrandName] = useState('');
+  const [brandPkList, setBrandPkList] = useState([]);
 
   const handleSelect = (e) => {
     setSelected(e.target.value);
@@ -91,29 +86,19 @@ const AddCustomers = () => {
     //이용할 브랜드를 선택하고 그 값들을 배열형태로 저장하여 보냄
     if (!id.length||
       !pw.length||
-      kioskPkList.length==0) {
+      brandPkList.length==0) {
       alert('필수 값을 입력하지 않았습니다.')
       setwith_save(false)
     }
     else {
-      var brand_pk_list = []
-      var brand_list = [kissher, silit, happyCall, tefal, emileHenry]
-      for (var i = 0; i < brand_list.length; i++) {
-        if (brand_list[i])
-          brand_pk_list.push(i + 1)
-      }
 
-      var brandPk = JSON.stringify(brand_pk_list)
-
-      // if (checkAddUser) {
-      //회원가입
-      var kioskLi = JSON.stringify(kioskPkList)
+      var brandPk = JSON.stringify(brandPkList)
+      console.log(brandPk)
       const { data: response } = await axios.post('/api/adduser', {
         id: id,
         pw: pw,
         userLevel: userLevel,
-        brandPk: brandPk,
-        kioskList: kioskLi
+        brandPk: brandPk
       })
       if (response.result == -200) {
         alert(response.message)
@@ -130,50 +115,38 @@ const AddCustomers = () => {
     }
 
   };
-  //키오스크 리스트 모두 출력
+  //브랜드 리스트 모두 출력
   useEffect(() => {
     async function fetchPosts() {
-      const { data: response } = await axios.get('/api/kiosk');
-      console.log(response.data)
-      setAllKioskList(response.data)
-      console.log(allKioskList)
+      const { data: response } = await axios.get('/api/brand');
+      setAllBrandList(response.data)
     }
     fetchPosts()
   }, []);
-  const handleSelectKiosk = (e) => {
-    setSelectKioskNum(e.target.value)
-    
-    for (var i = 0; i < allKioskList.length; i++) {
-      if (allKioskList[i].kiosk_num == e.target.value) {
+console.log(allBrandList)
+console.log(selectBrandName)
+console.log(brandPkList)
+console.log(brandNameList)
+  const handleSelectBrand = (e) => {
+    setSelectBrandName(e.target.value)
+    console.log(e.target.value)
+    for (var i = 0; i < allBrandList.length; i++) {
+      if (allBrandList[i].brand_name == e.target.value) {
 
-        for(var j =0; j<kioskNumList.length;j++){
-          if(kioskNumList[j]==e.target.value){
+        for(var j =0; j<brandNameList.length;j++){
+          if(brandNameList[j]==e.target.value){
             break;
           }
         }
-        if(j==kioskNumList.length){
-          kioskNumList.push(e.target.value)
-          kioskPkList.push(allKioskList[i].pk)
+        if(j==brandNameList.length){
+          brandNameList.push( e.target.value)
+          brandPkList.push(allBrandList[i].pk)
         }
 
       }
     }
   }
-  function deleteKioskPk(pk) {
-    console.log(pk)
-    for(var i=0;i<kioskNumList.length;i++){
-      console.log(kioskNumList[i])
-      if(kioskNumList[i]==pk){
-        kioskNumList.splice(i, 1);
-        kioskPkList.splice(i, 1);
-        break;
-      }
-    }
-  }
-  console.log(kioskPkList)
-  console.log(kioskNumList)
-  console.log(selectKioskNum)
-  console.log(kioskPkList.length)
+  
   useEffect(() => {
     if (
       id.length === 0 ||
@@ -205,50 +178,6 @@ const AddCustomers = () => {
     setCheckPw('')
   };
 
-
-
-
-
-  const handleEmileHenry = () => {
-    if (!emileHenry) {
-      setEmileHenry(true)
-    }
-    else {
-      setEmileHenry(false)
-    }
-  }
-  const handleTefal = () => {
-    if (!tefal) {
-      setTefal(true)
-    }
-    else {
-      setTefal(false)
-    }
-  }
-  const handleHappycall = () => {
-    if (!happyCall) {
-      setHappyCall(true)
-    }
-    else {
-      setHappyCall(false)
-    }
-  }
-  const handleSilit = () => {
-    if (!silit) {
-      setSilit(true)
-    }
-    else {
-      setSilit(false)
-    }
-  }
-  const handleKissher = () => {
-    if (!kissher) {
-      setKissher(true)
-    }
-    else {
-      setKissher(false)
-    }
-  }
 
   return (
     <React.Fragment>
@@ -322,10 +251,11 @@ const AddCustomers = () => {
                               </Col>
                               <Col lg={2}>
                                 <div className="mb-3">
-                                  <Label>접근도</Label>
+                                  <Label>접근권한</Label>
                                   <form >
                                     <select className="form-control" name="userlevel"
                                       onChange={handleSelect} value={selected}>
+
                                       {selectList.map((item) => (
                                         <option value={item} key={item}>
                                           {item}
@@ -335,88 +265,18 @@ const AddCustomers = () => {
                                   </form>
                                 </div>
                               </Col>
-                              <Col lg={4}>
+                              
+                              <Col lg={2}>
                                 <div className="mb-3">
-                                  <Label>관리할 브랜드</Label>
-                                  <form>
-
-                                    <input
-                                      className="form-check-input"
-                                      type="checkbox"
-                                      name="emile henry"
-                                      onClick={handleEmileHenry}
-                                    />
-                                    <label
-                                      className="form-check-label"
-                                      htmlFor="exampleRadios2"
-                                    >
-                                      emile henry
-                                    </label>
-                                    <br />
-                                    <input
-                                      className="form-check-input"
-                                      type="checkbox"
-                                      name="tefal"
-                                      onClick={handleTefal}
-                                    />
-                                    <label
-                                      className="form-check-label"
-                                      htmlFor="exampleRadios2"
-                                    >
-                                      tefal
-                                    </label>
-                                    <br />
-                                    <input
-                                      className="form-check-input"
-                                      type="checkbox"
-                                      name="happycall"
-                                      onClick={handleHappycall}
-                                    />
-                                    <label
-                                      className="form-check-label"
-                                      htmlFor="exampleRadios2"
-                                    >
-                                      happycall
-                                    </label>
-                                    <br />
-                                    <input
-                                      className="form-check-input"
-                                      type="checkbox"
-                                      name="silit"
-                                      onClick={handleSilit}
-                                    />
-                                    <label
-                                      className="form-check-label"
-                                      htmlFor="exampleRadios2"
-                                    >
-                                      silit
-                                    </label>
-                                    <br />
-                                    <input
-                                      className="form-check-input"
-                                      type="checkbox"
-                                      name=" kissher"
-                                      onClick={handleKissher}
-                                    />
-                                    <label
-                                      className="form-check-label"
-                                      htmlFor="exampleRadios2"
-                                    >
-                                      kissher
-                                    </label>
-                                  </form>
-                                </div>
-                              </Col>
-                              <Col lg={4}>
-                                <div className="mb-3">
-                                  <Label>이용할 키오스크(다중선택 가능)</Label>
+                                  <Label>브랜드</Label>
                                   <form >
                                     <select className="form-control" name="userlevel"
-                                      onChange={handleSelectKiosk}>
-                                      {allKioskList.map(item => (
+                                      onChange={handleSelectBrand} > 
+                                      <option>===== 선택 =====</option>
+                                      {allBrandList.map(item => (
                                         <option key={item.pk}
                                         >
-                                          {item.kiosk_num}
+                                          {item.brand_name}
                                         </option>
                                       ))}
                                     </select>
@@ -424,10 +284,10 @@ const AddCustomers = () => {
                                 </div>
                               </Col>
                               <Col>
-                                <Label>선택한 키오스크</Label>
-                                <UseKioskContainer>{kioskNumList.map(pk => (
-                                  <UseKioskContent onClick={()=>{deleteKioskPk(pk)}}>{pk}</UseKioskContent>
-                                ))}</UseKioskContainer>
+                                <Label>선택한 브랜드</Label>
+                                <UseBrandContainer>{brandNameList.map(item => (
+                                  <UseBrandContent>{item}</UseBrandContent>
+                                ))}</UseBrandContainer>
                               </Col>
                             </Row>
 

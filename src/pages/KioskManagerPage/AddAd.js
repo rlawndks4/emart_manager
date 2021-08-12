@@ -56,25 +56,34 @@ const AddAd = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!adName ||
-      !adFile) {
-      alert("필수 입력 사항을 입력하지 않으셨습니다.");
+    const {data: response} = await axios('/api/howmanyad')
+    if(!response.data){
+      alert('이미 광고가 존재합니다. 삭제 후 진행해 주세요.')
       setwith_save(false)
-    }
-    else {
-      
-      let formData = new FormData();
-      formData.append('adName', adName)
-      formData.append('image', adFile)
-      
-      const config = {
-        header: {'Content-type': 'multipart/form-data; charset=UTF-8',
-        'Accept': '*/*'}
-      }
-      axios.post('/api/addad', formData, config)
-      alert("광고가 추가되었습니다.")
       history.push('/ad-list')
     }
+    else{
+      if (!adName ||
+        !adFile) {
+        alert("필수 입력 사항을 입력하지 않으셨습니다.");
+        setwith_save(false)
+      }
+      else {
+        
+        let formData = new FormData();
+        formData.append('adName', adName)
+        formData.append('image', adFile)
+        
+        const config = {
+          header: {'Content-type': 'multipart/form-data; charset=UTF-8',
+          'Accept': '*/*'}
+        }
+        axios.post('/api/addad', formData, config)
+        alert("광고가 추가되었습니다.")
+        history.push('/ad-list')
+      }
+    }
+    
   }
 
   function handleAcceptedFiles(files) {
@@ -128,7 +137,7 @@ const AddAd = () => {
                             </div>
                           </div>
                           <div className="flex-1 overflow-hidden">
-                            <h5 className="font-size-16 mb-1" style={{fontFamily: 'NanumGothic', fontWeight:'bold'}}>광고 추가</h5>
+                            <h5 className="font-size-16 mb-1" style={{fontFamily: 'NanumGothic', fontWeight:'bold'}}>광고 관리</h5>
                             <p className="text-muted text-truncate mb-0">아래의 모든 정보를 입력하세요.</p>
                           </div>
                           <i className="mdi mdi-chevron-up accor-down-icon font-size-24"></i>

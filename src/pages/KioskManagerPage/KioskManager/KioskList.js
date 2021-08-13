@@ -442,15 +442,11 @@ const KioskList = () => {
                           <Status style={{ padding: 'none important!', width: '20% important!' }}>
                             {
                               onStatus(post.status) ?
-                                <div style={{ width: '100%' }}>
-                                  
-                                    <button  className="btn btn-primary" style={{ width: '45%', padding:'5px'}}><Strong>지급완료</Strong></button>
-                                    {" "}
-                                    <button  className="btn btn-primary" onClick={() => {
+                              
+                                    <Link to="#" className="btn btn-primary" onClick={() => {
                                       handleCancelKiosk(post.pk)
-                                    }} style={{ width: '45%' , padding:'5px'}}><Strong>취소</Strong></button>
-                                  
-                                </div>
+                                    }}><strong>취소</strong></Link>
+                           
                                 :
                                 <>
                                   <Link to="#" className="btn btn-primary" onClick={() => {

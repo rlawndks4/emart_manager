@@ -78,9 +78,9 @@ align-items: center;
 display: flex;
 flex-direction: column;
 `
-const ButtonConstent = styled.div`
-font-size:18px;
-@media screen and (max-width:950px) {
+const Strong = styled.strong`
+font-size:14px;
+@media screen and (max-width:1250px) {
   font-size:8px;
 }
 `
@@ -402,13 +402,13 @@ const KioskList = () => {
                             {
                               onStatus(post.status) ?
                                 <div style={{ width: '100%' }}>
-                                  <ButtonConstent>
-                                    <Link to="#" className="btn btn-primary" style={{ width: '45%' }}><strong>지급완료</strong></Link>
+                                  
+                                    <Link to="#" className="btn btn-primary" style={{ width: '45%' }}><Strong>지급완료</Strong></Link>
                                     {" "}
                                     <Link to="#" className="btn btn-primary" onClick={() => {
                                       handleCancelKiosk(post.pk)
-                                    }} style={{ width: '45%' }}><strong>취소</strong></Link>
-                                  </ButtonConstent>
+                                    }} style={{ width: '45%' }}><Strong>취소</Strong></Link>
+                                  
                                 </div>
                                 :
                                 <>

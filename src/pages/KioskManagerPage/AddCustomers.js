@@ -93,7 +93,7 @@ const AddCustomers = () => {
     else {
 
       var brandPk = JSON.stringify(brandPkList)
-      console.log(brandPk)
+      
       const { data: response } = await axios.post('/api/adduser', {
         id: id,
         pw: pw,
@@ -126,7 +126,7 @@ const AddCustomers = () => {
 
   const handleSelectBrand = (e) => {
     setSelectBrandName(e.target.value)
-    console.log(e.target.value)
+    
     for (var i = 0; i < allBrandList.length; i++) {
       if (allBrandList[i].brand_name == e.target.value) {
 
@@ -179,7 +179,7 @@ const AddCustomers = () => {
   return (
     <React.Fragment>
       <div className="page-content">
-        <Container fluid>
+        <Container fluid style={{fontFamily:'NanumGothic'}}>
           {/* Render Breadcrumb */}
           <Breadcrumbs breadcrumbItem="회원 관리" />
 
@@ -224,6 +224,7 @@ const AddCustomers = () => {
                                     type="text"
                                     className="form-control"
                                     placeholder="#ABCDEF"
+                                    style={{fontWeight:'500'}}
                                     value={id}
                                     required onChange={onChangeId}
                                   />
@@ -241,6 +242,7 @@ const AddCustomers = () => {
                                     type="email"
                                     className="form-control"
                                     placeholder="123****"
+                                    style={{fontWeight:'500'}}
                                     value={pw}
                                     required onChange={onChangePw}
                                   />

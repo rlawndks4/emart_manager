@@ -84,6 +84,37 @@ font-size:10px;
   font-size:6px;
 }
 `
+const DateContainer = styled.div`
+width: 100%;
+align-items: center;
+display:flex;
+justify-content: space-between;
+`
+const MenuTitle = styled.div`
+width:15%;
+padding-left:20px;
+
+`
+const UnPaidContent = styled.div`
+width:10%;
+
+`
+const PaidContent = styled.div`
+width:75%;
+
+`
+const DateContent = styled.div`
+width: 15%;
+
+`
+const ButtonContent = styled.div`
+width:10%;
+text-align:center;
+padding-left:16px;
+`
+const ExtractContent = styled.div`
+width:45%;
+`
 const KioskList = () => {
 
   const history = useHistory()
@@ -99,7 +130,7 @@ const KioskList = () => {
 
   const [revisePk, setRevisePk] = useState(0)
   const [firstDate, setFirstDate] = useState('2021-08-01')
-  const [secondDate, setSecondDate] = useState('2021-09-30')
+  const [secondDate, setSecondDate] = useState('2021-08-01')
   const [exelPost, setExelPost] = useState([])
   const [paid, setPaid] = useState(0)
   const [unPaid, setUnPaid] = useState(0)
@@ -274,7 +305,7 @@ const KioskList = () => {
   return (
     <React.Fragment>
       <div className="page-content">
-        <Container fluid>
+        <Container fluid style={{fontFamily:'NanumGothic'}}>
           <Breadcrumbs breadcrumbItem="키오스크관리" />
           <Row>
             <Col lg="12">
@@ -283,16 +314,13 @@ const KioskList = () => {
                 <div className="p-4 border-top">
                   <Card>
                     <Row>
-
-                      <Col md="2">
-                        <div className="mb-3" style={{ width: '100%', paddingLeft: '30px' }}>
-                          <br />
-                          <h5 className="font-size-14 mb-4"><strong>조회결과 순서</strong></h5>
-                        </div>
-                      </Col>
-                      <Col lg={1}>
-                        <br />
-                        <input
+                     <DateContainer>
+                      <MenuTitle>
+                      <br />
+                      <h5 className="font-size-14 mb-4"><strong>조회결과 순서</strong></h5>
+                      </MenuTitle>
+                     <UnPaidContent>
+                     <input
                           className="form-check-input"
                           type="radio"
                           name="exampleRadios"
@@ -308,10 +336,9 @@ const KioskList = () => {
                         >
                           미지급
                         </label>
-                      </Col>
-                      <Col lg={1}>
-                        <br />
-                        <input
+                     </UnPaidContent>
+                     <PaidContent>
+                     <input
                           className="form-check-input"
                           type="radio"
                           name="exampleRadios"
@@ -326,53 +353,56 @@ const KioskList = () => {
                         >
                           지급
                         </label>
-                      </Col>
+                     </PaidContent>
+                     </DateContainer>
                     </Row>
-
                     <Row>
-
-                      <Col lg={2}>
-                        <div className="mb-3" style={{ width: '100%', paddingLeft: '30px' }}>
+                    <DateContainer>
+                        <MenuTitle className="mb-3">
                           <br />
+                          
                           <h5 className="font-size-14 mb-4"><strong>조회 기간</strong></h5>
-                        </div>
-                      </Col>
-                      <Col lg={2}>
-                        <div className="col-md-10">
-                          <input
+                        </MenuTitle>
+                     
+                       <DateContent>
+                         <div style={{width:'95%'}}>
+                       <input
                             className="form-control"
                             type="date"
                             defaultValue="2021-08-01"
                             id="example-date-input"
                             onChange={onChangeFirst}
                           />
-                        </div>
-                      </Col>
-
-
-                      <Col lg={2}>
-                        <div className="col-md-10">
-                          <input
+                         </div>
+                       </DateContent>
+                       <div>
+                         {"-"}
+                       </div>
+                       <DateContent>
+                       <div style={{width:'97%' ,paddingLeft:'8px'}}>
+                       <input
                             className="form-control"
                             type="date"
-                            defaultValue="2021-09-30"
+                            defaultValue="2021-08-01"
                             id="example-date-input"
                             onChange={onChangeSecond}
                           />
-                        </div>
-                      </Col>
-                      <Col lg={2}>
+                          </div>
+                      </DateContent>
+                        <ButtonContent>
                         <Link to="#" className="btn btn-primary" onClick={() => {
                           onChangePage(1)
                         }}>조회하기</Link>
-                        {" "}
+                        </ButtonContent>
+                        <ExtractContent>
                         <Link to="#" className="btn btn-primary" style={{ marginLeft: '10px' }} onClick={
                           getExcel
                         }>
                           추출하기
                         </Link>
-                      </Col>
-                    </Row>
+                        </ExtractContent>
+                        </DateContainer>
+                        </Row>
                   </Card>
                   <div className="table-responsive mb-4">
 

@@ -87,7 +87,7 @@ const CustomerRevise = () => {
       setReviseId(location.state.id);
     }
   }, [])
- 
+
   const onSubmit = () => {
     if (!pw.length) {
       alert('필수 값을 입력하지 않았습니다.')
@@ -95,13 +95,13 @@ const CustomerRevise = () => {
     }
     else {
       var brandPk = JSON.stringify(brandPkList)
-      console.log(brandPk)
+  
       axios.put('/api/updateuser', {
         pk: revisePk,
         pw: pw,
-        brandPk: brandPk  
+        brandPk: brandPk
       }).then(() => {
-        console.log("success")
+       
         setwith_save(false)
         setwith_good(true)
 
@@ -122,7 +122,7 @@ const CustomerRevise = () => {
       setCheckAddUser(true)
     }
   })
- 
+
   useEffect(() => {
     if (selected === '일반유저') setUserLevel(0)
     else if (selected === '관리자') setUserLevel(40)
@@ -141,25 +141,25 @@ const CustomerRevise = () => {
 
   const handleSelectBrand = (e) => {
     setSelectBrandName(e.target.value)
-    console.log(e.target.value)
+    
     for (var i = 0; i < allBrandList.length; i++) {
       if (allBrandList[i].brand_name == e.target.value) {
 
-        for(var j =0; j<brandNameList.length;j++){
-          if(brandNameList[j]==e.target.value){
+        for (var j = 0; j < brandNameList.length; j++) {
+          if (brandNameList[j] == e.target.value) {
             break;
           }
         }
-        if(j==brandNameList.length){
-          brandNameList.push( e.target.value)
+        if (j == brandNameList.length) {
+          brandNameList.push(e.target.value)
           brandPkList.push(allBrandList[i].pk)
         }
 
       }
     }
   }
-  
-  
+
+
   const onChangeId = (e) => {
     setId(e.target.value)
     setCheckId('')
@@ -169,13 +169,13 @@ const CustomerRevise = () => {
     setCheckPw('')
   };
 
-  
+
 
 
   return (
     <React.Fragment>
       <div className="page-content">
-        <Container fluid>
+        <Container fluid style={{fontFamily:'NanumGothic'}}>
           {/* Render Breadcrumb */}
           <Breadcrumbs breadcrumbItem="회원 관리" />
 
@@ -220,6 +220,7 @@ const CustomerRevise = () => {
                                     type="text"
                                     className="form-control"
                                     placeholder="#ABCDEF"
+                                    style={{fontWeight:'500'}}
                                     value={reviseId}
                                     required onChange={onChangeId}
                                   />
@@ -237,6 +238,7 @@ const CustomerRevise = () => {
                                     type="email"
                                     className="form-control"
                                     placeholder="123****"
+                                    style={{fontWeight:'500'}}
                                     value={pw}
                                     required onChange={onChangePw}
                                   />
@@ -247,7 +249,7 @@ const CustomerRevise = () => {
                                   <Label>브랜드</Label>
                                   <form >
                                     <select className="form-control" name="userlevel"
-                                      onChange={handleSelectBrand} > 
+                                      onChange={handleSelectBrand} >
                                       <option>===== 선택 =====</option>
                                       {allBrandList.map(item => (
                                         <option key={item.pk}
@@ -266,9 +268,9 @@ const CustomerRevise = () => {
                                 ))}</UseBrandContainer>
                               </Col>
 
-                              
+
                             </Row>
-                          
+
                           </div>
                         </Form>
                       </div>

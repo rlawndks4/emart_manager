@@ -101,7 +101,7 @@ const AddBrand = () => {
   return (
     <React.Fragment>
       <div className="page-content">
-        <Container fluid>
+        <Container fluid style={{fontFamily:'NanumGothic'}}>
           {/* Render Breadcrumb */}
           <Breadcrumbs breadcrumbItem="브랜드 관리" />
 
@@ -146,6 +146,7 @@ const AddBrand = () => {
                                     type="text"
                                     className="form-control"
                                     placeholder="Input Brand"
+                                    style={{fontWeight:'500'}}
                                     value={brandName}
                                     required onChange={onChangeBrand}
                                   />
@@ -164,6 +165,7 @@ const AddBrand = () => {
                                     type="text"
                                     className="form-control"
                                     placeholder="Input Class1"
+                                    style={{fontWeight:'500'}}
                                     value={class1}
                                     required onChange={onChangeClass1}
                                   />
@@ -182,6 +184,7 @@ const AddBrand = () => {
                                     type="text"
                                     className="form-control"
                                     placeholder="Input Class2"
+                                    style={{fontWeight:'500'}}
                                     value={class2}
                                     required onChange={onChangeClass2}
                                   />
@@ -200,6 +203,7 @@ const AddBrand = () => {
                                     type="text"
                                     className="form-control"
                                     placeholder="Input Class3"
+                                    style={{fontWeight:'500'}}
                                     value={class3}
                                     required onChange={onChangeClass3}
                                   />
@@ -218,6 +222,7 @@ const AddBrand = () => {
                                     type="text"
                                     className="form-control"
                                     placeholder="Input Class4"
+                                    style={{fontWeight:'500'}}
                                     value={class4}
                                     required onChange={onChangeClass4}
                                   />

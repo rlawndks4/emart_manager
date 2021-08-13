@@ -177,7 +177,7 @@ const ProductList = () => {
   }
 
 
-  console.log(maxPage)
+ 
   const pageNumbers = [];
   for (let i = 1; i <= maxPage; i++) {
     pageNumbers.push(i);
@@ -224,7 +224,7 @@ const ProductList = () => {
   return (
     <React.Fragment>
       <div className="page-content">
-        <Container fluid>
+        <Container fluid style={{fontFamily:'NanumGothic'}}>
           <Breadcrumbs breadcrumbItem="상품관리" />
           <Row>
             <Col lg="12">

@@ -121,7 +121,7 @@ const AddAd = () => {
   return (
     <React.Fragment>
       <div className="page-content">
-        <Container fluid>
+        <Container fluid style={{fontFamily:'NanumGothic'}}>
           <Breadcrumbs breadcrumbItem="광고 관리" />
 
           <div className="checkout-tabs">
@@ -165,6 +165,7 @@ const AddAd = () => {
                                     type="text"
                                     className="form-control"
                                     placeholder="#123456"
+                                    style={{fontWeight:'500'}}
                                     onChange={onChangeAdName}
                                   />
                                 </div>
@@ -188,7 +189,7 @@ const AddAd = () => {
                                             <div className="mb-3">
                                               <i className="display-4 text-muted uil uil-cloud-upload" ></i>
                                             </div>
-                                            <h4>사진을 업로드 해주세요.</h4>
+                                            <h4>파일을 업로드 해주세요.<br/>(jpg, png, jpeg, gif, mp4, avi)</h4>
                                           </div>
                                         </div>
                                       </div>

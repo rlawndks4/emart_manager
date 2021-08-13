@@ -178,7 +178,7 @@ const AdList = () => {
     <React.Fragment>
 
       <div className="page-content">
-        <Container fluid>
+        <Container fluid style={{fontFamily:'NanumGothic'}}>
 
           <Breadcrumbs breadcrumbItem="광고관리" />
           <Row>

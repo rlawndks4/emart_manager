@@ -69,7 +69,7 @@ const AddKiosk = () => {
         store: store,
         uniNum: uniNum
       }).then(() => {
-        console.log("success")
+       
         setwith_save(false)
         setwith_good(true)
 
@@ -99,7 +99,7 @@ const AddKiosk = () => {
   return (
     <React.Fragment>
       <div className="page-content">
-        <Container fluid>
+        <Container fluid style={{fontFamily:'NanumGothic'}}>
           {/* Render Breadcrumb */}
           <Breadcrumbs breadcrumbItem="키오스크 관리" />
 
@@ -135,12 +135,13 @@ const AddKiosk = () => {
                         <Row>
                           <Col md="2">
                             <div className="mb-3">
-                              <Label htmlFor="productname" style={{ fontWeight: '1000' }}>키오스크 No.</Label>
+                              <Label htmlFor="productname" style={{ fontWeight: '1000' }}>키오스크 NO.</Label>
                               <Input
                                 type="text"
                                 className="form-control"
                                 value={kioskNum}
                                 placeholder="#123456"
+                                style={{fontWeight:'500'}}
                                 onChange={onChangeKn}
                               />
                             </div>
@@ -153,6 +154,7 @@ const AddKiosk = () => {
                                 className="form-control"
                                 value={uniNum}
                                 placeholder="123456"
+                                style={{fontWeight:'500'}}
                                 onChange={onChangeUn}
                               />
                             </div>
@@ -165,6 +167,7 @@ const AddKiosk = () => {
                                 className="form-control"
                                 value={store}
                                 placeholder="XX점"
+                                style={{fontWeight:'500'}}
                                 onChange={onChangeStore}
                               />
                             </div>

@@ -134,7 +134,7 @@ const AdRevise = () => {
             loading &&
             <LoadingBox><Spinner className="m-1" color="primary" /></LoadingBox>
           }
-          <Container fluid>
+          <Container fluid style={{fontFamily:'NanumGothic'}}>
             <Breadcrumbs breadcrumbItem="광고 관리" />
 
             <div className="checkout-tabs">
@@ -178,6 +178,7 @@ const AdRevise = () => {
                                       type="text"
                                       className="form-control"
                                       placeholder="#123456"
+                                      style={{fontWeight:'500'}}
                                       value={reviseName}
                                       onChange={onChangeAdName}
                                     />

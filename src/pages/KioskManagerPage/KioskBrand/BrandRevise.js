@@ -125,7 +125,7 @@ const BrandRevise = () => {
   return (
     <React.Fragment>
       <div className="page-content">
-        <Container fluid>
+        <Container fluid style={{fontFamily:'NanumGothic'}}>
           {/* Render Breadcrumb */}
           <Breadcrumbs breadcrumbItem="브랜드관리" />
 
@@ -171,6 +171,7 @@ const BrandRevise = () => {
                                     className="form-control"
                                     id="billing-name"
                                     placeholder="#ABCDEF"
+                                    style={{fontWeight:'500'}}
                                     value={brandName}
 
                                   />
@@ -190,6 +191,7 @@ const BrandRevise = () => {
                                     className="form-control"
                                     id="billing-email-address"
                                     placeholder="123****"
+                                    style={{fontWeight:'500'}}
                                     value={class1}
                                     onChange={onChangeClass1}
                                   />
@@ -209,6 +211,7 @@ const BrandRevise = () => {
                                     className="form-control"
                                     id="billing-phone"
                                     placeholder="Happycall"
+                                    style={{fontWeight:'500'}}
                                     value={class2}
                                     onChange={onChangeClass2}
                                   />
@@ -228,6 +231,7 @@ const BrandRevise = () => {
                                     className="form-control"
                                     id="billing-phone"
                                     placeholder="Happycall"
+                                    style={{fontWeight:'500'}}
                                     value={class3}
                                     onChange={onChangeClass3}
                                   />
@@ -247,6 +251,7 @@ const BrandRevise = () => {
                                     className="form-control"
                                     id="billing-phone"
                                     placeholder="Happycall"
+                                    style={{fontWeight:'500'}}
                                     value={class4}
                                     onChange={onChangeClass4}
                                   />

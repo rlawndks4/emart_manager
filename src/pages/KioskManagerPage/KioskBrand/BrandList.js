@@ -205,7 +205,7 @@ const BrandList = () => {
   return (
     <React.Fragment>
       <div className="page-content">
-        <Container fluid>
+        <Container fluid style={{fontFamily:'NanumGothic'}}>
           <Breadcrumbs breadcrumbItem="브랜드관리" />
           <Row>
             <Col lg="12">

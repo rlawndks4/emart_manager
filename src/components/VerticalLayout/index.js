@@ -47,8 +47,8 @@ class Layout extends Component {
     window.scrollTo(0, 0)
     let currentage = this.capitalizeFirstLetter(this.props.location.pathname)
 
-    document.title =
-      currentage
+    document.title = 
+      currentage + " | Emart The Kitchen"
     if (this.props.leftSideBarTheme) {
       this.props.changeSidebarTheme(this.props.leftSideBarTheme)
     }

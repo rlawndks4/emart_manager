@@ -106,7 +106,7 @@ const BrandRevise = () => {
       setStatusNum(0)
     }
   })
-  console.log(statusNum)
+
   const onChangeClass1 = (e) => {
     setClass1(e.target.value)
   }

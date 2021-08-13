@@ -109,7 +109,7 @@ const AddProduct = () => {
   useEffect(() => {
     async function fetchPosts() {
       const { data: response } = await axios.get(`/api/allbrand/${'kissher'}`)
-      console.log(response.data)
+    
       setMiddleClassList(response.data)
     }
     fetchPosts()
@@ -126,7 +126,7 @@ const AddProduct = () => {
   const handleSelectMiddleClass = (e) => {
     setSelectedmiddleClass(e.target.value);
   };
-  console.log(selectedmiddleClass)
+ 
   const handleSelectStatus = (e) => {
     setSelectedStatus(e.target.value);
   };

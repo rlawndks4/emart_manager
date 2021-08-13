@@ -138,8 +138,14 @@ const KioskList = () => {
       const { data: response } = await axios.get(`/api/kiosk/${page}?status=${paid}&firstdate=${firstDate}&lastdate=${secondDate}`);
       setPosts(response.data.result);
       setMaxPage(response.data.maxPage);
+      setLoading(false);
+    }
+    fetchPosts()
+  }, []);
+  useEffect(() => {
+    async function fetchPosts() {
+      setLoading(true);
       const { data: res } = await axios.get(`/api/kiosk/${0}?status=${paid}&firstdate=${firstDate}&lastdate=${secondDate}`);
-
       setExelPost(res.data.result);
       setLoading(false);
     }
@@ -168,15 +174,18 @@ const KioskList = () => {
       setLoading(true);
       const page = num
       setCurrentPage(num)
-      const { data: response } = await axios.get(`/api/kiosk/${page}?status=${paid}&firstdate=${firstDate}&lastdate=${secondDate}`);
       const { data: res } = await axios.get(`/api/kiosk/${0}?status=${paid}&firstdate=${firstDate}&lastdate=${secondDate}`);
-      setPosts(response.data.result);
       setExelPost(res.data.result);
+      const { data: response } = await axios.get(`/api/kiosk/${page}?status=${paid}&firstdate=${firstDate}&lastdate=${secondDate}`);
+      setPosts(response.data.result);
+      setMaxPage(response.data.maxPage);
       setLoading(false);
     }
     fetchPosts()
   };
-
+  console.log(paid)
+console.log(posts)
+console.log(exelPost)
   function onChangePageColor(num) {
     if (currentPage == num) {
       return { background: '#5B73E8', color: '#ffffff' }

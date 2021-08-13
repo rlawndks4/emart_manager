@@ -79,9 +79,9 @@ display: flex;
 flex-direction: column;
 `
 const Strong = styled.strong`
-font-size:14px;
+font-size:10px;
 @media screen and (max-width:1250px) {
-  font-size:8px;
+  font-size:6px;
 }
 `
 const KioskList = () => {
@@ -102,6 +102,7 @@ const KioskList = () => {
   const [secondDate, setSecondDate] = useState('2021-09-30')
   const [exelPost, setExelPost] = useState([])
   const [paid, setPaid] = useState(0)
+  const [unPaid, setUnPaid] = useState(0)
   const headers = [
     { label: "Kiosk Number", key: "kiosk_num" },
     { label: "Store Name", key: "store_name" },
@@ -134,7 +135,7 @@ const KioskList = () => {
     async function fetchPosts() {
       setLoading(true);
       const page = currentPage
-      const { data: response } = await axios.get(`/api/kiosk/${page}?status=${paid}&firstdate=${firstDate}&lastdate=${secondDate}`);
+      const { data: response } = await axios.get(`/api/kiosk/${page}?firstdate=${firstDate}&lastdate=${secondDate}`);
       setPosts(response.data.result);
       setMaxPage(response.data.maxPage);
       setLoading(false);
@@ -144,7 +145,7 @@ const KioskList = () => {
   useEffect(() => {
     async function fetchPosts() {
       setLoading(true);
-      const { data: res } = await axios.get(`/api/kiosk/${0}?status=${paid}&firstdate=${firstDate}&lastdate=${secondDate}`);
+      const { data: res } = await axios.get(`/api/kiosk/${0}?firstdate=${firstDate}&lastdate=${secondDate}`);
       setExelPost(res.data.result);
       setLoading(false);
     }
@@ -173,11 +174,20 @@ const KioskList = () => {
       setLoading(true);
       const page = num
       setCurrentPage(num)
-      const { data: res } = await axios.get(`/api/kiosk/${0}?status=${paid}&firstdate=${firstDate}&lastdate=${secondDate}`);
-      setExelPost(res.data.result);
-      const { data: response } = await axios.get(`/api/kiosk/${page}?status=${paid}&firstdate=${firstDate}&lastdate=${secondDate}`);
-      setPosts(response.data.result);
-      setMaxPage(response.data.maxPage);
+      if(paid==0&&unPaid==0){
+        const { data: res } = await axios.get(`/api/kiosk/${0}?firstdate=${firstDate}&lastdate=${secondDate}`);
+        setExelPost(res.data.result);
+        const { data: response } = await axios.get(`/api/kiosk/${page}?firstdate=${firstDate}&lastdate=${secondDate}`);
+        setPosts(response.data.result);
+        setMaxPage(response.data.maxPage);
+      }
+      else{
+        const { data: res } = await axios.get(`/api/kiosk/${0}?status=${paid}&firstdate=${firstDate}&lastdate=${secondDate}`);
+        setExelPost(res.data.result);
+        const { data: response } = await axios.get(`/api/kiosk/${page}?status=${paid}&firstdate=${firstDate}&lastdate=${secondDate}`);
+        setPosts(response.data.result);
+        setMaxPage(response.data.maxPage);
+      }
       setLoading(false);
     }
     fetchPosts()
@@ -247,11 +257,12 @@ const KioskList = () => {
   }
   const onChangePaid = (e) => {
     setPaid(1)
+    setUnPaid(0)
   }
   const onChangeUnpaid = (e) => {
+    setUnPaid(1)
     setPaid(0)
   }
-
 
   const onChangeFirst = (e) => {
     setFirstDate(e.target.value)
@@ -287,7 +298,7 @@ const KioskList = () => {
                           name="exampleRadios"
                           id="exampleRadios1"
                           value="option1"
-                          defaultChecked
+                          
                           onChange={onChangeUnpaid}
                         />
                         {" "}
@@ -305,7 +316,7 @@ const KioskList = () => {
                           type="radio"
                           name="exampleRadios"
                           id="exampleRadios2"
-                          value="option2"
+                          value="option1"
                           onChange={onChangePaid}
                         />
                         {" "}
@@ -403,11 +414,11 @@ const KioskList = () => {
                               onStatus(post.status) ?
                                 <div style={{ width: '100%' }}>
                                   
-                                    <Link to="#" className="btn btn-primary" style={{ width: '45%' }}><Strong>지급완료</Strong></Link>
+                                    <button  className="btn btn-primary" style={{ width: '45%', padding:'5px'}}><Strong>지급완료</Strong></button>
                                     {" "}
-                                    <Link to="#" className="btn btn-primary" onClick={() => {
+                                    <button  className="btn btn-primary" onClick={() => {
                                       handleCancelKiosk(post.pk)
-                                    }} style={{ width: '45%' }}><Strong>취소</Strong></Link>
+                                    }} style={{ width: '45%' , padding:'5px'}}><Strong>취소</Strong></button>
                                   
                                 </div>
                                 :

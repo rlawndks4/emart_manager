@@ -8,7 +8,6 @@ import styled from "styled-components"
 import SweetAlert from "react-bootstrap-sweetalert"
 import { useHistory } from 'react-router'
 import { Pagination, PaginationItem, PaginationLink } from "reactstrap"
-import { CSVDownload } from "react-csv";
 import XLSX from "xlsx";
 const CheckBox = styled.input`
 margin: 14px 14px 14px;
@@ -183,9 +182,7 @@ const KioskList = () => {
     }
     fetchPosts()
   };
-  console.log(paid)
-console.log(posts)
-console.log(exelPost)
+ 
   function onChangePageColor(num) {
     if (currentPage == num) {
       return { background: '#5B73E8', color: '#ffffff' }

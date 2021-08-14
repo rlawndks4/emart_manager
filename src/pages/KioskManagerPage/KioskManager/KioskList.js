@@ -9,6 +9,7 @@ import SweetAlert from "react-bootstrap-sweetalert"
 import { useHistory } from 'react-router'
 import { Pagination, PaginationItem, PaginationLink } from "reactstrap"
 import XLSX from "xlsx";
+import deletepic from "../delete.png"
 const CheckBox = styled.input`
 margin: 14px 14px 14px;
 `
@@ -311,7 +312,7 @@ const KioskList = () => {
             <Col lg="12">
 
               <React.Fragment>
-                <div className="p-4 border-top">
+                <div>
                   <Card>
                     <Row>
                      <DateContainer>
@@ -404,6 +405,7 @@ const KioskList = () => {
                         </DateContainer>
                         </Row>
                   </Card>
+
                   <div className="table-responsive mb-4">
 
                     <Table style={{ background: '#EEF1FD' }}>
@@ -445,7 +447,7 @@ const KioskList = () => {
                               
                                     <Link to="#" className="btn btn-primary" onClick={() => {
                                       handleCancelKiosk(post.pk)
-                                    }}><strong>취소</strong></Link>
+                                    }} style={{padding:'7.5px 21px 7.5px'}}><strong>취소</strong></Link>
                            
                                 :
                                 <>
@@ -474,35 +476,25 @@ const KioskList = () => {
 
                     {with_delete ? (
                       <SweetAlert
-                        title="정말 삭제하시겠습니까?"
-                        warning
+                        
                         showConfirm={false}
                         style={{
                           paddingBottom: '42px'
                         }}
                       >
-                        <br />
+                        <div style={{ paddingBottom: '52px', paddingTop: '30px' }}>
+                            <img src={deletepic} />
+                          </div>
+
+                          <h3><strong>정말 삭제 하시겠습니까?</strong></h3>
+                          <br />
                         <Link to="#" className="btn btn-danger" onClick={() => {
                           setwith_delete(false)
                         }}> <i className="uil uil-times me-1" ></i> 취소 </Link>{" "}
                         <Link to="#" className="btn btn-success" onClick={onDelete}> <i className="uil uil-file-alt me-1"></i> 확인 </Link>
                       </SweetAlert>
-
                     ) : null}
-                    {with_good ? (
-                      <SweetAlert
-                        title="삭제되었습니다."
-                        warning
-                        showConfirm={false}
-                        style={{
-                          paddingBottom: '42px'
-                        }}
-                      >
-                        <br />
-
-                        <Link to="/kiosk-list" className="btn btn-primary" onClick={() => { setwith_good(false) }}> <i className="uil uil-file-alt me-1"></i> 확인 </Link>
-                      </SweetAlert>
-                    ) : null}
+                    
                     <Row className="row mb-4">
                       <div className="col text-end">
                         <Link to="/add-kiosk" className="btn btn-primary">+ 추가하기</Link>

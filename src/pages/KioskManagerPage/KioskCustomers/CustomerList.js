@@ -9,6 +9,7 @@ import SweetAlert from "react-bootstrap-sweetalert"
 import { useHistory } from 'react-router';
 import { AvForm } from "availity-reactstrap-validation"
 import { Pagination, PaginationItem, PaginationLink } from "reactstrap"
+import deletepic from "../delete.png"
 const CheckBox = styled.input`
 margin: 14px 14px 14px;
 `
@@ -268,20 +269,23 @@ const CustomerList = (props) => {
                     </>
                     {with_delete ? (
                       <SweetAlert
-                        title="정말 삭제하시겠습니까?"
-                        warning
+                        
                         showConfirm={false}
                         style={{
                           paddingBottom: '42px'
                         }}
                       >
-                        <br />
+                        <div style={{ paddingBottom: '52px', paddingTop: '30px' }}>
+                            <img src={deletepic} />
+                          </div>
+
+                          <h3><strong>정말 삭제 하시겠습니까?</strong></h3>
+                          <br />
                         <Link to="#" className="btn btn-danger" onClick={() => {
                           setwith_delete(false)
                         }}> <i className="uil uil-times me-1" ></i> 취소 </Link>{" "}
                         <Link to="#" className="btn btn-success" onClick={onDelete}> <i className="uil uil-file-alt me-1"></i> 확인 </Link>
                       </SweetAlert>
-
                     ) : null}
 
                     <Row className="row mb-4">

@@ -18,6 +18,8 @@ import axios from 'axios'
 import { useHistory } from 'react-router';
 import cancel from "./cancel.png"
 import save from "./save.png"
+import up from "./up.png"
+import down from "./down.png"
 const AddBrand = () => {
   const history = useHistory()
   const [isOpen, setIsOpen] = useState(true);

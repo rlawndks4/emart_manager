@@ -10,6 +10,8 @@ import { useHistory } from 'react-router'
 import { Pagination, PaginationItem, PaginationLink } from "reactstrap"
 import XLSX from "xlsx";
 import deletepic from "../delete.png"
+import moment from 'moment';
+import 'moment/locale/ko';
 const CheckBox = styled.input`
 margin: 14px 14px 14px;
 `
@@ -116,9 +118,14 @@ padding-left:16px;
 const ExtractContent = styled.div`
 width:45%;
 `
+
 const KioskList = () => {
 
   const history = useHistory()
+  
+  const date1 = moment().subtract(1,'year').format('YYYY-MM-DD')
+  const date2 = moment().format('YYYY-MM-DD')
+  
   const [deleteNum, setDeleteNum] = useState(0)
   const [posts, setPosts] = useState([]);
   const [maxPage, setMaxPage] = useState(0);
@@ -130,8 +137,8 @@ const KioskList = () => {
   const [with_good, setwith_good] = useState(false);
 
   const [revisePk, setRevisePk] = useState(0)
-  const [firstDate, setFirstDate] = useState('2021-08-01')
-  const [secondDate, setSecondDate] = useState('2021-08-01')
+  const [firstDate, setFirstDate] = useState(date1)
+  const [secondDate, setSecondDate] = useState(date2)
   const [exelPost, setExelPost] = useState([])
   const [paid, setPaid] = useState(0)
   const [unPaid, setUnPaid] = useState(0)
@@ -183,7 +190,7 @@ const KioskList = () => {
     }
     fetchPosts()
   }, []);
-
+ 
   const onDelete = async (e) => {
     e.preventDefault()
     const { data: res } = await axios.get('/api/auth')
@@ -370,7 +377,7 @@ const KioskList = () => {
                        <input
                             className="form-control"
                             type="date"
-                            defaultValue="2021-08-01"
+                            defaultValue={date1}
                             id="example-date-input"
                             onChange={onChangeFirst}
                           />
@@ -384,7 +391,7 @@ const KioskList = () => {
                        <input
                             className="form-control"
                             type="date"
-                            defaultValue="2021-08-01"
+                            defaultValue={date2}
                             id="example-date-input"
                             onChange={onChangeSecond}
                           />

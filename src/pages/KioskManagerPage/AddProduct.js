@@ -20,7 +20,8 @@ import axios from 'axios'
 import { useHistory } from 'react-router';
 import cancel from "./cancel.png"
 import save from "./save.png"
-import Select from "react-select"
+import up from "./up.png"
+import down from "./down.png"
 const AddProduct = () => {
 
   const history = useHistory();
@@ -41,21 +42,58 @@ const AddProduct = () => {
   const [qrFile, setQrFile] = useState({
     file: []
   });
-  const toggle = () => setIsOpen(!isOpen);
 
+  const [toggleIcon, setToggleIcon] = useState(`${up}`)
+  const toggle = () => {
+    setIsOpen(!isOpen)
+    if(toggleIcon==`${up}`){
+      setToggleIcon(`${down}`)
+    }
+    else{
+      setToggleIcon(`${up}`)
+    }
+  };
 
+  const [toggleProductIcon, setToggleProductIcon] = useState(`${down}`)
   const [isOpenAddproduct, setIsOpenAddproduct] = useState(false);
-  const toggleAddproduct = () => setIsOpenAddproduct(!isOpenAddproduct);
+  const toggleAddproduct = () => {
+    setIsOpenAddproduct(!isOpenAddproduct)
+    if(toggleProductIcon==`${up}`){
+      setToggleProductIcon(`${down}`)
+    }
+    else{
+      setToggleProductIcon(`${up}`)
+    }
 
+  };
+
+  const [toggleDetailProductIcon, setToggleDetailProductIcon] = useState(`${down}`)
   const [isOpenAddDetailproduct, setIsOpenAddDetailproduct] = useState(false);
-  const toggleAddDetailproduct = () => setIsOpenAddDetailproduct(!isOpenAddDetailproduct);
+  const toggleAddDetailproduct = () => {
+    setIsOpenAddDetailproduct(!isOpenAddDetailproduct)
+    if(toggleDetailProductIcon==`${up}`){
+      setToggleDetailProductIcon(`${down}`)
+    }
+    else{
+      setToggleDetailProductIcon(`${up}`)
+    }
 
+  };
+  
+  const [toggleQrProductIcon, setToggleQrProductIcon] = useState(`${down}`)
   const [isOpenAddQRproduct, setIsOpenAddQRproduct] = useState(false);
-  const toggleAddQRproduct = () => setIsOpenAddQRproduct(!isOpenAddQRproduct);
+  const toggleAddQRproduct = () => {
+    setIsOpenAddQRproduct(!isOpenAddQRproduct)
+    if(toggleQrProductIcon==`${up}`){
+      setToggleQrProductIcon(`${down}`)
+    }
+    else{
+      setToggleQrProductIcon(`${up}`)
+    }
 
-  const [isOpenMetadata, setIsOpenMetadata] = useState(false);
+  };
 
-  const toggleMetadata = () => setIsOpenMetadata(!isOpenMetadata);
+ 
 
   const [with_save, setwith_save] = useState(false);
   const [with_cancel, setwith_cancel] = useState(false);
@@ -258,9 +296,10 @@ const AddProduct = () => {
                           <h5 className="font-size-16 mb-1" style={{ fontFamily: 'NanumGothic', fontWeight: 'bold' }}>상품 추가</h5>
                           <p className="text-muted text-truncate mb-0">아래의 모든 정보를 입력하세요.</p>
                         </div>
-                        <i className="mdi mdi-chevron-up accor-down-icon font-size-24"></i>
+                        {/* <i className="mdi mdi-chevron-up accor-down-icon font-size-24"></i> */}
+                        <img src={toggleIcon}/>
                       </Media>
-
+                      
                     </div>
                   </Link>
 
@@ -384,11 +423,11 @@ const AddProduct = () => {
                           </div>
                         </div>
                         <div className="flex-1 overflow-hidden">
-                          <h5 className="font-size-16 mb-1">메인 이미지</h5>
-                          <p className="text-muted text-truncate mb-0">메인 사진을 등록해 주세요.
+                          <h5 className="font-size-16 mb-1" style={{ fontFamily: 'NanumGothic', fontWeight: 'bold' }}>메인 이미지</h5>
+                          <p className="text-muted text-truncate mb-0">메인 이미지를 등록해 주세요.
                             <br />이미지는 238x238 사이즈로 JPG, PNG 파일 이미지만 등록 가능합니다.</p>
                         </div>
-                        <i className="mdi mdi-chevron-up accor-down-icon font-size-24"></i>
+                        <img src={toggleProductIcon}/>
                       </Media>
 
                     </div>
@@ -471,11 +510,11 @@ const AddProduct = () => {
                           </div>
                         </div>
                         <div className="flex-1 overflow-hidden">
-                          <h5 className="font-size-16 mb-1">상세 이미지</h5>
-                          <p className="text-muted text-truncate mb-0">상세 사진을 등록해 주세요.
+                          <h5 className="font-size-16 mb-1" style={{ fontFamily: 'NanumGothic', fontWeight: 'bold' }}>상세 이미지</h5>
+                          <p className="text-muted text-truncate mb-0">상세 이미지를 등록해 주세요.
                             <br />이미지는 1000x1200 사이즈로 JPG, PNG 파일 이미지만 등록 가능합니다.</p>
                         </div>
-                        <i className="mdi mdi-chevron-up accor-down-icon font-size-24"></i>
+                        <img src={toggleDetailProductIcon}/>
                       </Media>
 
                     </div>
@@ -557,11 +596,11 @@ const AddProduct = () => {
                           </div>
                         </div>
                         <div className="flex-1 overflow-hidden">
-                          <h5 className="font-size-16 mb-1">QR 코드 이미지</h5>
-                          <p className="text-muted text-truncate mb-0">QR 코드 사진을 등록해 주세요.
+                          <h5 className="font-size-16 mb-1" style={{ fontFamily: 'NanumGothic', fontWeight: 'bold' }}>QR 코드 이미지</h5>
+                          <p className="text-muted text-truncate mb-0">QR 코드 이미지를 등록해 주세요.
                             <br />이미지는 320x320 사이즈로 JPG,PNG 파일 이미지만 등록 가능합니다.</p>
                         </div>
-                        <i className="mdi mdi-chevron-up accor-down-icon font-size-24"></i>
+                        <img src={toggleQrProductIcon}/>
                       </Media>
 
                     </div>

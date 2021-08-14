@@ -19,6 +19,8 @@ import { useHistory } from 'react-router'
 import cancel from "./cancel.png"
 import save from "./save.png"
 import styled from "styled-components"
+import up from "./up.png"
+import down from "./down.png"
 const UseBrandContainer = styled.div`
 display:flex;
 padding-left: 0;
@@ -33,7 +35,16 @@ cursor:pointer;
 const AddCustomers = () => {
   const history = useHistory()
   const [isOpen, setIsOpen] = useState(true);
-  const toggle = () => setIsOpen(!isOpen);
+  const [toggleIcon, setToggleIcon] = useState(`${up}`)
+  const toggle = () => {
+    setIsOpen(!isOpen)
+    if(toggleIcon==`${up}`){
+      setToggleIcon(`${down}`)
+    }
+    else{
+      setToggleIcon(`${up}`)
+    }
+  };
   const [with_save, setwith_save] = useState(false);
   const [with_cancel, setwith_cancel] = useState(false);
   const [with_good, setwith_good] = useState(false);
@@ -202,7 +213,7 @@ const AddCustomers = () => {
                             <h5 className="font-size-16 mb-1" style={{ fontFamily: 'NanumGothic', fontWeight: 'bold' }}>회원 추가</h5>
                             <p className="text-muted text-truncate mb-0">아래의 모든 정보를 입력하세요.</p>
                           </div>
-                          <i className="mdi mdi-chevron-up accor-down-icon font-size-24"></i>
+                          <img src={toggleIcon}/>
                         </Media>
                       </div>
                     </Link>

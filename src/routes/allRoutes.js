@@ -162,7 +162,7 @@ const userRoutes = [
   { path: "/add-ad", component: AddAd },
   { path: "/add-customer", component: AddCustomers },
   { path: "/add-kiosk", component: AddKiosk },
-  { path: "/add-brand", component: AddBrand},
+  // { path: "/add-brand", component: AddBrand},
 
   // //Email
   // { path: "/email-inbox", component: EmailInbox },

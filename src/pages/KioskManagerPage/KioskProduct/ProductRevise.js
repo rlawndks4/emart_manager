@@ -22,6 +22,18 @@ import cancel from "../cancel.png"
 import save from "../save.png"
 import up from "../up.png"
 import down from "../down.png"
+import select from "../select.png"
+import styled from "styled-components"
+const Select = styled.select`
+
+  width: 100%; 
+  font-family: inherit;
+  background: url(${select}) no-repeat 97.5% 50%;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  
+`
 const ProductRevise = () => {
 
   const history = useHistory();
@@ -111,6 +123,8 @@ const ProductRevise = () => {
 
   const [selectedmiddleClass, setSelectedmiddleClass] = useState("프라이팬");
   const [middleClassList, setMiddleClassList] = useState([]);
+
+  
   const isAdmin = async () => {
 
     const { data: response } = await axios.get('/api/auth')
@@ -280,6 +294,7 @@ const ProductRevise = () => {
     setQrFile(selectedQrFiles[0])
   })
 
+
   return (
     <React.Fragment>
       <div className="page-content">
@@ -344,7 +359,8 @@ const ProductRevise = () => {
                             <div className="mb-3">
                               <Label style={{ fontWeight: '1000' }}>중분류</Label>
                               <form >
-                                <select className="form-control" name="userlevel"
+                              
+                                <Select className="form-control" name="userlevel"
                                   onChange={handleSelectMiddleClass} value={selectedmiddleClass}>
                                   <option>
                                     {middleClassList.middle_class_1}
@@ -358,7 +374,8 @@ const ProductRevise = () => {
                                   <option>
                                     {middleClassList.middle_class_4}
                                   </option>
-                                </select>
+                                </Select>
+                                
                               </form>
                             </div>
                           </Col>
@@ -368,14 +385,16 @@ const ProductRevise = () => {
                             <div className="mb-3">
                               <Label style={{ fontWeight: '1000' }}>상품분류</Label>
                               <form >
-                                <select className="form-control" name="userlevel"
+                              
+                                <Select className="form-control" name="userlevel"
                                   onChange={handleSelectClass} value={selectedclass}>
                                   {classList.map((item) => (
                                     <option value={item} key={item}>
                                       {item}
                                     </option>
                                   ))}
-                                </select>
+                                </Select>
+                                
                               </form>
                             </div>
                           </Col>
@@ -383,14 +402,17 @@ const ProductRevise = () => {
                             <div className="mb-3">
                               <Label style={{ fontWeight: '1000' }}>브랜드</Label>
                               <form >
-                                <select className="form-control" name="userlevel"
+                             
+                                <Select className="form-control" name="userlevel"
                                   onChange={handleSelectBrand} value={selectedBrand}>
                                   {brandList.map((item) => (
                                     <option value={item} key={item}>
                                       {item}
                                     </option>
                                   ))}
-                                </select>
+                                  
+                                </Select>
+                                
                               </form>
                             </div>
                           </Col>
@@ -398,14 +420,16 @@ const ProductRevise = () => {
                             <div className="mb-3">
                               <Label style={{ fontWeight: '1000' }}>상태</Label>
                               <form >
-                                <select className="form-control" name="userlevel"
+                             
+                                <Select className="form-control" name="userlevel"
                                   onChange={handleSelectStatus} value={selectedStatus}>
                                   {statusList.map((item) => (
                                     <option value={item} key={item}>
                                       {item}
                                     </option>
                                   ))}
-                                </select>
+                                </Select>
+                               
                               </form>
                             </div>
                           </Col>

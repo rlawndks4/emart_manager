@@ -117,8 +117,8 @@ const ProductRevise = () => {
   const [selectedclass, setSelectedclass] = useState("일반 상품");
   const [classification, setClassification] = useState(0);
 
-  const brandList = ["kissher", "silit", "happycall", "tefal", "emile henry"];
-  const [selectedBrand, setSelectedBrand] = useState("kissher");
+  const brandList = ["Fissler", "Silit", "Happycall", "Tefal", "Emile henry"];
+  const [selectedBrand, setSelectedBrand] = useState("Fissler");
 
 
   const [selectedmiddleClass, setSelectedmiddleClass] = useState("프라이팬");
@@ -151,10 +151,10 @@ const ProductRevise = () => {
   };
   //서버에 보낼대 int형으로 저장되므로 브랜드 이름과 번호가 매칭이 되게 구성
   useEffect(() => {
-    if (selectedBrand === 'kissher') setBrandPk(1)
-    else if (selectedBrand === 'silit') setBrandPk(2)
-    else if (selectedBrand === 'happycall') setBrandPk(3)
-    else if (selectedBrand === 'tefal') setBrandPk(4)
+    if (selectedBrand === 'Fissler') setBrandPk(1)
+    else if (selectedBrand === 'Silit') setBrandPk(2)
+    else if (selectedBrand === 'Happycall') setBrandPk(3)
+    else if (selectedBrand === 'Tefal') setBrandPk(4)
     else {
       setBrandPk(5)
     }
@@ -189,17 +189,18 @@ const ProductRevise = () => {
   }, [])
   const handleSelectBrand = async (e) => {
     setSelectedBrand(e.target.value);
-    if (e.target.value === 'kissher') setBrandPk(1)
-    else if (e.target.value === 'silit') setBrandPk(2)
-    else if (e.target.value === 'happycall') setBrandPk(3)
-    else if (e.target.value === 'tefal') setBrandPk(4)
+    if (e.target.value === 'Fissler') setBrandPk(1)
+    else if (e.target.value === 'Silit') setBrandPk(2)
+    else if (e.target.value === 'Happycall') setBrandPk(3)
+    else if (e.target.value === 'Tefal') setBrandPk(4)
     else {
       setBrandPk(5)
     }
     const { data: response } = await axios.get(`/api/allbrand/${e.target.value}`)
     setMiddleClassList(response.data)
+    setSelectedmiddleClass(response.data.middle_class_1)
   };
-
+  
   //디비에 저장하게 하는 함수
   const handleSubmit = async (e) => {
     e.preventDefault()

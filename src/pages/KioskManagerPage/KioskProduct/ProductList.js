@@ -195,19 +195,19 @@ const ProductList = () => {
   }
   function setBrand(brd) {
     if (brd == 1) {
-      return "kissher"
+      return "Fissler"
     }
     else if (brd == 2) {
-      return "silit"
+      return "Silit"
     }
     else if (brd == 3) {
-      return "happycall"
+      return "Happycall"
     }
     else if (brd == 4) {
-      return "tefal"
+      return "Tefal"
     }
     else {
-      return "emile henry"
+      return "Emile henry"
     }
   }
 
@@ -284,7 +284,7 @@ const ProductList = () => {
                             pathname: '/product-revise',
                             state: {
                               pk: post.pk, name: post.item_name, num: post.item_num, brand: setBrand(post.brand_pk),
-                              class: setClass(post.classification), middleclass: post.middle_class, status: setStatus(post.status)
+                              class: setClass(post.classification), middleclass: post.middle_class, status: setStatus(post.status) 
                               , mainImage: post.main_image, detailImage: post.detail_image, qrImage: post.qr_image
                             }
 

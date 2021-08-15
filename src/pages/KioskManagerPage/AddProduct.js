@@ -122,8 +122,8 @@ const AddProduct = () => {
   const [selectedclass, setSelectedclass] = useState("일반 상품");
   const [classification, setClassification] = useState(0);
 
-  const brandList = ["kissher", "silit", "happycall", "tefal", "emile henry"];
-  const [selectedBrand, setSelectedBrand] = useState("kissher");
+  const brandList = ["Fissler", "Silit", "Happycall", "Tefal", "Emile henry"];
+  const [selectedBrand, setSelectedBrand] = useState("Fissler");
 
 
   const [middleClassList, setMiddleClassList] = useState([]);
@@ -149,21 +149,23 @@ const AddProduct = () => {
   };
   const handleSelectBrand = async (e) => {
     setSelectedBrand(e.target.value);
-    if (e.target.value === 'kissher') setBrandPk(1)
-    else if (e.target.value === 'silit') setBrandPk(2)
-    else if (e.target.value === 'happycall') setBrandPk(3)
-    else if (e.target.value === 'tefal') setBrandPk(4)
+    if (e.target.value === 'Fissler') setBrandPk(1)
+    else if (e.target.value === 'Silit') setBrandPk(2)
+    else if (e.target.value === 'Happycall') setBrandPk(3)
+    else if (e.target.value === 'Tefal') setBrandPk(4)
     else {
       setBrandPk(5)
     }
     const { data: response } = await axios.get(`/api/allbrand/${e.target.value}`)
     setMiddleClassList(response.data)
+    setSelectedmiddleClass(response.data.middle_class_1)
   };
   useEffect(() => {
     async function fetchPosts() {
-      const { data: response } = await axios.get(`/api/allbrand/${'kissher'}`)
+      const { data: response } = await axios.get(`/api/allbrand/${'Fissler'}`)
     
       setMiddleClassList(response.data)
+      setSelectedmiddleClass(response.data.middle_class_1)
     }
     fetchPosts()
   }, [])

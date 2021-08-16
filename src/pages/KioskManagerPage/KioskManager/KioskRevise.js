@@ -120,7 +120,7 @@ const KioskRevise = () => {
 
   return (
     <React.Fragment>
-      <div className="page-content">
+      <div className="page-content" style={{color:'#596275'}}>
         <Container fluid style={{fontFamily:'NanumGothic'}}>
           {/* Render Breadcrumb */}
           <Breadcrumbs breadcrumbItem="키오스크 관리" />

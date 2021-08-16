@@ -298,7 +298,7 @@ const ProductRevise = () => {
 
   return (
     <React.Fragment>
-      <div className="page-content">
+      <div className="page-content" style={{color:'#596275'}}>
         <Container fluid style={{fontFamily:'NanumGothic'}}>
           <Breadcrumbs breadcrumbItem="상품관리" />
           <Row>

@@ -28,6 +28,9 @@ const Table = styled.table`
   justify-content: space-between;
   box-shadow: 1px 1px 1px #00000029;
   word-break:break-all;
+  th{
+    color: #596275;
+  }
 `
 const ID = styled.th`
   width: 15%;
@@ -133,8 +136,8 @@ const CustomerList = (props) => {
     }
     else {
 
-      if (!response.first) {
-        alert('개발자만 접근 가능합니다.')
+      if (!response.second) {
+        alert('관리자만 접근 가능합니다.')
         history.push('/product-list')
       } else {
         setLoading(false)
@@ -202,7 +205,7 @@ const CustomerList = (props) => {
   }
   return (
     <React.Fragment>
-      <div className="page-content">
+      <div className="page-content" style={{color:'#596275'}}>
         <Container fluid style={{fontFamily:'NanumGothic'}}>
           <Breadcrumbs breadcrumbItem="회원관리" />
           <Row>

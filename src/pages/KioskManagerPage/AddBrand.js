@@ -102,7 +102,7 @@ const AddBrand = () => {
 
   return (
     <React.Fragment>
-      <div className="page-content">
+      <div className="page-content" style={{color:'#596275'}}>
         <Container fluid style={{fontFamily:'NanumGothic'}}>
           {/* Render Breadcrumb */}
           <Breadcrumbs breadcrumbItem="브랜드 관리" />

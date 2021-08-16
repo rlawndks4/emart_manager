@@ -131,7 +131,7 @@ const AddAd = () => {
   }
   return (
     <React.Fragment>
-      <div className="page-content">
+      <div className="page-content" style={{color:'#596275'}}>
         <Container fluid style={{fontFamily:'NanumGothic'}}>
           <Breadcrumbs breadcrumbItem="광고 관리" />
 

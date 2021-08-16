@@ -79,8 +79,8 @@ const AddCustomers = () => {
     }
     else {
 
-      if (!response.first) {
-        alert('개발자만 접근 가능합니다.')
+      if (!response.second) {
+        alert('관리자만 접근 가능합니다.')
         history.push('/product-list')
       } else {
         setLoading(false)
@@ -189,7 +189,7 @@ const AddCustomers = () => {
 
   return (
     <React.Fragment>
-      <div className="page-content">
+      <div className="page-content" style={{color:'#596275'}}>
         <Container fluid style={{fontFamily:'NanumGothic'}}>
           {/* Render Breadcrumb */}
           <Breadcrumbs breadcrumbItem="회원 관리" />

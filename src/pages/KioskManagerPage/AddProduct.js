@@ -162,6 +162,7 @@ const AddProduct = () => {
   };
   useEffect(() => {
     async function fetchPosts() {
+      
       const { data: response } = await axios.get(`/api/allbrand/${'Fissler'}`)
     
       setMiddleClassList(response.data)
@@ -291,8 +292,8 @@ const AddProduct = () => {
 
   return (
     <React.Fragment>
-      <div className="page-content">
-        <Container fluid style={{fontFamily:'NanumGothic'}}>
+      <div className="page-content" style={{color:'#596275'}}>
+        <Container fluid style={{fontFamily:'NanumGothic',color:'#596275 important!'}}>
           <Breadcrumbs breadcrumbItem="상품추가" />
           <Row>
             <Col lg="12">

@@ -28,6 +28,9 @@ const Table = styled.table`
   justify-content: space-between;
   box-shadow: 1px 1px 1px #00000029;
   word-break:break-all;
+  th{
+    color: #596275;
+  }
 `
 const AdName = styled.th`
   width: 15%;
@@ -177,7 +180,7 @@ const AdList = () => {
   return (
     <React.Fragment>
 
-      <div className="page-content">
+      <div className="page-content" style={{color:'#596275'}}>
         <Container fluid style={{fontFamily:'NanumGothic'}}>
 
           <Breadcrumbs breadcrumbItem="광고관리" />

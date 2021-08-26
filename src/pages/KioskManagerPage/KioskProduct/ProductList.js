@@ -201,7 +201,7 @@ const ProductList = () => {
       return "Fissler"
     }
     else if (brd == 2) {
-      return "Silit"
+      return "WTF"
     }
     else if (brd == 3) {
       return "Happycall"
@@ -209,9 +209,7 @@ const ProductList = () => {
     else if (brd == 4) {
       return "Tefal"
     }
-    else {
-      return "Emile henry"
-    }
+    
   }
 
   function setStatus(stt) {

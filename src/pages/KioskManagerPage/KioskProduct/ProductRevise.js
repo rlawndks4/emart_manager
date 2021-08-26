@@ -117,7 +117,7 @@ const ProductRevise = () => {
   const [selectedclass, setSelectedclass] = useState("일반 상품");
   const [classification, setClassification] = useState(0);
 
-  const brandList = ["Fissler", "Silit", "Happycall", "Tefal", "Emile henry"];
+  const brandList = ["Fissler", "WTF", "Happycall", "Tefal"];
   const [selectedBrand, setSelectedBrand] = useState("Fissler");
 
 
@@ -152,7 +152,7 @@ const ProductRevise = () => {
   //서버에 보낼대 int형으로 저장되므로 브랜드 이름과 번호가 매칭이 되게 구성
   useEffect(() => {
     if (selectedBrand === 'Fissler') setBrandPk(1)
-    else if (selectedBrand === 'Silit') setBrandPk(2)
+    else if (selectedBrand === 'WTF') setBrandPk(2)
     else if (selectedBrand === 'Happycall') setBrandPk(3)
     else if (selectedBrand === 'Tefal') setBrandPk(4)
     else {
@@ -190,7 +190,7 @@ const ProductRevise = () => {
   const handleSelectBrand = async (e) => {
     setSelectedBrand(e.target.value);
     if (e.target.value === 'Fissler') setBrandPk(1)
-    else if (e.target.value === 'Silit') setBrandPk(2)
+    else if (e.target.value === 'WTF') setBrandPk(2)
     else if (e.target.value === 'Happycall') setBrandPk(3)
     else if (e.target.value === 'Tefal') setBrandPk(4)
     else {

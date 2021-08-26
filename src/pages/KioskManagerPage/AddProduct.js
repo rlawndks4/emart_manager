@@ -122,7 +122,7 @@ const AddProduct = () => {
   const [selectedclass, setSelectedclass] = useState("일반 상품");
   const [classification, setClassification] = useState(0);
 
-  const brandList = ["Fissler", "Silit", "Happycall", "Tefal", "Emile henry"];
+  const brandList = ["Fissler", "WTF", "Happycall", "Tefal"];
   const [selectedBrand, setSelectedBrand] = useState("Fissler");
 
 
@@ -150,12 +150,9 @@ const AddProduct = () => {
   const handleSelectBrand = async (e) => {
     setSelectedBrand(e.target.value);
     if (e.target.value === 'Fissler') setBrandPk(1)
-    else if (e.target.value === 'Silit') setBrandPk(2)
+    else if (e.target.value === 'WTF') setBrandPk(2)
     else if (e.target.value === 'Happycall') setBrandPk(3)
     else if (e.target.value === 'Tefal') setBrandPk(4)
-    else {
-      setBrandPk(5)
-    }
     const { data: response } = await axios.get(`/api/allbrand/${e.target.value}`)
     setMiddleClassList(response.data)
     setSelectedmiddleClass(response.data.middle_class_1)

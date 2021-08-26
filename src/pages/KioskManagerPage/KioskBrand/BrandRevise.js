@@ -31,8 +31,8 @@ const BrandRevise = () => {
       history.push('/login')
     }
     else {
-      if (!response.first) {
-        alert('개발자만 접근 가능합니다.')
+      if (!response.second) {
+        alert('관리자만 접근 가능합니다.')
         history.push('/product-list')
       } else {
         setLoading(false)

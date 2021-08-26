@@ -196,6 +196,17 @@ const CustomerList = (props) => {
     num = num.replace('T', ' ')
     return num
   }
+  function onUserLevel(num){
+    if(num==0){
+      return '일반유저'
+    }
+    else if(num==40){
+      return '관리자'
+    }
+    else{
+      return 'dev'
+    }
+  }
   const pageNumbers = [];
   for (let i = 1; i <= maxPage; i++) {
     pageNumbers.push(i);
@@ -244,29 +255,57 @@ const CustomerList = (props) => {
                         <LoadingBox><Spinner className="m-1" color="primary" /></LoadingBox>
                       }
                       {posts && posts.map(post => (
+ 
                         <Table key={post.pk}>
                           <CheckBox type="checkbox" id="cb1" />
-                          <ID><ListText>{post.id}</ListText></ID>
-                          <PW><ListText>{post.pw}</ListText></PW>
-                          <UserLevel><ListText>{post.user_level}</ListText></UserLevel>
+                          <ID>
+                            {
+                              post.user_level == 50 ?
+                              <ListText>********</ListText>
+                              :
+                              <>
+                              <ListText>{post.id}</ListText>
+                              </>
+                            }
+                          </ID>
+                          <PW>
+                            <ListText>********</ListText>
+                          </PW>
+                          <UserLevel><ListText>{onUserLevel(post.user_level)}</ListText></UserLevel>
                           <Date><ListText>
-
                             {onCreateTime(post.create_time)}
-
                           </ListText></Date>
                           <Modify>
+                            {
+                              post.user_level == 50 ?
+                              <Link className="px-3 text-primary" ><i className="uil uil-pen font-size-18"></i></Link>
+                              :
+                              <>
                             <Link to={{
                               pathname: '/customer-revise',
                               state: { pk: post.pk, id: post.id }
                             }} className="px-3 text-primary" >
                               <i className="uil uil-pen font-size-18"></i>
                             </Link>
+                            </>
+                            }
                           </Modify>
-                          <Delete><Link to="#" className="px-3 text-danger" onClick={() => {
+                          <Delete>
+                            {post.user_level == 50 ?
+                            <Link className="px-3 text-danger"><i className="uil uil-trash-alt font-size-18"></i></Link>
+                            :
+                            <>
+                             <Link to="#" className="px-3 text-danger" onClick={() => {
                             setDeleteNum(post.pk)
                             setwith_delete(true)
-                          }}><i className="uil uil-trash-alt font-size-18"></i></Link></Delete>
+                             }}><i className="uil uil-trash-alt font-size-18"></i></Link>
+
+                            </>
+                            }
+                           
+                          </Delete>
                         </Table>
+
                       ))}
 
                     </>

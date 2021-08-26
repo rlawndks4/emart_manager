@@ -55,7 +55,7 @@ const AddCustomers = () => {
   const [checkPw, setCheckPw] = useState(false);
   const [checkAddUser, setCheckAddUser] = useState(false);
   const [userLevel, setUserLevel] = useState('');
-  const selectList = ["일반유저", "관리자", "개발자"];
+  const [selectList, setSelectList] = useState(["일반유저", "관리자"]);
   const [selected, setSelected] = useState("일반유저");
 
 
@@ -78,19 +78,27 @@ const AddCustomers = () => {
       history.push('/login')
     }
     else {
-
-      if (!response.second) {
-        alert('관리자만 접근 가능합니다.')
-        history.push('/product-list')
-      } else {
+      if(!response.first){
+        if (!response.second) {
+          
+          alert('관리자만 접근 가능합니다.')
+          history.push('/product-list')
+        } else {
+          
+          setLoading(false)
+        }
+      }
+      else{
+        selectList.push('개발자');
         setLoading(false)
       }
-
     }
+
   }
   useEffect(() => {
     isAdmin()
   }, [])
+ 
   //제출함수 
   const onSubmit = async (e) => {
     e.preventDefault()
@@ -171,7 +179,7 @@ const AddCustomers = () => {
   useEffect(() => {
     if (selected === '일반유저') setUserLevel(0)
     else if (selected === '관리자') setUserLevel(40)
-    else {
+    else if (selected === '개발자'){
       setUserLevel(50)
     }
   })

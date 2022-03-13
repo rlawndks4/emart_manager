@@ -28,10 +28,10 @@ const AddAd = () => {
   const [toggleIcon, setToggleIcon] = useState(`${up}`)
   const toggle = () => {
     setIsOpen(!isOpen)
-    if(toggleIcon==`${up}`){
+    if (toggleIcon == `${up}`) {
       setToggleIcon(`${down}`)
     }
-    else{
+    else {
       setToggleIcon(`${up}`)
     }
   };
@@ -46,57 +46,51 @@ const AddAd = () => {
   const [with_cancel, setwith_cancel] = useState(false);
   const [with_good, setwith_good] = useState(false);
   const [loading, setLoading] = useState(false);
-  const isAdmin = async () => {
-    setLoading(true);
-    const { data: response } = await axios.get('/api/auth')
-    if (!response.third) {
-      alert('회원만 접근 가능합니다.')
-      history.push('/login')
-    }
-    else {
-      if (!response.second) {
-        alert('관리자만 접근 가능합니다.')
-        history.push('/product-list')
-      } else {
-        setLoading(false)
-      }
-    }
-  }
-  useEffect(() => {
-    isAdmin()
-  }, [])
+  // const isAdmin = async () => {
+  //   setLoading(true);
+  //   const { data: response } = await axios.get('/api/auth')
+  //   if (!response.third) {
+  //     alert('회원만 접근 가능합니다.')
+  //     history.push('/login')
+  //   }
+  //   else {
+  //     if (!response.second) {
+  //       alert('관리자만 접근 가능합니다.')
+  //       history.push('/product-list')
+  //     } else {
+  //       setLoading(false)
+  //     }
+  //   }
+  // }
+  // useEffect(() => {
+  //   isAdmin()
+  // }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    const { data: response } = await axios('/api/howmanyad')
-    if (!response.data) {
-      alert('이미 광고가 존재합니다. 삭제 후 진행해 주세요.')
+
+    if (!adName ||
+      !adFile) {
+      alert("필수 입력 사항을 입력하지 않으셨습니다.");
       setwith_save(false)
-      history.push('/ad-list')
     }
     else {
-      if (!adName ||
-        !adFile) {
-        alert("필수 입력 사항을 입력하지 않으셨습니다.");
-        setwith_save(false)
-      }
-      else {
 
-        let formData = new FormData();
-        formData.append('adName', adName)
-        formData.append('image', adFile)
+      let formData = new FormData();
+      formData.append('adName', adName)
+      formData.append('image', adFile)
 
-        const config = {
-          header: {
-            'Content-type': 'multipart/form-data; charset=UTF-8',
-            'Accept': '*/*'
-          }
+      const config = {
+        header: {
+          'Content-type': 'multipart/form-data; charset=UTF-8',
+          'Accept': '*/*'
         }
-        axios.post('/api/addad', formData, config)
-        setwith_save(false)
-        setwith_good(true)
       }
+      axios.post('/api/addad', formData, config)
+      setwith_save(false)
+      setwith_good(true)
     }
+
 
   }
 
@@ -131,8 +125,8 @@ const AddAd = () => {
   }
   return (
     <React.Fragment>
-      <div className="page-content" style={{color:'#596275'}}>
-        <Container fluid style={{fontFamily:'NanumGothic'}}>
+      <div className="page-content" style={{ color: '#596275' }}>
+        <Container fluid style={{ fontFamily: 'NanumGothic' }}>
           <Breadcrumbs breadcrumbItem="광고 관리" />
 
           <div className="checkout-tabs">
@@ -154,7 +148,7 @@ const AddAd = () => {
                             <h5 className="font-size-16 mb-1" style={{ fontFamily: 'NanumGothic', fontWeight: 'bold' }}>광고 관리</h5>
                             <p className="text-muted text-truncate mb-0">아래의 모든 정보를 입력하세요.</p>
                           </div>
-                          <img src={toggleIcon}/>
+                          <img src={toggleIcon} />
                         </Media>
                       </div>
                     </Link>
@@ -176,7 +170,7 @@ const AddAd = () => {
                                     type="text"
                                     className="form-control"
                                     placeholder="#123456"
-                                    style={{fontWeight:'500'}}
+                                    style={{ fontWeight: '500' }}
                                     onChange={onChangeAdName}
                                   />
                                 </div>
@@ -200,7 +194,7 @@ const AddAd = () => {
                                             <div className="mb-3">
                                               <i className="display-4 text-muted uil uil-cloud-upload" ></i>
                                             </div>
-                                            <h4>파일을 업로드 해주세요.<br/>(jpg, png, jpeg, gif, mp4, avi)</h4>
+                                            <h4>파일을 업로드 해주세요.<br />(jpg, png, jpeg, gif, mp4, avi)</h4>
                                           </div>
                                         </div>
                                       </div>

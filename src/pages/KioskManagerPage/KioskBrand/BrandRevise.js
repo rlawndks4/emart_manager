@@ -79,6 +79,9 @@ const BrandRevise = () => {
       setClass4(location.state.class4)
       setStatus(location.state.status)
     }
+    else{
+      history.push('/brand-list')
+    }
   }, [])
   const onSubmit = () => {
     if (!brandName.length ||

@@ -59,11 +59,22 @@ const AddBrand = () => {
   const onSubmit = async (e) => {
     e.preventDefault()
     if (checkAddBrand) {
-      const res = await axios.post('/api/brand', { brandName, class1, class2, class3, class4 })
-        .catch(err => console.log(err))
-
-      setwith_save(false)
+      const {data:response} = await axios.post('/api/addbrand', {
+        brandName:brandName,
+        class1:class1,
+        class2:class2,
+        class3:class3,
+        class4:class4
+      })
+      if(response.result>0){
+        setwith_save(false)
       setwith_good(true)
+      }
+      else{
+        alert(response.message)
+      }
+
+      
 
     } else {
       alert('필수정보가 입력되지 않았습니다.')

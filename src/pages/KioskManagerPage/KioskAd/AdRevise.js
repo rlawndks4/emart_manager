@@ -95,6 +95,9 @@ const AdRevise = () => {
       setReviseImg(location.state.img)
       setReviseName(location.state.name)
     }
+    else{
+      history.push('/ad-list')
+    }
   }, [])
 
 

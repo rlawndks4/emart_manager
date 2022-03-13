@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Col, Container, Row, Card, Spinner } from "reactstrap"
+import { Col, Container, Row, Card, Spinner, Button } from "reactstrap"
 import { Link, useHistory } from "react-router-dom"
 //Import Breadcrumb
 import Breadcrumbs from "../../../components/Common/Breadcrumb"
@@ -9,7 +9,7 @@ import SweetAlert from "react-bootstrap-sweetalert"
 import { AvForm } from "availity-reactstrap-validation";
 import deletepic from "../delete.png"
 import { Pagination, PaginationItem, PaginationLink } from "reactstrap"
-
+import ServerLink from '../data/ServerLink'
 const CheckBox = styled.input`
 margin: 14px 14px 14px;
 `
@@ -125,7 +125,7 @@ const AdList = () => {
       setLoading(true);
       const page = currentPage
       const { data: response } = await axios.get(`/api/ad/${page}?keyword=${search}`);
-
+      console.log(response)
       setPosts(response.data.result);
       setMaxPage(response.data.maxPage);
       setLoading(false);
@@ -155,6 +155,7 @@ const AdList = () => {
       setCurrentPage(num)
       const { data: response } = await axios.get(`/api/ad/${page}?keyword=${search}`);
       setPosts(response.data.result);
+      setMaxPage(response.data.maxPage);
       setLoading(false);
     }
     fetchPosts()
@@ -176,7 +177,28 @@ const AdList = () => {
   for (let i = 1; i <= maxPage; i++) {
     pageNumbers.push(i);
   }
+  async function submitOnOff(onoff_num,ad_pk,manager_pk){
+    let obj = {
+      pk:ad_pk,
+      managerPk:manager_pk
+    }
 
+    if(onoff_num==0){
+      obj.onOffCount = 0
+    }
+    else if(onoff_num==1){
+      obj.onOffCount = 1
+    }
+    const {data:response} = await axios.post(`/api/adonoff`,obj)
+    console.log(response)
+    if(response.result<0){
+      alert(response.message)
+    }
+    else{
+      alert(response.message)
+      window.location.reload()
+    }
+  }
   return (
     <React.Fragment>
 
@@ -208,6 +230,7 @@ const AdList = () => {
                       <AdName>광고명</AdName>
                       <AdImg>광고사진</AdImg>
                       <Date>생성시간</Date>
+                      <Modify>온오프</Modify>
                       <Modify>수정</Modify>
                       <Delete>삭제</Delete>
                     </Table>
@@ -220,8 +243,20 @@ const AdList = () => {
                         <Table key={post.pk}>
                           <CheckBox type="checkbox" id="cb1" />
                           <AdName><ListText>{post.ad_name}</ListText></AdName>
-                          <AdImg><ListImg src={"http://emart.cafe24app.com" + post.ad_image} /></AdImg>
+                          <AdImg><ListImg src={ServerLink + post.ad_image} /></AdImg>
                           <Date><ListText>{onCreateTime(post.create_time)}</ListText></Date>
+                          <Modify>{post.onoff==0?
+                          <Button onClick={()=>{
+                            if (window.confirm("상태를 on으로 변경하시겠습니까?")) {
+                              submitOnOff(1,post.pk,post.manager_pk)
+                            }
+                          }}>{'off'}</Button>
+                        :
+                        <Button style={{background:'#2ecc71'}} onClick={()=>{
+                          if (window.confirm("상태를 off로 변경하시겠습니까?")) {
+                            submitOnOff(0,post.pk,post.manager_pk)
+                          }
+                        }}>{'on'}</Button>}</Modify>
                           <Modify><Link to={{
                             pathname: '/ad-revise',
                             state: { pk: post.pk, name: post.ad_name, img: post.ad_image }

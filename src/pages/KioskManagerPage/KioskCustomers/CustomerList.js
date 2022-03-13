@@ -167,7 +167,12 @@ const CustomerList = (props) => {
     const { data: response } = await axios.post('/api/deleteuser', {
       pk: deleteNum
     })
-    alert('삭제되었습니다.')
+    if(response.result<0){
+      alert(response.message)
+    }
+    else{
+      alert(response.message)
+    }
     setwith_delete(false)
     window.location.replace("/customer-list")
   };
@@ -282,7 +287,7 @@ const CustomerList = (props) => {
                               :
                               <>
                             <Link to={{
-                              pathname: '/customer-revise',
+                              pathname: `/customer-revise/${post.pk}`,
                               state: { pk: post.pk, id: post.id }
                             }} className="px-3 text-primary" >
                               <i className="uil uil-pen font-size-18"></i>

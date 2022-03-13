@@ -22,6 +22,7 @@ import up from "../up.png"
 import down from "../down.png"
 const KioskRevise = () => {
   const history = useHistory()
+  const location = useLocation();
   const [loading, setLoading] = useState(false);
   const [kioskNum, setKioskNum] = useState('');
   const [uniNum, setUniNum] = useState('');
@@ -30,6 +31,9 @@ const KioskRevise = () => {
   const [checkStore, setCheckStore] = useState('');
 
   const [revisePk, setRevisePk] = useState(0);
+  const [backgroundColor, setBackgroundColor] = useState(location.state.background_color?location.state.background_color:history.push('/kiosk-list'))
+  const [middleClassColor, setMiddleClassColor] = useState(location.state.middle_class_color?location.state.middle_class_color:history.push('/kiosk-list'))
+  const [fontColor, setFontColor] = useState('#000000')
 
 
   const [isOpen, setIsOpen] = useState(true);
@@ -54,18 +58,9 @@ const KioskRevise = () => {
       alert('회원만 접근 가능합니다.')
       history.push('/login')
     }
-    else {
-
-      if (!response.first) {
-        alert('개발자만 접근 가능합니다.')
-        history.push('/product-list')
-      } else {
-        setLoading(false)
-      }
-
-    }
+    
   }
-  const location = useLocation();
+ 
 
   useEffect(() => {
     if (typeof location.state != "undefined") {
@@ -73,6 +68,12 @@ const KioskRevise = () => {
       setKioskNum(location.state.num);
       setUniNum(location.state.unique)
       setStore(location.state.store)
+      setMiddleClassColor(location.state.middle_class_color)
+      setBackgroundColor(location.state.background_color)
+      setFontColor(location.state.font_color)
+    }
+    else{
+      history.push('/kiosk-list')
     }
   }, [])
   useEffect(() => {
@@ -80,7 +81,7 @@ const KioskRevise = () => {
   }, [])
 
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     if (!kioskNum.length ||
       !uniNum.length ||
       !store.length) {
@@ -88,18 +89,19 @@ const KioskRevise = () => {
       setwith_save(false)
     }
     else {
-      axios.put('/api/updatekiosk', {
+      const {data:response} = await axios.put('/api/updatekiosk', {
         num: kioskNum,
         uniNum: uniNum,
         store: store,
-        pk: revisePk
-      }).then(() => {
-        console.log("success")
+        pk: revisePk,
+        middleClassColor:middleClassColor,
+        backgroundColor:backgroundColor,
+        fontColor:fontColor
+      })
+      if(response.result>0){
         setwith_save(false)
         setwith_good(true)
-
-      })
-        .catch(err => console.log(err))
+      }
 
     }
 
@@ -117,7 +119,15 @@ const KioskRevise = () => {
     setStore(e.target.value)
     setCheckStore('')
   }
-
+  const onChangeMiddleClassColor = (e) =>{
+    setMiddleClassColor(e.target.value)
+  } 
+  const onChangeBackgroundColor = (e) =>{
+    setBackgroundColor(e.target.value)
+  }
+  const onChangeFontColor = (e) =>{
+    setFontColor(e.target.value)
+  }
   return (
     <React.Fragment>
       <div className="page-content" style={{color:'#596275'}}>
@@ -193,7 +203,36 @@ const KioskRevise = () => {
                               />
                             </div>
                           </Col>
-
+                          <Col md="2">
+                            <Label htmlFor="productname" style={{ fontWeight: '1000' }}>배경색</Label>
+                            <Input
+                              className="form-control form-control-color mw-100"
+                              type="color"
+                              defaultValue={backgroundColor}
+                              id="example-color-input"
+                              onChange={onChangeBackgroundColor}
+                            />
+                          </Col>
+                          <Col md="2">
+                            <Label htmlFor="productname" style={{ fontWeight: '1000' }}>중분류색</Label>
+                            <Input
+                              className="form-control form-control-color mw-100"
+                              type="color"
+                              defaultValue={middleClassColor}
+                              id="example-color-input"
+                              onChange={onChangeMiddleClassColor}
+                            />
+                          </Col>
+                          <Col md="2">
+                            <Label htmlFor="productname" style={{ fontWeight: '1000' }}>글자색</Label>
+                            <Input
+                              className="form-control form-control-color mw-100"
+                              type="color"
+                              defaultValue={fontColor}
+                              id="example-color-input"
+                              onChange={onChangeFontColor}
+                            />
+                          </Col>
                         </Row>
 
                       </Form>

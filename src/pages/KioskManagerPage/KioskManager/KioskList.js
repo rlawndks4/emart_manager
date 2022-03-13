@@ -127,7 +127,7 @@ const KioskList = () => {
   const history = useHistory()
   
   const date1 = moment().subtract(1,'year').format('YYYY-MM-DD')
-  const date2 = moment().format('YYYY-MM-DD')
+  const date2 = moment().add(1,'days').format('YYYY-MM-DD')
   
   const [deleteNum, setDeleteNum] = useState(0)
   const [posts, setPosts] = useState([]);
@@ -145,6 +145,7 @@ const KioskList = () => {
   const [exelPost, setExelPost] = useState([])
   const [paid, setPaid] = useState(0)
   const [unPaid, setUnPaid] = useState(0)
+  const [myPk, setMyPk] = useState(0)
   const headers = [
     { label: "Kiosk Number", key: "kiosk_num" },
     { label: "Store Name", key: "store_name" },
@@ -155,49 +156,31 @@ const KioskList = () => {
     setLoading(true);
     const { data: response } = await axios.get('/api/auth')
     if (!response.third) {
+
       alert('회원만 접근 가능합니다.')
       history.push('/login')
     }
-    else {
-
-      if (!response.first) {
-        alert('개발자만 접근 가능합니다.')
-        history.push('/product-list')
-      } else {
-        setLoading(false)
-      }
-
+    else{
+      setMyPk(response.pk)
+      const page = currentPage
+      const { data: response2 } = await axios.get(`/api/kiosk?page=${page}&firstDate=${firstDate}&lastDate=${secondDate}&pk=${response.pk}`);
+      setPosts(response2.data.result);
+      setMaxPage(response2.data.maxPage);
+      console.log(response2)
+      setLoading(false);
     }
+    
   }
   useEffect(() => {
     isAdmin()
   }, [])
 
-  useEffect(() => {
-    async function fetchPosts() {
-      setLoading(true);
-      const page = currentPage
-      const { data: response } = await axios.get(`/api/kiosk/${page}?firstdate=${firstDate}&lastdate=${secondDate}`);
-      setPosts(response.data.result);
-      setMaxPage(response.data.maxPage);
-      setLoading(false);
-    }
-    fetchPosts()
-  }, []);
-  useEffect(() => {
-    async function fetchPosts() {
-      setLoading(true);
-      const { data: res } = await axios.get(`/api/kiosk/${0}?firstdate=${firstDate}&lastdate=${secondDate}`);
-      setExelPost(res.data.result);
-      setLoading(false);
-    }
-    fetchPosts()
-  }, []);
+  
  
   const onDelete = async (e) => {
     e.preventDefault()
     const { data: res } = await axios.get('/api/auth')
-    if (!res.first) {
+    if (!res.second) {
       alert('권한이 없습니다.')
       setwith_delete(false)
     }
@@ -217,16 +200,16 @@ const KioskList = () => {
       const page = num
       setCurrentPage(num)
       if(paid==0&&unPaid==0){
-        const { data: res } = await axios.get(`/api/kiosk/${0}?firstdate=${firstDate}&lastdate=${secondDate}`);
+        const { data: res } = await axios.get(`/api/kiosk?firstDate=${firstDate}&lastDate=${secondDate}&pk=${myPk}`);
         setExelPost(res.data.result);
-        const { data: response } = await axios.get(`/api/kiosk/${page}?firstdate=${firstDate}&lastdate=${secondDate}`);
+        const { data: response } = await axios.get(`/api/kiosk?page=${page}&firstDate=${firstDate}&lastDate=${secondDate}&pk=${myPk}`);
         setPosts(response.data.result);
         setMaxPage(response.data.maxPage);
       }
       else{
-        const { data: res } = await axios.get(`/api/kiosk/${0}?status=${paid}&firstdate=${firstDate}&lastdate=${secondDate}`);
+        const { data: res } = await axios.get(`/api/kiosk?status=${paid}&firstDate=${firstDate}&lastDate=${secondDate}&pk=${myPk}`);
         setExelPost(res.data.result);
-        const { data: response } = await axios.get(`/api/kiosk/${page}?status=${paid}&firstdate=${firstDate}&lastdate=${secondDate}`);
+        const { data: response } = await axios.get(`/api/kiosk?page=${page}&status=${paid}&firstDate=${firstDate}&lastDate=${secondDate}&pk=${myPk}`);
         setPosts(response.data.result);
         setMaxPage(response.data.maxPage);
       }
@@ -253,7 +236,7 @@ const KioskList = () => {
   }
   async function handleGiveKiosk(num) {
     const { data: res } = await axios.get('/api/auth')
-    if (!res.first) {
+    if (!res.second) {
       alert('권한이 없습니다.')
     }
     else {
@@ -269,7 +252,7 @@ const KioskList = () => {
   }
   async function handleCancelKiosk(num) {
     const { data: res } = await axios.get('/api/auth')
-    if (!res.first) {
+    if (!res.second) {
       alert('권한이 없습니다.')
     }
     else {
@@ -424,6 +407,9 @@ const KioskList = () => {
                       <UniqueNumber>고유번호</UniqueNumber>
                       <Store>지점</Store>
                       <Date>생성시간</Date>
+                      <Status>배경색</Status>
+                      <Status>중분류색</Status>
+                      <Status>글자색</Status>
                       <Status>상태</Status>
                       <Status></Status>
                       <Modify>수정</Modify>
@@ -442,6 +428,15 @@ const KioskList = () => {
                           <Store><ListText>{post.store_name}</ListText></Store>
                           <Date><ListText>{onCreateTime(post.create_time)}</ListText></Date>
                           <Status>
+                            <ListText style={{color:`${post.background_color}`}}>{post.background_color}</ListText>
+                          </Status>
+                          <Status>
+                            <ListText style={{color:`${post.middle_class_color}`}}>{post.middle_class_color}</ListText>
+                          </Status>
+                          <Status>
+                            <ListText style={{color:`${post.font_color}`}}>{post.font_color}</ListText>
+                          </Status>
+                          <Status>
                             {
                               onStatus(post.status) ?
                                 <ListText>완료</ListText>
@@ -451,6 +446,7 @@ const KioskList = () => {
                                 </>
                             }
                           </Status>
+                          
                           <Status style={{ padding: 'none important!', width: '20% important!' }}>
                             {
                               onStatus(post.status) ?
@@ -472,7 +468,7 @@ const KioskList = () => {
                             pathname: '/kiosk-revise',
                             state: {
                               pk: post.pk, num: post.kiosk_num, unique: post.unique_code
-                              , store: post.store_name
+                              , store: post.store_name , background_color:post.background_color,middle_class_color:post.middle_class_color,font_color:post.font_color
                             }
                           }} className="px-3 text-primary"><i className="uil uil-pen font-size-18"></i></Link></Modify>
                           <Delete><Link to="#" className="px-3 text-danger" onClick={() => {

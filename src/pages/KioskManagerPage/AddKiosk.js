@@ -29,20 +29,23 @@ const AddKiosk = () => {
   const [checkUn, setCheckUn] = useState('');
   const [store, setStore] = useState('');
   const [checkStore, setCheckStore] = useState('');
+  const [backgroundColor, setBackgroundColor] = useState('#ffffff')
+  const [middleClassColor, setMiddleClassColor] = useState('#ffffff')
+  const [fontColor, setFontColor] = useState('#000000')
 
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(true);
   const [toggleIcon, setToggleIcon] = useState(`${up}`)
   const toggle = () => {
     setIsOpen(!isOpen)
-    if(toggleIcon==`${up}`){
+    if (toggleIcon == `${up}`) {
       setToggleIcon(`${down}`)
     }
-    else{
+    else {
       setToggleIcon(`${up}`)
     }
   };
-  
+
   const [with_save, setwith_save] = useState(false);
   const [with_cancel, setwith_cancel] = useState(false);
   const [with_good, setwith_good] = useState(false);
@@ -67,24 +70,29 @@ const AddKiosk = () => {
     isAdmin()
   }, [])
   //디비에 저장하게 하는 함수
-  const onSubmit = () => {
+  const onSubmit = async () => {
     if (!kioskNum.length ||
       !store.length ||
       !uniNum.length) {
       alert('필수 값을 입력하지 않았습니다.')
       setwith_save(false)
     } else {
-      axios.post('/api/addkiosk', {
+      const {data:response} = await axios.post('/api/addkiosk', {
         kioskNum: kioskNum,
         store: store,
-        uniNum: uniNum
-      }).then(() => {
-       
+        uniNum: uniNum,
+        middleClassColor:middleClassColor,
+        backgroundColor:backgroundColor,
+        fontColor:fontColor
+      })
+      if(response.result>0){
         setwith_save(false)
         setwith_good(true)
+      }
+      else{
 
-      })
-        .catch(err => console.log(err))
+      }
+     
 
 
     }
@@ -105,11 +113,19 @@ const AddKiosk = () => {
     setStore(e.target.value)
     setCheckStore('')
   }
-
+  const onChangeMiddleClassColor = (e) =>{
+    setMiddleClassColor(e.target.value)
+  } 
+  const onChangeBackgroundColor = (e) =>{
+    setBackgroundColor(e.target.value)
+  }
+  const onChangeFontColor = (e) =>{
+    setFontColor(e.target.value)
+  }
   return (
     <React.Fragment>
-      <div className="page-content" style={{color:'#596275'}}>
-        <Container fluid style={{fontFamily:'NanumGothic'}}>
+      <div className="page-content" style={{ color: '#596275' }}>
+        <Container fluid style={{ fontFamily: 'NanumGothic' }}>
           {/* Render Breadcrumb */}
           <Breadcrumbs breadcrumbItem="키오스크 관리" />
 
@@ -132,7 +148,7 @@ const AddKiosk = () => {
                           <h5 className="font-size-16 mb-1" style={{ fontFamily: 'NanumGothic', fontWeight: 'bold' }}>키오스크 추가</h5>
                           <p className="text-muted text-truncate mb-0">아래의 모든 정보를 입력하세요.</p>
                         </div>
-                        <img src={toggleIcon}/>
+                        <img src={toggleIcon} />
                       </Media>
 
                     </div>
@@ -151,7 +167,7 @@ const AddKiosk = () => {
                                 className="form-control"
                                 value={kioskNum}
                                 placeholder="#123456"
-                                style={{fontWeight:'500'}}
+                                style={{ fontWeight: '500' }}
                                 onChange={onChangeKn}
                               />
                             </div>
@@ -164,7 +180,7 @@ const AddKiosk = () => {
                                 className="form-control"
                                 value={uniNum}
                                 placeholder="123456"
-                                style={{fontWeight:'500'}}
+                                style={{ fontWeight: '500' }}
                                 onChange={onChangeUn}
                               />
                             </div>
@@ -177,12 +193,41 @@ const AddKiosk = () => {
                                 className="form-control"
                                 value={store}
                                 placeholder="XX점"
-                                style={{fontWeight:'500'}}
+                                style={{ fontWeight: '500' }}
                                 onChange={onChangeStore}
                               />
                             </div>
                           </Col>
-
+                          <Col md="2">
+                            <Label htmlFor="productname" style={{ fontWeight: '1000' }}>배경색</Label>
+                            <Input
+                              className="form-control form-control-color mw-100"
+                              type="color"
+                              defaultChecked={backgroundColor}
+                              id="example-color-input"
+                              onChange={onChangeBackgroundColor}
+                            />
+                          </Col>
+                          <Col md="2">
+                            <Label htmlFor="productname" style={{ fontWeight: '1000' }}>중분류색</Label>
+                            <Input
+                              className="form-control form-control-color mw-100"
+                              type="color"
+                              defaultValue={middleClassColor}
+                              id="example-color-input"
+                              onChange={onChangeMiddleClassColor}
+                            />
+                          </Col>
+                          <Col md="2">
+                            <Label htmlFor="productname" style={{ fontWeight: '1000' }}>글자색</Label>
+                            <Input
+                              className="form-control form-control-color mw-100"
+                              type="color"
+                              defaultValue={fontColor}
+                              id="example-color-input"
+                              onChange={onChangeFontColor}
+                            />
+                          </Col>
                         </Row>
 
                       </Form>

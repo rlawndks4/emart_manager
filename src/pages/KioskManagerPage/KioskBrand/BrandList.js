@@ -8,6 +8,7 @@ import styled from "styled-components"
 import SweetAlert from "react-bootstrap-sweetalert"
 import { useHistory } from 'react-router';
 import { AvForm } from "availity-reactstrap-validation"
+import { Button } from "reactstrap";
 const CheckBox = styled.input`
 margin: 14px 14px 14px;
 `
@@ -140,6 +141,7 @@ const BrandList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [with_delete, setwith_delete] = useState(false);
   const [search, setSearch] = useState('')
+  const [myPk, setMyPk] = useState(0)
   const isAdmin = async () => {
     setLoading(true);
     const { data: response } = await axios.get('/api/auth')
@@ -153,6 +155,12 @@ const BrandList = () => {
         alert('관리자만 접근 가능합니다.')
         history.push('/product-list')
       } else {
+        setMyPk(response.pk)
+        const page = currentPage
+        const { data: response2 } = await axios.get(`/api/brand?page=${page}&keyword=${search}&pk=${response.pk}`);
+        console.log(response2)
+        setPosts(response2.data.result);
+        setMaxPage(response2.data.maxPage);
         setLoading(false)
       }
     }
@@ -161,18 +169,6 @@ const BrandList = () => {
     isAdmin()
   }, [])
 
-  useEffect(() => {
-    async function fetchPosts() {
-      setLoading(true);
-      const page = currentPage
-      const { data: response } = await axios.get(`/api/brand/${page}?keyword=${search}`);
-
-      setPosts(response.data.result);
-      setMaxPage(response.data.maxPage);
-      setLoading(false);
-    }
-    fetchPosts()
-  }, []);
 
   function setStatus(stt) {
     if (stt === 1) {
@@ -189,7 +185,7 @@ const BrandList = () => {
     async function fetchPosts() {
       setLoading(true);
       const page = num
-      const { data: response } = await axios.get(`/api/brand/${page}?keyword=${search}`);
+      const { data: response } = await axios.get(`/api/brand?page=${page}&keyword=${search}&pk=${myPk}`);
       setPosts(response.data.result);
       setLoading(false);
     }
@@ -204,7 +200,38 @@ const BrandList = () => {
   for (let i = 1; i <= maxPage; i++) {
     pageNumbers.push(i);
   }
+  async function submitOnOff(onoff_num,brand_pk){
+    let obj = {
+      pk:brand_pk,
+    }
 
+    if(onoff_num==0){
+      obj.onOffCount = 0
+    }
+    else if(onoff_num==1){
+      obj.onOffCount = 1
+    }
+    const {data:response} = await axios.post(`/api/brandonoff`,obj)
+    if(response.result<0){
+      alert(response.message)
+    }
+    else{
+      alert(response.message)
+      window.location.reload()
+    }
+  }
+  async function onDelete(num){
+    const {data:response} = await axios.post('/api/deletebrand',{
+      pk:num
+    })
+    if(response.result<0){
+      alert(response.message)
+    }
+    else{
+      alert("삭제되었습니다.")
+      window.location.reload()
+    }
+  }
   return (
     <React.Fragment>
       <div className="page-content" style={{color:'#596275'}}>
@@ -238,6 +265,7 @@ const BrandList = () => {
                       <Class2>중분류2</Class2>
                       <Class3>중분류3</Class3>
                       <Class4>중분류4</Class4>
+                      <Status>온오프</Status>
                       <Status>상태</Status>
                       <Date>생성시간</Date>
                       <Modify>수정</Modify>
@@ -256,6 +284,18 @@ const BrandList = () => {
                           <Class2><ListText>{post.middle_class_2}</ListText></Class2>
                           <Class3><ListText>{post.middle_class_3}</ListText></Class3>
                           <Class4><ListText>{post.middle_class_4}</ListText></Class4>
+                          <Status>{post.onoff==0?
+                          <Button onClick={()=>{
+                            if (window.confirm("상태를 on으로 변경하시겠습니까?")) {
+                              submitOnOff(1,post.pk)
+                            }
+                          }}>{'off'}</Button>
+                        :
+                        <Button style={{background:'#2ecc71'}} onClick={()=>{
+                          if (window.confirm("상태를 off로 변경하시겠습니까?")) {
+                            submitOnOff(0,post.pk)
+                          }
+                        }}>{'on'}</Button>}</Status>
                           <Status><ListText>{setStatus(post.status)}</ListText></Status>
                           <Date><ListText>{onCreateTime(post.create_time)}</ListText></Date>
                           <Modify><Link to={{
@@ -267,9 +307,10 @@ const BrandList = () => {
                             }
                           }} className="px-3 text-primary"><i className="uil uil-pen font-size-18"></i></Link></Modify>
                           <Delete><Link to="#" className="px-3 text-danger"
-                          // onClick={() => {
-                          //   setDeleteNum(post.pk)
-                          //   setwith_delete(true)}}
+                           onClick={() => {
+                            if (window.confirm("정말 삭제 하시겠습니까?")) {
+                              onDelete(post.pk)
+                            }}}
                           ><i className="uil uil-trash-alt font-size-18"></i></Link></Delete>
                         </Table>
                       ))}
@@ -289,34 +330,20 @@ const BrandList = () => {
                           setwith_delete(false)
                         }}> <i className="uil uil-times me-1" ></i> 취소 </Link>{" "}
                         <Link to="#" className="btn btn-success" onClick={() => {
+                          
                           setwith_delete(false)
                         }}> <i className="uil uil-file-alt me-1"></i> 확인 </Link>
                       </SweetAlert>
 
                     ) : null}
 
-                    {/* <Row className="row mb-4">
+                     <Row className="row mb-4">
                       <div className="col text-end">
                         <Link to="/add-brand" className="btn btn-primary">+ 추가하기</Link>
                       </div>
                     </Row>
 
-                    <Row className="row mb-4">
-
-                      <PageBox>
-                        <PageUl className="pagination">
-                        <PageLi onClick={()=>{onChangePage(1)}}>처음</PageLi>
-                          {pageNumbers.map(number => (
-                            <PageLi key={number} className="page-item">
-                              <PageSpan onClick={() => {onChangePage(number)}}>
-                                {number}
-                              </PageSpan>
-                            </PageLi>
-                          ))}
-                          <PageLi onClick={()=>{onChangePage(maxPage)}}>마지막</PageLi>
-                        </PageUl>
-                      </PageBox>
-                    </Row> */}
+                    
                   </div>
                 </div>
               </React.Fragment>

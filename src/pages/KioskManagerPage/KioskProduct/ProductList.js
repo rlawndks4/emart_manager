@@ -10,6 +10,7 @@ import { useHistory } from 'react-router';
 import { AvForm } from "availity-reactstrap-validation"
 import { Pagination, PaginationItem, PaginationLink } from "reactstrap"
 import deletepic from "../delete.png"
+import ServerLink from '../data/ServerLink'
 const CheckBox = styled.input`
 margin: 14px 14px 14px;
 `
@@ -34,67 +35,67 @@ const Table = styled.table`
 `
 const MainImg = styled.th`
   width: 20%;
+  padding: 14px 0;
   color: black;
-  padding: 14px 14px 14px;
   text-align:center;
 `
 const ItemName = styled.th`
 width: 20%;
+padding: 14px 0;
   color: black;
-  padding: 14px 14px 14px;
   text-align:center;
 `
 const ItemNum = styled.th`
 width: 20%;
   color: black;
-  padding: 14px 14px 14px;
+  padding: 14px 0;
   text-align:center;
 `
 const BrandPk = styled.th`
 width: 20%;
   color: black;
-  padding: 14px 14px 14px;
+  padding: 14px 0;
   text-align:center;
 `
 const Classification = styled.th`
 width: 20%;
   color: black;
-  padding: 14px 14px 14px;
+  padding: 14px 0;
   text-align:center;
 `
 const MiddleClass = styled.th`
 width: 20%;
   color: black;
-  padding: 14px 14px 14px;
+  padding: 14px 0;
   text-align:center;
 `
 const Status = styled.th`
-width: 20%;
+width: 15%;
   color: black;
-  padding: 14px 14px 14px;
+  padding: 14px 0;
   text-align:center;
 `
 const DetailImg = styled.th`
 width: 20%;
   color: black;
-  padding: 14px 14px 14px;
   text-align:center;
+  padding: 14px 0;
 `
 const QrImg = styled.th`
 width: 20%;
   color: black;
-  padding: 14px 14px 14px;
   text-align:center;
+  padding: 14px 0;
 `
 const Modify = styled.th`
 width: 10%;
   color: black;
-  padding: 14px 14px 14px;
+  padding: 14px 0;
 `
 const Delete = styled.th`
 width: 10%;
   color: black;
-  padding: 14px 14px 14px;
+  padding: 14px 0;
 `
 const ListText = styled.p`
 font-weight: 400;
@@ -121,8 +122,8 @@ const ProductList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState('')
   const [with_delete, setwith_delete] = useState(false);
-
-
+  const [myPk ,setMyPk] = useState(0)
+  const [brandList, setBrandList] = useState([])
   const isAdmin = async () => {
     setLoading(true);
     const { data: response } = await axios.get('/api/auth')
@@ -130,6 +131,8 @@ const ProductList = () => {
       alert('회원만 접근 가능합니다.')
       history.push('/login')
     } else {
+      console.log(response)
+      setMyPk(response.pk)
       setLoading(false)
     }
   }
@@ -143,8 +146,12 @@ const ProductList = () => {
       setLoading(true);
       const page = currentPage
       const { data: response } = await axios.get(`/api/product/${page}?keyword=${search}`);
+      console.log(response)
       setPosts(response.data.result);
       setMaxPage(response.data.maxPage);
+      const {data:response2} = await axios.get('/api/mybrand')
+      console.log(response2)
+      setBrandList(response2.data.result)
       setLoading(false);
     }
     fetchPosts()
@@ -167,6 +174,7 @@ const ProductList = () => {
       setCurrentPage(num)
       const { data: response } = await axios.get(`/api/product/${page}?keyword=${search}`);
       setPosts(response.data.result);
+      setMaxPage(response.data.maxPage);
       setLoading(false);
     }
     fetchPosts()
@@ -197,17 +205,10 @@ const ProductList = () => {
     }
   }
   function setBrand(brd) {
-    if (brd == 1) {
-      return "Fissler"
-    }
-    else if (brd == 2) {
-      return "WTF"
-    }
-    else if (brd == 3) {
-      return "Happycall"
-    }
-    else if (brd == 4) {
-      return "Tefal"
+    for(var i =0;i<brandList.length;i++){
+      if(brd==brandList[i].pk){
+        return brandList[i].brand_name
+      }
     }
     
   }
@@ -259,6 +260,7 @@ const ProductList = () => {
                       <Classification>분류</Classification>
                       <MiddleClass>중분류</MiddleClass>
                       <Status>상태</Status>
+                      <Status>가격</Status>
                       <DetailImg>상세사진</DetailImg>
                       <QrImg>QR</QrImg>
                       <Modify>수정</Modify>
@@ -272,25 +274,18 @@ const ProductList = () => {
                       {posts && posts.map(post => (
                         <Table key={post.pk}>
                           <CheckBox type="checkbox" id="cb1" />
-                          <MainImg><ListImg src={"http://emart.cafe24app.com" + post.main_image} /></MainImg>
+                          <MainImg><ListImg src={ServerLink + post.main_image} /></MainImg>
                           <ItemName><ListText>{post.item_name}</ListText></ItemName>
                           <ItemNum><ListText>{post.item_num}</ListText></ItemNum>
                           <BrandPk><ListText>{setBrand(post.brand_pk)}</ListText></BrandPk>
                           <Classification><ListText>{setClass(post.classification)}</ListText></Classification>
                           <MiddleClass><ListText>{post.middle_class}</ListText></MiddleClass>
                           <Status><ListText>{setStatus(post.status)}</ListText></Status>
-                          <DetailImg><ListImg src={"http://emart.cafe24app.com" + post.detail_image} /></DetailImg>
-                          <QrImg><ListImg src={"http://emart.cafe24app.com" + post.qr_image} /></QrImg>
+                          <Status><ListText>{post.price}</ListText></Status>
+                          <DetailImg><ListImg src={ServerLink + post.detail_image} /></DetailImg>
+                          <QrImg><ListImg src={ServerLink + post.qr_image} /></QrImg>
                           <Modify><Link to={{
-                            pathname: '/product-revise',
-                            state: {
-                              pk: post.pk, name: post.item_name, num: post.item_num, brand: setBrand(post.brand_pk),
-                              class: setClass(post.classification), middleclass: post.middle_class, status: setStatus(post.status) 
-                              , mainImage: post.main_image, detailImage: post.detail_image, qrImage: post.qr_image
-                            }
-
-
-                          }}><i className="uil uil-pen font-size-18"></i></Link></Modify>
+                            pathname: `/product-revise/${post.pk}`}}><i className="uil uil-pen font-size-18"></i></Link></Modify>
                           <Delete><Link to="#" className="px-3 text-danger" onClick={() => {
                             setDeleteNum(post.pk)
                             setwith_delete(true)
@@ -334,7 +329,7 @@ const ProductList = () => {
                             <PaginationLink onClick={() => { onChangePage(1) }}>처음</PaginationLink>
                           </PaginationItem>
                           {pageNumbers.map(number => (
-                            <PaginationItem key={number} >
+                            <PaginationItem key={number} style={{display:`${number >= currentPage+4 || number<= currentPage-4 ? 'none':''}`}} >
                               <PaginationLink onClick={() => { onChangePage(number) }} style={onChangePageColor(number)}>
                                 {number}
                               </PaginationLink>

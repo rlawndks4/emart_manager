@@ -147,9 +147,9 @@ const userRoutes = [
 
   //수정
   { path: "/kiosk-revise", component: KioskRevise },
-  { path: "/customer-revise", component: CustomerRevise },
+  { path: "/customer-revise/:pk", component: CustomerRevise },
   { path: "/ad-revise", component: AdRevise },
-  { path: "/product-revise", component: ProductRevise },
+  { path: "/product-revise/:pk", component: ProductRevise },
   { path: "/brand-revise", component: BrandRevise},
   //리스트
   { path: "/ad-list", component: AdList },
@@ -162,7 +162,7 @@ const userRoutes = [
   { path: "/add-ad", component: AddAd },
   { path: "/add-customer", component: AddCustomers },
   { path: "/add-kiosk", component: AddKiosk },
-  // { path: "/add-brand", component: AddBrand},
+  { path: "/add-brand", component: AddBrand},
 
   // //Email
   // { path: "/email-inbox", component: EmailInbox },

@@ -17,34 +17,37 @@ import SweetAlert from "react-bootstrap-sweetalert"
 //Import Breadcrumb
 import Breadcrumbs from "../../../components/Common/Breadcrumb"
 import axios from 'axios'
-import { useHistory, useLocation } from 'react-router';
+import { useHistory, useParams } from 'react-router';
 import cancel from "../cancel.png"
 import save from "../save.png"
 import up from "../up.png"
 import down from "../down.png"
 import select from "../select.png"
 import styled from "styled-components"
-const Select = styled.select`
-
+const SelectStyle = styled.div`
+select {
   width: 100%; 
   font-family: inherit;
   background: url(${select}) no-repeat 97.5% 50%;
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  
+  }
+  select::-ms-expand {
+      display: none;
+  }
 `
 const ProductRevise = () => {
 
   const history = useHistory();
+  const params = useParams()
   const [itemName, setItemName] = useState('')
   const [itemNum, setItemNum] = useState('')
-  const [brandPk, setBrandPk] = useState(1)
   const [selectedMainFiles, setselectedMainFiles] = useState([])
   const [selectedDetailFiles, setselectedDetailFiles] = useState([])
   const [selectedQrFiles, setselectedQrFiles] = useState([])
   const [isOpen, setIsOpen] = useState(true);
-  const [revisePk, setRevisePk] = useState(0);
+
   const [mainFile, setMainFile] = useState({
     file: []
   });
@@ -54,6 +57,7 @@ const ProductRevise = () => {
   const [qrFile, setQrFile] = useState({
     file: []
   });
+
   const [toggleIcon, setToggleIcon] = useState(`${up}`)
   const toggle = () => {
     setIsOpen(!isOpen)
@@ -104,6 +108,7 @@ const ProductRevise = () => {
 
   };
 
+ 
 
   const [with_save, setwith_save] = useState(false);
   const [with_cancel, setwith_cancel] = useState(false);
@@ -117,14 +122,13 @@ const ProductRevise = () => {
   const [selectedclass, setSelectedclass] = useState("일반 상품");
   const [classification, setClassification] = useState(0);
 
-  const brandList = ["Fissler", "WTF", "Happycall", "Tefal"];
-  const [selectedBrand, setSelectedBrand] = useState("Fissler");
+  const [brandList,setBrandList] = useState([]);
+  const [selectedBrand, setSelectedBrand] = useState("");
 
 
-  const [selectedmiddleClass, setSelectedmiddleClass] = useState("프라이팬");
   const [middleClassList, setMiddleClassList] = useState([]);
-
-  
+  const [selectedmiddleClass, setSelectedmiddleClass] = useState('');
+  const [price, setPrice] = useState(0)
   const isAdmin = async () => {
 
     const { data: response } = await axios.get('/api/auth')
@@ -143,96 +147,137 @@ const ProductRevise = () => {
   const handleSelectClass = (e) => {
     setSelectedclass(e.target.value);
   };
+  
+  useEffect(() => {
+    async function fetchPosts() {
+      const {data:res} = await axios.get(`/api/oneproduct/${params.pk}`)
+      console.log(res)
+      setItemName(res.data.result.item_name)
+      setItemNum(res.data.result.item_num)
+      setSelectedclass(res.data.result)
+      setClassification(res.data.result.classification)
+      setSelectedmiddleClass(res.data.result.middle_class)
+      setStatusNum(res.data.result.status)
+      setPrice(res.data.result.price)
+      const {data:response} = await axios.get('/api/mybrand')
+      console.log(response)
+      setBrandList(response.data.result)
+      for(var i =0;i<response.data.result.length;i++){
+        if(response.data.result[i].pk==res.data.result.brand_pk){
+          setSelectedBrand(response.data.result[i].brand_name)
+          let middle_list = []
+          if(response.data.result[i].middle_class_1){
+            middle_list.push(response.data.result[i].middle_class_1)
+          }
+          if(response.data.result[i].middle_class_2){
+            middle_list.push(response.data.result[i].middle_class_2)
+          }
+          if(response.data.result[i].middle_class_3){
+            middle_list.push(response.data.result[i].middle_class_3)
+          }
+          if(response.data.result[i].middle_class_4){
+            middle_list.push(response.data.result[i].middle_class_4)
+          }
+          if(response.data.result[i].middle_class_5){
+            middle_list.push(response.data.result[i].middle_class_5)
+          }
+          setMiddleClassList(middle_list)
+          break;
+        }
+      }
+    }
+    fetchPosts()
+  }, [])
+
+  // function onChangeBrand(num) {
+  //   async function fetchPosts() {
+  //     const brandPk = num
+  //     const {data:response} = await axios.get(`/api/allbrand/${brandPk}`)
+  //     setMiddleClassList(response.data)
+  //   }
+  //   fetchPosts()
+  // };
   const handleSelectMiddleClass = (e) => {
     setSelectedmiddleClass(e.target.value);
   };
+  
   const handleSelectStatus = (e) => {
     setSelectedStatus(e.target.value);
-  };
-  //서버에 보낼대 int형으로 저장되므로 브랜드 이름과 번호가 매칭이 되게 구성
-  useEffect(() => {
-    if (selectedBrand === 'Fissler') setBrandPk(1)
-    else if (selectedBrand === 'WTF') setBrandPk(2)
-    else if (selectedBrand === 'Happycall') setBrandPk(3)
-    else if (selectedBrand === 'Tefal') setBrandPk(4)
-    else {
-      setBrandPk(5)
-    }
-
-    if (selectedStatus === '판매중') setStatusNum(1)
-    else {
+    if(e.target.value=='판매중'){
+      setStatusNum(1)
+    }else{
       setStatusNum(0)
     }
-    if (selectedclass === '오늘의 상품') setClassification(1)
-    else {
-      setClassification(0)
-    }
-  })
-  const location = useLocation();
-
-  useEffect(() => {
-    if (typeof location.state != "undefined") {
-      setRevisePk(location.state.pk)
-      setItemName(location.state.name)
-      setItemNum(location.state.num)
-      setSelectedBrand(location.state.brand)
-      setSelectedclass(location.state.class)
-      setSelectedmiddleClass(location.state.middleclass)
-      setSelectedStatus(location.state.status)
-      async function fetchPosts() {
-        const { data: response } = await axios.get(`/api/allbrand/${location.state.brand}`)
-       
-        setMiddleClassList(response.data)
-      }
-      fetchPosts()
-    }
-  }, [])
-  const handleSelectBrand = async (e) => {
-    setSelectedBrand(e.target.value);
-    if (e.target.value === 'Fissler') setBrandPk(1)
-    else if (e.target.value === 'WTF') setBrandPk(2)
-    else if (e.target.value === 'Happycall') setBrandPk(3)
-    else if (e.target.value === 'Tefal') setBrandPk(4)
-    else {
-      setBrandPk(5)
-    }
-    const { data: response } = await axios.get(`/api/allbrand/${e.target.value}`)
-    setMiddleClassList(response.data)
-    setSelectedmiddleClass(response.data.middle_class_1)
   };
-  
+
+
   //디비에 저장하게 하는 함수
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!itemName.length ||
-      !itemNum.length
-    ) {
+      !itemNum.length ) {
       alert("필수 입력 사항을 입력하지 않으셨습니다.");
       setwith_save(false)
     }
     else {//brandPk, itemNum, itemName, classification, middleClass, status
+      let brand_pk = 0
+      for(var i = 0;i<brandList.length;i++){
+        if(brandList[i].brand_name==selectedBrand){
+          brand_pk = brandList[i].pk
+          break;
+        }
+      }
       const formData = new FormData();
       formData.append('mainImage', mainFile)
       formData.append('detailImage', detailFile)
       formData.append('qrImage', qrFile)
-      formData.append('brandPk', brandPk)
+
+      formData.append('brandPk', brand_pk)
       formData.append('itemNum', itemNum)
-      formData.append('pk', revisePk)
+
       formData.append('itemName', itemName)
       formData.append('classification', classification)
       formData.append('middleClass', selectedmiddleClass)
       formData.append('status', statusnum)
+      formData.append('price',price)
+      formData.append('pk',params.pk)
       const headers = {
         'Content-type': 'multipart/form-data; charset=UTF-8',
         'Accept': '*/*'
       }
-      axios.post('/api/updateitem', formData, { headers })
+
+      const {data:response } = await axios.post('/api/updateitem', formData, { headers })
 
       setwith_save(false)
       setwith_good(true)
     }
   }
-
+  //브랜드 선택
+  const onChangeBrand = (e) =>{
+    setSelectedBrand(e.target.value)
+    for(var i=0;i<brandList.length;i++){
+      if(e.target.value==brandList[i].brand_name){
+        let middleClassList = []
+        if(brandList[i].middle_class_1){
+          middleClassList.push(brandList[i].middle_class_1)
+        }
+        if(brandList[i].middle_class_2){
+          middleClassList.push(brandList[i].middle_class_2)
+        }
+        if(brandList[i].middle_class_3){
+          middleClassList.push(brandList[i].middle_class_3)
+        }
+        if(brandList[i].middle_class_4){
+          middleClassList.push(brandList[i].middle_class_4)
+        }
+        if(brandList[i].middle_class_5){
+          middleClassList.push(brandList[i].middle_class_5)
+        }
+        setMiddleClassList(middleClassList)
+        setSelectedmiddleClass(middleClassList[0])
+      }
+    }
+  }
   //파일 저장 함수
   function handleAcceptedMainFiles(files) {
     files.map(file =>
@@ -266,10 +311,12 @@ const ProductRevise = () => {
   }
   //상품의 종류도 int형으로 저장되므로 만든 함수
   useEffect(() => {
-    if (selectedclass === "오늘의 상품") {
+    if (selectedclass === "오늘의 상품" || setClassification==1) {
       setClassification(1);
+      setSelectedclass("오늘의 상품")
     }
     else {
+      setSelectedclass("일반 상품")
       setClassification(0)
     }
   })
@@ -294,12 +341,13 @@ const ProductRevise = () => {
     setDetailFile(selectedDetailFiles[0])
     setQrFile(selectedQrFiles[0])
   })
-
-
+  const onChangePrice = (e) =>{
+    setPrice(e.target.value)
+  }
   return (
     <React.Fragment>
       <div className="page-content" style={{color:'#596275'}}>
-        <Container fluid style={{fontFamily:'NanumGothic'}}>
+        <Container fluid style={{fontFamily:'NanumGothic',color:'#596275 important!'}}>
           <Breadcrumbs breadcrumbItem="상품관리" />
           <Row>
             <Col lg="12">
@@ -320,9 +368,10 @@ const ProductRevise = () => {
                           <h5 className="font-size-16 mb-1" style={{ fontFamily: 'NanumGothic', fontWeight: 'bold' }}>상품 수정</h5>
                           <p className="text-muted text-truncate mb-0">아래의 모든 정보를 입력하세요.</p>
                         </div>
+                        {/* <i className="mdi mdi-chevron-up accor-down-icon font-size-24"></i> */}
                         <img src={toggleIcon}/>
                       </Media>
-
+                      
                     </div>
                   </Link>
 
@@ -338,8 +387,8 @@ const ProductRevise = () => {
                                 name="productname"
                                 type="text"
                                 className="form-control"
-                                value={itemName}
                                 onChange={onChangeItemName}
+                                value={itemName}
                               />
                             </div>
                           </Col>
@@ -351,32 +400,25 @@ const ProductRevise = () => {
                                 name="productname"
                                 type="text"
                                 className="form-control"
-                                value={itemNum}
                                 onChange={onChangeItemNum}
+                                value={itemNum}
                               />
                             </div>
                           </Col>
                           <Col md="4">
                             <div className="mb-3">
-                              <Label style={{ fontWeight: '1000' }}>중분류</Label>
+                              <Label style={{ fontWeight: '1000' }}>브랜드</Label>
                               <form >
-                              
-                                <Select className="form-control" name="userlevel"
-                                  onChange={handleSelectMiddleClass} value={selectedmiddleClass}>
-                                  <option>
-                                    {middleClassList.middle_class_1}
-                                  </option>
-                                  <option>
-                                    {middleClassList.middle_class_2}
-                                  </option>
-                                  <option>
-                                    {middleClassList.middle_class_3}
-                                  </option>
-                                  <option>
-                                    {middleClassList.middle_class_4}
-                                  </option>
-                                </Select>
-                                
+                              <SelectStyle>
+                                <select className="form-control" name="userlevel"
+                                  onChange={onChangeBrand} value={selectedBrand}>
+                                  {brandList && brandList.map((item) => (
+                                    <option key={item.pk}>
+                                      {item.brand_name}
+                                    </option>
+                                  ))}
+                                </select>
+                                </SelectStyle>
                               </form>
                             </div>
                           </Col>
@@ -386,56 +428,73 @@ const ProductRevise = () => {
                             <div className="mb-3">
                               <Label style={{ fontWeight: '1000' }}>상품분류</Label>
                               <form >
-                              
-                                <Select className="form-control" name="userlevel"
+                              <SelectStyle>
+                                <select className="form-control" name="userlevel"
                                   onChange={handleSelectClass} value={selectedclass}>
                                   {classList.map((item) => (
                                     <option value={item} key={item}>
                                       {item}
                                     </option>
                                   ))}
-                                </Select>
-                                
+                                </select>
+                                </SelectStyle>
                               </form>
                             </div>
                           </Col>
                           <Col md="4">
                             <div className="mb-3">
-                              <Label style={{ fontWeight: '1000' }}>브랜드</Label>
+                              <Label style={{ fontWeight: '1000' }}>중분류</Label>
                               <form >
-                             
-                                <Select className="form-control" name="userlevel"
-                                  onChange={handleSelectBrand} value={selectedBrand}>
-                                  {brandList.map((item) => (
-                                    <option value={item} key={item}>
-                                      {item}
-                                    </option>
-                                  ))}
+                                <SelectStyle>
+                                <select className="form-control" name="userlevel"
+                                  onChange={handleSelectMiddleClass} value={selectedmiddleClass}>
+                                    {middleClassList && middleClassList.map(post=>(
+                                      <option>
+                                        {post}
+                                      </option>
+                                    ))}
                                   
-                                </Select>
-                                
+                                  
+                                </select>
+                                </SelectStyle>
                               </form>
                             </div>
                           </Col>
+                         
                           <Col md="4">
                             <div className="mb-3">
                               <Label style={{ fontWeight: '1000' }}>상태</Label>
                               <form >
-                             
-                                <Select className="form-control" name="userlevel"
+                              <SelectStyle>
+                                <select className="form-control" name="userlevel"
                                   onChange={handleSelectStatus} value={selectedStatus}>
                                   {statusList.map((item) => (
                                     <option value={item} key={item}>
                                       {item}
                                     </option>
                                   ))}
-                                </Select>
-                               
+                                </select>
+                                </SelectStyle>
                               </form>
                             </div>
                           </Col>
                         </Row>
-
+                        <Row>
+                        <Col md="4">
+                            <div className="mb-3">
+                              <Label htmlFor="productname" style={{ fontWeight: '1000' }}>가격</Label>
+                              <Input
+                                id="productname"
+                                name="productname"
+                                type="text"
+                                className="form-control"
+                                value={price}
+                                onChange={onChangePrice}
+                                placeholder='숫자만 입력해 주세요'
+                              />
+                            </div>
+                          </Col>
+                          </Row>
 
 
 
@@ -459,7 +518,7 @@ const ProductRevise = () => {
                         <div className="flex-1 overflow-hidden">
                           <h5 className="font-size-16 mb-1" style={{ fontFamily: 'NanumGothic', fontWeight: 'bold' }}>메인 이미지</h5>
                           <p className="text-muted text-truncate mb-0">메인 이미지를 등록해 주세요.
-                            <br />이미지는 238x238 사이즈로 JPG,PNG 파일 이미지만 등록 가능합니다.</p>
+                            <br />이미지는 238x238 사이즈로 JPG, PNG 파일 이미지만 등록 가능합니다.</p>
                         </div>
                         <img src={toggleProductIcon}/>
                       </Media>
@@ -546,7 +605,7 @@ const ProductRevise = () => {
                         <div className="flex-1 overflow-hidden">
                           <h5 className="font-size-16 mb-1" style={{ fontFamily: 'NanumGothic', fontWeight: 'bold' }}>상세 이미지</h5>
                           <p className="text-muted text-truncate mb-0">상세 이미지를 등록해 주세요.
-                            <br />이미지는 1000x1200 사이즈로 JPG,PNG 파일 이미지만 등록 가능합니다.</p>
+                            <br />이미지는 1000x1200 사이즈로 JPG, PNG 파일 이미지만 등록 가능합니다.</p>
                         </div>
                         <img src={toggleDetailProductIcon}/>
                       </Media>
@@ -710,11 +769,7 @@ const ProductRevise = () => {
             </Col>
           </Row>
           <Row>
-            {/* <Col>
-                    <Link to="/ecommerce-products" className="btn btn-link text-muted">
-                      <i className="uil uil-arrow-left me-1"></i> Continue Shopping
-                    </Link>
-                  </Col> */}
+
             <Col>
               <div className="text-sm-end mt-2 mt-sm-0">
                 <Link to="#" className="btn btn-danger" onClick={() => {
@@ -771,7 +826,7 @@ const ProductRevise = () => {
               ) : null}
               {with_good ? (
                 <SweetAlert
-                  title="상품이 수정되었습니다."
+                  title="상품이 추가되었습니다."
                   success
                   showConfirm={false}
                   style={{
@@ -783,7 +838,6 @@ const ProductRevise = () => {
                   <Link to="/product-list" className="btn btn-primary"> <i className="uil uil-file-alt me-1"></i> 확인 </Link>
                 </SweetAlert>
               ) : null}
-
             </Col>
 
           </Row>

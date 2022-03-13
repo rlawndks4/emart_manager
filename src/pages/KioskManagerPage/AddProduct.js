@@ -42,7 +42,6 @@ const AddProduct = () => {
   const history = useHistory();
   const [itemName, setItemName] = useState('')
   const [itemNum, setItemNum] = useState('')
-  const [brandPk, setBrandPk] = useState(1)
   const [selectedMainFiles, setselectedMainFiles] = useState([])
   const [selectedDetailFiles, setselectedDetailFiles] = useState([])
   const [selectedQrFiles, setselectedQrFiles] = useState([])
@@ -122,13 +121,13 @@ const AddProduct = () => {
   const [selectedclass, setSelectedclass] = useState("일반 상품");
   const [classification, setClassification] = useState(0);
 
-  const brandList = ["Fissler", "WTF", "Happycall", "Tefal"];
-  const [selectedBrand, setSelectedBrand] = useState("Fissler");
+  const [brandList,setBrandList] = useState([]);
+  const [selectedBrand, setSelectedBrand] = useState("");
 
 
   const [middleClassList, setMiddleClassList] = useState([]);
   const [selectedmiddleClass, setSelectedmiddleClass] = useState('');
-
+  const [price, setPrice] = useState(0)
   const isAdmin = async () => {
 
     const { data: response } = await axios.get('/api/auth')
@@ -147,23 +146,33 @@ const AddProduct = () => {
   const handleSelectClass = (e) => {
     setSelectedclass(e.target.value);
   };
-  const handleSelectBrand = async (e) => {
-    setSelectedBrand(e.target.value);
-    if (e.target.value === 'Fissler') setBrandPk(1)
-    else if (e.target.value === 'WTF') setBrandPk(2)
-    else if (e.target.value === 'Happycall') setBrandPk(3)
-    else if (e.target.value === 'Tefal') setBrandPk(4)
-    const { data: response } = await axios.get(`/api/allbrand/${e.target.value}`)
-    setMiddleClassList(response.data)
-    setSelectedmiddleClass(response.data.middle_class_1)
-  };
+  
   useEffect(() => {
     async function fetchPosts() {
       
-      const { data: response } = await axios.get(`/api/allbrand/${'Fissler'}`)
-    
-      setMiddleClassList(response.data)
-      setSelectedmiddleClass(response.data.middle_class_1)
+      const {data:response} = await axios.get('/api/mybrand')
+      console.log(response)
+      setBrandList(response.data.result)
+      let middleClassList = []
+        if(response.data.result[0].middle_class_1){
+          middleClassList.push(response.data.result[0].middle_class_1)
+        }
+        if(response.data.result[0].middle_class_2){
+          middleClassList.push(response.data.result[0].middle_class_2)
+        }
+        if(response.data.result[0].middle_class_3){
+          middleClassList.push(response.data.result[0].middle_class_3)
+        }
+        if(response.data.result[0].middle_class_4){
+          middleClassList.push(response.data.result[0].middle_class_4)
+        }
+        if(response.data.result[0].middle_class_5){
+          middleClassList.push(response.data.result[0].middle_class_5)
+        }
+       
+       setSelectedBrand(response.data.result[0].brand_name)
+      setMiddleClassList(middleClassList)
+      setSelectedmiddleClass(middleClassList[0])
     }
     fetchPosts()
   }, [])
@@ -179,7 +188,7 @@ const AddProduct = () => {
   const handleSelectMiddleClass = (e) => {
     setSelectedmiddleClass(e.target.value);
   };
- 
+  
   const handleSelectStatus = (e) => {
     setSelectedStatus(e.target.value);
   };
@@ -203,26 +212,62 @@ const AddProduct = () => {
       setwith_save(false)
     }
     else {//brandPk, itemNum, itemName, classification, middleClass, status
+      let brand_pk = 0
+      for(var i = 0;i<brandList.length;i++){
+        if(brandList[i].brand_name==selectedBrand){
+          brand_pk = brandList[i].pk
+          break;
+        }
+      }
       const formData = new FormData();
       formData.append('mainImage', mainFile)
       formData.append('detailImage', detailFile)
       formData.append('qrImage', qrFile)
 
-      formData.append('brandPk', brandPk)
+      formData.append('brandPk', brand_pk)
       formData.append('itemNum', itemNum)
 
       formData.append('itemName', itemName)
       formData.append('classification', classification)
       formData.append('middleClass', selectedmiddleClass)
       formData.append('status', statusnum)
+      formData.append('price',price)
       const headers = {
         'Content-type': 'multipart/form-data; charset=UTF-8',
         'Accept': '*/*'
       }
-      axios.post('/api/addproduct', formData, { headers })
+      console.log(formData)
+
+      const {data:response } = await axios.post('/api/addproduct', formData, { headers })
 
       setwith_save(false)
       setwith_good(true)
+    }
+  }
+  //브랜드 선택
+  const onChangeBrand = (e) =>{
+    setSelectedBrand(e.target.value)
+    for(var i=0;i<brandList.length;i++){
+      if(e.target.value==brandList[i].brand_name){
+        let middleClassList = []
+        if(brandList[i].middle_class_1){
+          middleClassList.push(brandList[i].middle_class_1)
+        }
+        if(brandList[i].middle_class_2){
+          middleClassList.push(brandList[i].middle_class_2)
+        }
+        if(brandList[i].middle_class_3){
+          middleClassList.push(brandList[i].middle_class_3)
+        }
+        if(brandList[i].middle_class_4){
+          middleClassList.push(brandList[i].middle_class_4)
+        }
+        if(brandList[i].middle_class_5){
+          middleClassList.push(brandList[i].middle_class_5)
+        }
+        setMiddleClassList(middleClassList)
+        setSelectedmiddleClass(middleClassList[0])
+      }
     }
   }
   //파일 저장 함수
@@ -286,7 +331,9 @@ const AddProduct = () => {
     setDetailFile(selectedDetailFiles[0])
     setQrFile(selectedQrFiles[0])
   })
-
+  const onChangePrice = (e) =>{
+    setPrice(e.target.value)
+  }
   return (
     <React.Fragment>
       <div className="page-content" style={{color:'#596275'}}>
@@ -348,24 +395,16 @@ const AddProduct = () => {
                           </Col>
                           <Col md="4">
                             <div className="mb-3">
-                              <Label style={{ fontWeight: '1000' }}>중분류</Label>
+                              <Label style={{ fontWeight: '1000' }}>브랜드</Label>
                               <form >
-                                <SelectStyle>
+                              <SelectStyle>
                                 <select className="form-control" name="userlevel"
-                                  onChange={handleSelectMiddleClass} value={selectedmiddleClass}>
-                                  <option>
-                                    {middleClassList.middle_class_1}
-                                  </option>
-                                  <option>
-                                    {middleClassList.middle_class_2}
-                                  </option>
-                                  <option>
-                                    {middleClassList.middle_class_3}
-                                  </option>
-                                  <option>
-                                    {middleClassList.middle_class_4}
-                                  </option>
-                                  
+                                  onChange={onChangeBrand} value={selectedBrand}>
+                                  {brandList && brandList.map((item) => (
+                                    <option key={item.pk}>
+                                      {item.brand_name}
+                                    </option>
+                                  ))}
                                 </select>
                                 </SelectStyle>
                               </form>
@@ -392,21 +431,24 @@ const AddProduct = () => {
                           </Col>
                           <Col md="4">
                             <div className="mb-3">
-                              <Label style={{ fontWeight: '1000' }}>브랜드</Label>
+                              <Label style={{ fontWeight: '1000' }}>중분류</Label>
                               <form >
-                              <SelectStyle>
+                                <SelectStyle>
                                 <select className="form-control" name="userlevel"
-                                  onChange={handleSelectBrand} value={selectedBrand}>
-                                  {brandList.map((item) => (
-                                    <option value={item} key={item}>
-                                      {item}
-                                    </option>
-                                  ))}
+                                  onChange={handleSelectMiddleClass} value={selectedmiddleClass}>
+                                    {middleClassList && middleClassList.map(post=>(
+                                      <option>
+                                        {post}
+                                      </option>
+                                    ))}
+                                  
+                                  
                                 </select>
                                 </SelectStyle>
                               </form>
                             </div>
                           </Col>
+                         
                           <Col md="4">
                             <div className="mb-3">
                               <Label style={{ fontWeight: '1000' }}>상태</Label>
@@ -425,7 +467,22 @@ const AddProduct = () => {
                             </div>
                           </Col>
                         </Row>
-
+                        <Row>
+                        <Col md="4">
+                            <div className="mb-3">
+                              <Label htmlFor="productname" style={{ fontWeight: '1000' }}>가격</Label>
+                              <Input
+                                id="productname"
+                                name="productname"
+                                type="text"
+                                className="form-control"
+                                value={price}
+                                onChange={onChangePrice}
+                                placeholder='숫자만 입력해 주세요'
+                              />
+                            </div>
+                          </Col>
+                          </Row>
 
 
 

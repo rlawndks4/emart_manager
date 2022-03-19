@@ -232,6 +232,20 @@ const BrandList = () => {
       window.location.reload()
     }
   }
+  async function middleClassOnOff(brand_pk,class_num,onoff_count){
+    const {data:response} = await axios.post('/api/brandclassonoff',{
+      pk:brand_pk,
+      classNum:class_num,
+      count:onoff_count
+    })
+    if(response.result>0){
+      alert(response.message)
+      window.location.reload()
+    }
+    else{
+      alert(response.message)
+    }
+  }
   return (
     <React.Fragment>
       <div className="page-content" style={{color:'#596275'}}>
@@ -265,6 +279,12 @@ const BrandList = () => {
                       <Class2>중분류2</Class2>
                       <Class3>중분류3</Class3>
                       <Class4>중분류4</Class4>
+                      <Class4>중분류5</Class4>
+                      <Class4>중분류6</Class4>
+                      <Class4>중분류7</Class4>
+                      <Class4>중분류8</Class4>
+                      <Class4>중분류9</Class4>
+                      <Class4>중분류10</Class4>
                       <Status>온오프</Status>
                       <Status>상태</Status>
                       <Date>생성시간</Date>
@@ -280,10 +300,127 @@ const BrandList = () => {
                         <Table key={post.pk}>
                           <CheckBox type="checkbox" id="cb1" />
                           <BrandName><ListText>{post.brand_name}</ListText></BrandName>
-                          <Class1><ListText>{post.middle_class_1}</ListText></Class1>
-                          <Class2><ListText>{post.middle_class_2}</ListText></Class2>
-                          <Class3><ListText>{post.middle_class_3}</ListText></Class3>
-                          <Class4><ListText>{post.middle_class_4}</ListText></Class4>
+                          <Class1><ListText style={{padding:'4px',background:`${JSON.parse(post.middle_class_onoff_list)[0]==1?'#2ecc71':'#74788d'}`,color:`white`,borderRadius:'4px',cursor:'pointer'}} onClick={()=>{
+                            if(JSON.parse(post.middle_class_onoff_list)[0]==1){
+                              if (window.confirm("상태를 off으로 변경하시겠습니까?")) {
+                                middleClassOnOff(post.pk,1,0)
+                              }
+                            }
+                            else{
+                              if (window.confirm("상태를 on으로 변경하시겠습니까?")) {
+                                middleClassOnOff(post.pk,1,1)
+                              }
+                            }
+                          }}>{post.middle_class_1}</ListText></Class1>
+                          <Class1><ListText style={{padding:'4px',background:`${JSON.parse(post.middle_class_onoff_list)[1]==1?'#2ecc71':'#74788d'}`,color:`white`,borderRadius:'4px',cursor:'pointer'}} onClick={()=>{
+                            if(JSON.parse(post.middle_class_onoff_list)[1]==1){
+                              if (window.confirm("상태를 off으로 변경하시겠습니까?")) {
+                                middleClassOnOff(post.pk,2,0)
+                              }
+                            }
+                            else{
+                              if (window.confirm("상태를 on으로 변경하시겠습니까?")) {
+                                middleClassOnOff(post.pk,2,1)
+                              }
+                            }
+                          }}>{post.middle_class_2}</ListText></Class1>
+                          <Class1><ListText style={{padding:'4px',background:`${JSON.parse(post.middle_class_onoff_list)[2]==1?'#2ecc71':'#74788d'}`,color:`white`,borderRadius:'4px',cursor:'pointer'}} onClick={()=>{
+                            if(JSON.parse(post.middle_class_onoff_list)[2]==1){
+                              if (window.confirm("상태를 off으로 변경하시겠습니까?")) {
+                                middleClassOnOff(post.pk,3,0)
+                              }
+                            }
+                            else{
+                              if (window.confirm("상태를 on으로 변경하시겠습니까?")) {
+                                middleClassOnOff(post.pk,3,1)
+                              }
+                            }
+                          }}>{post.middle_class_3}</ListText></Class1>
+                          <Class1><ListText style={{padding:'4px',background:`${JSON.parse(post.middle_class_onoff_list)[3]==1?'#2ecc71':'#74788d'}`,color:`white`,borderRadius:'4px',cursor:'pointer'}} onClick={()=>{
+                            if(JSON.parse(post.middle_class_onoff_list)[3]==1){
+                              if (window.confirm("상태를 off으로 변경하시겠습니까?")) {
+                                middleClassOnOff(post.pk,4,0)
+                              }
+                            }
+                            else{
+                              if (window.confirm("상태를 on으로 변경하시겠습니까?")) {
+                                middleClassOnOff(post.pk,4,1)
+                              }
+                            }
+                          }}>{post.middle_class_4}</ListText></Class1>
+                          <Class1><ListText style={{padding:'4px',background:`${JSON.parse(post.middle_class_onoff_list)[4]==1?'#2ecc71':'#74788d'}`,color:`white`,borderRadius:'4px',cursor:'pointer'}} onClick={()=>{
+                            if(JSON.parse(post.middle_class_onoff_list)[4]==1){
+                              if (window.confirm("상태를 off으로 변경하시겠습니까?")) {
+                                middleClassOnOff(post.pk,5,0)
+                              }
+                            }
+                            else{
+                              if (window.confirm("상태를 on으로 변경하시겠습니까?")) {
+                                middleClassOnOff(post.pk,5,1)
+                              }
+                            }
+                          }}>{post.middle_class_5}</ListText></Class1>
+                          <Class1><ListText style={{padding:'4px',background:`${JSON.parse(post.middle_class_onoff_list)[5]==1?'#2ecc71':'#74788d'}`,color:`white`,borderRadius:'4px',cursor:'pointer'}} onClick={()=>{
+                            if(JSON.parse(post.middle_class_onoff_list)[5]==1){
+                              if (window.confirm("상태를 off으로 변경하시겠습니까?")) {
+                                middleClassOnOff(post.pk,6,0)
+                              }
+                            }
+                            else{
+                              if (window.confirm("상태를 on으로 변경하시겠습니까?")) {
+                                middleClassOnOff(post.pk,6,1)
+                              }
+                            }
+                          }}>{post.middle_class_6}</ListText></Class1>
+
+                          <Class1><ListText style={{padding:'4px',background:`${JSON.parse(post.middle_class_onoff_list)[6]==1?'#2ecc71':'#74788d'}`,color:`white`,borderRadius:'4px',cursor:'pointer'}} onClick={()=>{
+                            if(JSON.parse(post.middle_class_onoff_list)[6]==1){
+                              if (window.confirm("상태를 off으로 변경하시겠습니까?")) {
+                                middleClassOnOff(post.pk,7,0)
+                              }
+                            }
+                            else{
+                              if (window.confirm("상태를 on으로 변경하시겠습니까?")) {
+                                middleClassOnOff(post.pk,7,1)
+                              }
+                            }
+                          }}>{post.middle_class_7}</ListText></Class1>
+                          <Class1><ListText style={{padding:'4px',background:`${JSON.parse(post.middle_class_onoff_list)[7]==1?'#2ecc71':'#74788d'}`,color:`white`,borderRadius:'4px',cursor:'pointer'}} onClick={()=>{
+                            if(JSON.parse(post.middle_class_onoff_list)[7]==1){
+                              if (window.confirm("상태를 off으로 변경하시겠습니까?")) {
+                                middleClassOnOff(post.pk,8,0)
+                              }
+                            }
+                            else{
+                              if (window.confirm("상태를 on으로 변경하시겠습니까?")) {
+                                middleClassOnOff(post.pk,8,1)
+                              }
+                            }
+                          }}>{post.middle_class_8}</ListText></Class1>
+                          <Class1><ListText style={{padding:'4px',background:`${JSON.parse(post.middle_class_onoff_list)[8]==1?'#2ecc71':'#74788d'}`,color:`white`,borderRadius:'4px',cursor:'pointer'}} onClick={()=>{
+                            if(JSON.parse(post.middle_class_onoff_list)[8]==1){
+                              if (window.confirm("상태를 off으로 변경하시겠습니까?")) {
+                                middleClassOnOff(post.pk,9,0)
+                              }
+                            }
+                            else{
+                              if (window.confirm("상태를 on으로 변경하시겠습니까?")) {
+                                middleClassOnOff(post.pk,9,1)
+                              }
+                            }
+                          }}>{post.middle_class_9}</ListText></Class1>
+                          <Class1><ListText style={{padding:'4px',background:`${JSON.parse(post.middle_class_onoff_list)[9]==1?'#2ecc71':'#74788d'}`,color:`white`,borderRadius:'4px',cursor:'pointer'}} onClick={()=>{
+                            if(JSON.parse(post.middle_class_onoff_list)[9]==1){
+                              if (window.confirm("상태를 off으로 변경하시겠습니까?")) {
+                                middleClassOnOff(post.pk,10,0)
+                              }
+                            }
+                            else{
+                              if (window.confirm("상태를 on으로 변경하시겠습니까?")) {
+                                middleClassOnOff(post.pk,10,1)
+                              }
+                            }
+                          }}>{post.middle_class_10}</ListText></Class1>
                           <Status>{post.onoff==0?
                           <Button onClick={()=>{
                             if (window.confirm("상태를 on으로 변경하시겠습니까?")) {
@@ -304,6 +441,8 @@ const BrandList = () => {
                               pk: post.pk, name: post.brand_name, class1: post.middle_class_1
                               , class2: post.middle_class_2, class3: post.middle_class_3, class4: post.middle_class_4,
                               status: setStatus(post.status)
+                              , class5: post.middle_class_5, class6: post.middle_class_6, class7: post.middle_class_7
+                              , class8: post.middle_class_8, class9: post.middle_class_9, class10: post.middle_class_10
                             }
                           }} className="px-3 text-primary"><i className="uil uil-pen font-size-18"></i></Link></Modify>
                           <Delete><Link to="#" className="px-3 text-danger"

@@ -208,6 +208,9 @@ const CustomerList = (props) => {
     else if(num==40){
       return '관리자'
     }
+    else if(num==45){
+      return '최고 관리자'
+    }
     else{
       return 'dev'
     }
@@ -247,6 +250,7 @@ const CustomerList = (props) => {
 
                     <Table style={{ background: '#EEF1FD' }}>
                       <CheckBox type="checkbox" id="cb1" />
+                      <ID>Senior ID</ID>
                       <ID>ID</ID>
                       <PW>PW</PW>
                       <UserLevel>User Level</UserLevel>
@@ -263,6 +267,7 @@ const CustomerList = (props) => {
  
                         <Table key={post.pk}>
                           <CheckBox type="checkbox" id="cb1" />
+                          <ID>{post.senior_user_id}</ID>
                           <ID>
                             {
                               post.user_level == 50 ?

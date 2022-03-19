@@ -146,7 +146,7 @@ const userRoutes = [
 
 
   //수정
-  { path: "/kiosk-revise", component: KioskRevise },
+  { path: "/kiosk-revise/:pk", component: KioskRevise },
   { path: "/customer-revise/:pk", component: CustomerRevise },
   { path: "/ad-revise", component: AdRevise },
   { path: "/product-revise/:pk", component: ProductRevise },

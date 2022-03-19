@@ -77,11 +77,11 @@ const AddCustomers = () => {
   const [checkId, setCheckId] = useState('');
   const [checkPw, setCheckPw] = useState(false);
   const [checkAddUser, setCheckAddUser] = useState(false);
-  const [userLevel, setUserLevel] = useState('');
+  const [userLevel, setUserLevel] = useState(0);
   const [selectList, setSelectList] = useState(["일반유저", "관리자"]);
   const [selected, setSelected] = useState("일반유저");
   const [myPk, setMyPk] = useState(0)
-
+  const [myId, setMyId] = useState('')
   const [allBrandList, setAllBrandList] = useState([]);
   const [brandNameList, setBrandNameList] = useState([]);
 
@@ -93,6 +93,12 @@ const AddCustomers = () => {
   const [brandList, setBrandList] = useState([]) 
   const handleSelect = (e) => {
     setSelected(e.target.value);
+    if (e.target.value === '일반유저') setUserLevel(0)
+    else if (e.target.value === '관리자') setUserLevel(40)
+    else if (e.target.value === '최고 관리자') setUserLevel(45)
+    else if (e.target.value === '개발자'){
+      setUserLevel(50)
+    }
   };
 
   const isAdmin = async () => {
@@ -110,12 +116,14 @@ const AddCustomers = () => {
           history.push('/product-list')
         } else {
           if(response.first){
+            selectList.push('최고 관리자')
             selectList.push('개발자');
           }
           setLoading(false)
         }
       
       setMyPk(response.pk)
+      setMyId(response.id)
     }
     const {data:response2} = await axios.get(`/api/kiosk?firstDate=1999-04-23&lastDate=2100-01-01&pk=${response.pk}`)
     setKioskList(response2.data.result)
@@ -155,12 +163,12 @@ const AddCustomers = () => {
         }
        
       }
-      console.log(selectKioskList)
       const { data: response } = await axios.post('/api/adduser', {
         id: id,
         pw: pw,
         userLevel: userLevel,
         seniorPk:myPk,
+        seniorId:myId,
         brandList:selectBrandList,
         kioskList:selectKioskList
       })
@@ -195,15 +203,7 @@ const AddCustomers = () => {
     }
   })
 
-  useEffect(() => {
-    if (selected === '일반유저') setUserLevel(0)
-    else if (selected === '관리자') setUserLevel(40)
-    else if (selected === '개발자'){
-      setUserLevel(50)
-    }
-  })
-
-
+ 
   const onChangeId = (e) => {
     setId(e.target.value)
     setCheckId('')

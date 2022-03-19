@@ -33,6 +33,13 @@ const AddBrand = () => {
   const [class2, setClass2] = useState("");
   const [class3, setClass3] = useState("");
   const [class4, setClass4] = useState("");
+  const [class5, setClass5] = useState("");
+  const [class6, setClass6] = useState("");
+  const [class7, setClass7] = useState("");
+  const [class8, setClass8] = useState("");
+  const [class9, setClass9] = useState("");
+  const [class10, setClass10] = useState("");
+
   const [checkAddBrand, setCheckAddBrand] = useState(false);
 
   const isAdmin = async () => {
@@ -58,13 +65,18 @@ const AddBrand = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault()
-    if (checkAddBrand) {
       const {data:response} = await axios.post('/api/addbrand', {
         brandName:brandName,
         class1:class1,
         class2:class2,
         class3:class3,
-        class4:class4
+        class4:class4,
+        class5:class5,
+        class6:class6,
+        class7:class7,
+        class8:class8,
+        class9:class9,
+        class10:class10,
       })
       if(response.result>0){
         setwith_save(false)
@@ -76,10 +88,7 @@ const AddBrand = () => {
 
       
 
-    } else {
-      alert('필수정보가 입력되지 않았습니다.')
-      setwith_save(false)
-    }
+   
   };
 
   useEffect(() => {
@@ -110,7 +119,25 @@ const AddBrand = () => {
   const onChangeClass4 = (e) => {
     setClass4(e.target.value)
   }
-
+  const onChangeClass5 = (e) => {
+    setClass5(e.target.value)
+  }
+  const onChangeClass6 = (e) => {
+    setClass6(e.target.value)
+  }
+  const onChangeClass7 = (e) => {
+    setClass7(e.target.value)
+  }
+  const onChangeClass8 = (e) => {
+    setClass8(e.target.value)
+  }
+  const onChangeClass9 = (e) => {
+    setClass9(e.target.value)
+  }
+  const onChangeClass10 = (e) => {
+    setClass10(e.target.value)
+  }
+ 
   return (
     <React.Fragment>
       <div className="page-content" style={{color:'#596275'}}>
@@ -165,6 +192,9 @@ const AddBrand = () => {
                                   />
                                 </div>
                               </Col>
+                             
+                            </Row>
+                            <Row>
                               <Col lg={2}>
                                 <div className="mb-3 mb-4">
                                   <Label
@@ -238,6 +268,122 @@ const AddBrand = () => {
                                     style={{fontWeight:'500'}}
                                     value={class4}
                                     required onChange={onChangeClass4}
+                                  />
+                                </div>
+                              </Col>
+                              <Col lg={2}>
+                                <div className="mb-3 mb-4">
+                                  <Label
+                                    htmlFor="billing-phone"
+
+                                    className="form-label"
+                                  >
+                                    중분류5
+                                  </Label>
+                                  <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Input Class4"
+                                    style={{fontWeight:'500'}}
+                                    value={class5}
+                                    required onChange={onChangeClass5}
+                                  />
+                                </div>
+                              </Col>
+                            </Row>
+                            <Row>
+                              <Col lg={2}>
+                                <div className="mb-3 mb-4">
+                                  <Label
+                                    htmlFor="billing-email-address"
+
+                                    className="form-label"
+                                  >
+                                    중분류6
+                                  </Label>
+                                  <Input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Input Class1"
+                                    style={{fontWeight:'500'}}
+                                    value={class6}
+                                    required onChange={onChangeClass6}
+                                  />
+                                </div>
+                              </Col>
+                              <Col lg={2}>
+                                <div className="mb-3 mb-4">
+                                  <Label
+                                    htmlFor="billing-phone"
+
+                                    className="form-label"
+                                  >
+                                    중분류7
+                                  </Label>
+                                  <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Input Class2"
+                                    style={{fontWeight:'500'}}
+                                    value={class7}
+                                    required onChange={onChangeClass7}
+                                  />
+                                </div>
+                              </Col>
+                              <Col lg={2}>
+                                <div className="mb-3 mb-4">
+                                  <Label
+                                    htmlFor="billing-phone"
+
+                                    className="form-label"
+                                  >
+                                    중분류8
+                                  </Label>
+                                  <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Input Class3"
+                                    style={{fontWeight:'500'}}
+                                    value={class8}
+                                    required onChange={onChangeClass8}
+                                  />
+                                </div>
+                              </Col>
+                              <Col lg={2}>
+                                <div className="mb-3 mb-4">
+                                  <Label
+                                    htmlFor="billing-phone"
+
+                                    className="form-label"
+                                  >
+                                    중분류9
+                                  </Label>
+                                  <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Input Class4"
+                                    style={{fontWeight:'500'}}
+                                    value={class9}
+                                    required onChange={onChangeClass9}
+                                  />
+                                </div>
+                              </Col>
+                              <Col lg={2}>
+                                <div className="mb-3 mb-4">
+                                  <Label
+                                    htmlFor="billing-phone"
+
+                                    className="form-label"
+                                  >
+                                    중분류10
+                                  </Label>
+                                  <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Input Class4"
+                                    style={{fontWeight:'500'}}
+                                    value={class10}
+                                    required onChange={onChangeClass10}
                                   />
                                 </div>
                               </Col>

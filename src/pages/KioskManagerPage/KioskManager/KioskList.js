@@ -465,11 +465,8 @@ const KioskList = () => {
                           </Status>
 
                           <Modify><Link to={{
-                            pathname: '/kiosk-revise',
-                            state: {
-                              pk: post.pk, num: post.kiosk_num, unique: post.unique_code
-                              , store: post.store_name , background_color:post.background_color,middle_class_color:post.middle_class_color,font_color:post.font_color
-                            }
+                            pathname: `/kiosk-revise/${post.pk}`
+                            
                           }} className="px-3 text-primary"><i className="uil uil-pen font-size-18"></i></Link></Modify>
                           <Delete><Link to="#" className="px-3 text-danger" onClick={() => {
                             setDeleteNum(post.pk)

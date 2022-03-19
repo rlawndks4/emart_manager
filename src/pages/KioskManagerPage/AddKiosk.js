@@ -32,7 +32,7 @@ const AddKiosk = () => {
   const [backgroundColor, setBackgroundColor] = useState('#ffffff')
   const [middleClassColor, setMiddleClassColor] = useState('#ffffff')
   const [fontColor, setFontColor] = useState('#000000')
-
+  
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(true);
   const [toggleIcon, setToggleIcon] = useState(`${up}`)

@@ -15,7 +15,7 @@ import axios from 'axios'
 //Import Breadcrumb
 import Breadcrumbs from "../../../components/Common/Breadcrumb"
 import SweetAlert from "react-bootstrap-sweetalert"
-import { useHistory, useLocation } from 'react-router'
+import { useHistory, useLocation, useParams } from 'react-router'
 import cancel from "../cancel.png"
 import save from "../save.png"
 import up from "../up.png"
@@ -23,6 +23,7 @@ import down from "../down.png"
 const KioskRevise = () => {
   const history = useHistory()
   const location = useLocation();
+  const params = useParams()
   const [loading, setLoading] = useState(false);
   const [kioskNum, setKioskNum] = useState('');
   const [uniNum, setUniNum] = useState('');
@@ -31,19 +32,19 @@ const KioskRevise = () => {
   const [checkStore, setCheckStore] = useState('');
 
   const [revisePk, setRevisePk] = useState(0);
-  const [backgroundColor, setBackgroundColor] = useState(location.state.background_color?location.state.background_color:history.push('/kiosk-list'))
-  const [middleClassColor, setMiddleClassColor] = useState(location.state.middle_class_color?location.state.middle_class_color:history.push('/kiosk-list'))
+  const [backgroundColor, setBackgroundColor] = useState("#ffffff")
+  const [middleClassColor, setMiddleClassColor] = useState("#ffffff")
   const [fontColor, setFontColor] = useState('#000000')
-
+  const [myLevel, setMyLevel] = useState(0)
 
   const [isOpen, setIsOpen] = useState(true);
   const [toggleIcon, setToggleIcon] = useState(`${up}`)
   const toggle = () => {
     setIsOpen(!isOpen)
-    if(toggleIcon==`${up}`){
+    if (toggleIcon == `${up}`) {
       setToggleIcon(`${down}`)
     }
-    else{
+    else {
       setToggleIcon(`${up}`)
     }
   };
@@ -58,23 +59,28 @@ const KioskRevise = () => {
       alert('회원만 접근 가능합니다.')
       history.push('/login')
     }
-    
+    setMyLevel(response.user_level)
+    console.log(response)
   }
- 
+
 
   useEffect(() => {
-    if (typeof location.state != "undefined") {
-      setRevisePk(location.state.pk)
-      setKioskNum(location.state.num);
-      setUniNum(location.state.unique)
-      setStore(location.state.store)
-      setMiddleClassColor(location.state.middle_class_color)
-      setBackgroundColor(location.state.background_color)
-      setFontColor(location.state.font_color)
+    async function fetchPosts(){
+    const { data: response } = await axios.get(`/api/onekiosk/${params.pk}`)
+    if (response.data.result) {
+      setRevisePk(params.pk)
+      setKioskNum(response.data.result.kiosk_num);
+      setUniNum(response.data.result.unique_code)
+      setStore(response.data.result.store_name)
+      setMiddleClassColor(response.data.result.middle_class_color)
+      setBackgroundColor(response.data.result.background_color)
+      setFontColor(response.data.result.font_color)
     }
-    else{
-      history.push('/kiosk-list')
+    else {
+      window.location.href = '/kiosk-list'
     }
+  }
+  fetchPosts()
   }, [])
   useEffect(() => {
     isAdmin()
@@ -89,16 +95,16 @@ const KioskRevise = () => {
       setwith_save(false)
     }
     else {
-      const {data:response} = await axios.put('/api/updatekiosk', {
+      const { data: response } = await axios.put('/api/updatekiosk', {
         num: kioskNum,
         uniNum: uniNum,
         store: store,
         pk: revisePk,
-        middleClassColor:middleClassColor,
-        backgroundColor:backgroundColor,
-        fontColor:fontColor
+        middleClassColor: middleClassColor,
+        backgroundColor: backgroundColor,
+        fontColor: fontColor
       })
-      if(response.result>0){
+      if (response.result > 0) {
         setwith_save(false)
         setwith_good(true)
       }
@@ -119,19 +125,19 @@ const KioskRevise = () => {
     setStore(e.target.value)
     setCheckStore('')
   }
-  const onChangeMiddleClassColor = (e) =>{
+  const onChangeMiddleClassColor = (e) => {
     setMiddleClassColor(e.target.value)
-  } 
-  const onChangeBackgroundColor = (e) =>{
+  }
+  const onChangeBackgroundColor = (e) => {
     setBackgroundColor(e.target.value)
   }
-  const onChangeFontColor = (e) =>{
+  const onChangeFontColor = (e) => {
     setFontColor(e.target.value)
   }
   return (
     <React.Fragment>
-      <div className="page-content" style={{color:'#596275'}}>
-        <Container fluid style={{fontFamily:'NanumGothic'}}>
+      <div className="page-content" style={{ color: '#596275' }}>
+        <Container fluid style={{ fontFamily: 'NanumGothic' }}>
           {/* Render Breadcrumb */}
           <Breadcrumbs breadcrumbItem="키오스크 관리" />
 
@@ -154,7 +160,7 @@ const KioskRevise = () => {
                           <h5 className="font-size-16 mb-1" style={{ fontFamily: 'NanumGothic', fontWeight: 'bold' }}>키오스크 수정</h5>
                           <p className="text-muted text-truncate mb-0">아래의 모든 정보를 입력하세요.</p>
                         </div>
-                        <img src={toggleIcon}/>
+                        <img src={toggleIcon} />
                       </Media>
 
                     </div>
@@ -173,7 +179,7 @@ const KioskRevise = () => {
                                 className="form-control"
                                 value={kioskNum}
                                 placeholder="#123456"
-                                style={{fontWeight:'500'}}
+                                style={{ fontWeight: '500' }}
                               />
                             </div>
                           </Col>
@@ -185,7 +191,7 @@ const KioskRevise = () => {
                                 className="form-control"
                                 value={uniNum}
                                 placeholder="123456"
-                                style={{fontWeight:'500'}}
+                                style={{ fontWeight: '500' }}
                                 onChange={onChangeUn}
                               />
                             </div>
@@ -198,11 +204,16 @@ const KioskRevise = () => {
                                 className="form-control"
                                 value={store}
                                 placeholder="XX점"
-                                style={{fontWeight:'500'}}
+                                style={{ fontWeight: '500' }}
                                 onChange={onChangeStore}
                               />
                             </div>
                           </Col>
+                          {myLevel<=40?
+                          <>
+                          </>
+                          :
+                          <>
                           <Col md="2">
                             <Label htmlFor="productname" style={{ fontWeight: '1000' }}>배경색</Label>
                             <Input
@@ -233,6 +244,8 @@ const KioskRevise = () => {
                               onChange={onChangeFontColor}
                             />
                           </Col>
+                          </>}
+                          
                         </Row>
 
                       </Form>

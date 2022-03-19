@@ -93,27 +93,17 @@ const CustomerRevise = () => {
         history.push('/product-list')
       } else {
         if (response.first) {
+          selectList.push('최고 관리자')
           selectList.push('개발자');
         }
 
         const { data: response1 } = await axios.get(`/api/mytopdownbrand?topPk=${response.pk}&downPk=${params.pk}`)
         setBrandList(response1.data.result)
-        for (var i = 0; i < response1.data.result.length; i++) {
-          if (response1.data.result[i].check) {
-            $(`input:checkbox[name=check-brand${i + 1}]`).prop("checked", true);
-          }
-
-        }
+        
 
         const { data: response2 } = await axios.get(`/api/mytopdownkiosk?topPk=${response.pk}&downPk=${params.pk}`)
         setKioskList(response2.data.result)
-        let kiosk_list = response2.data.result
-        for (var i = 0; i < kiosk_list.length; i++) {
-          if (kiosk_list[i].check) {
-            $(`input:checkbox[name=check${i + 1}]`).prop("checked", true);
-          }
-
-        }
+        
 
         setMyPk(response.pk)
         setLoading(false)
@@ -191,6 +181,7 @@ const CustomerRevise = () => {
   useEffect(() => {
     if (selected === '일반유저') setUserLevel(0)
     else if (selected === '관리자') setUserLevel(40)
+    else if (selected === '최고 관리자') setUserLevel(45)
     else {
       setUserLevel(50)
     }
@@ -376,7 +367,7 @@ const CustomerRevise = () => {
                               <div style={{ borderBottom: '1px solid #cccccc', width: '100%', display: 'flex' }}>
                                 <div style={{ margin: '1rem' }}>
                                  
-                                   <input type={'checkbox'} name={`check-brand${index + 1}`} onChange={onChangeBrand} />
+                                   <input type={'checkbox'} name={`check-brand${index + 1}`} onChange={onChangeBrand} defaultChecked={post.check?true:false} />
                                  
                                  
                                 </div>
@@ -428,7 +419,7 @@ const CustomerRevise = () => {
                               <div style={{ borderBottom: '1px solid #cccccc', width: '100%', display: 'flex' }}>
                                 <div style={{ margin: '1rem' }}>
                                   
-                                  <input type={'checkbox'} name={`check${index + 1}`} onChange={onChange} />
+                                  <input type={'checkbox'} name={`check${index + 1}`} onChange={onChange} defaultChecked={post.check?true:false} />
                                  
                                   
                                 </div>

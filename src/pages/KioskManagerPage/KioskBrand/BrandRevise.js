@@ -64,6 +64,12 @@ const BrandRevise = () => {
   const [class2, setClass2] = useState('')
   const [class3, setClass3] = useState('')
   const [class4, setClass4] = useState('')
+  const [class5, setClass5] = useState("");
+  const [class6, setClass6] = useState("");
+  const [class7, setClass7] = useState("");
+  const [class8, setClass8] = useState("");
+  const [class9, setClass9] = useState("");
+  const [class10, setClass10] = useState("");
   const [status, setStatus] = useState('')
   const statusList = ['사용중', '사용안함'];
   const [statusNum, setStatusNum] = useState(0)
@@ -77,6 +83,12 @@ const BrandRevise = () => {
       setClass2(location.state.class2)
       setClass3(location.state.class3)
       setClass4(location.state.class4)
+      setClass5(location.state.class5)
+      setClass6(location.state.class6)
+      setClass7(location.state.class7)
+      setClass8(location.state.class8)
+      setClass9(location.state.class9)
+      setClass10(location.state.class10)
       setStatus(location.state.status)
     }
     else{
@@ -100,6 +112,12 @@ const BrandRevise = () => {
         class2: class2,
         class3: class3,
         class4: class4,
+        class5: class5,
+        class6: class6,
+        class7: class7,
+        class8: class8,
+        class9: class9,
+        class10: class10,
         status: statusNum
       }).then(() => {
         setwith_save(false)
@@ -131,6 +149,24 @@ const BrandRevise = () => {
   }
   const onChangeClass4 = (e) => {
     setClass4(e.target.value)
+  }
+  const onChangeClass5 = (e) => {
+    setClass5(e.target.value)
+  }
+  const onChangeClass6 = (e) => {
+    setClass6(e.target.value)
+  }
+  const onChangeClass7 = (e) => {
+    setClass7(e.target.value)
+  }
+  const onChangeClass8 = (e) => {
+    setClass8(e.target.value)
+  }
+  const onChangeClass9 = (e) => {
+    setClass9(e.target.value)
+  }
+  const onChangeClass10 = (e) => {
+    setClass10(e.target.value)
   }
   const handleSelectStatus = (e) => {
     setStatus(e.target.value);
@@ -190,86 +226,7 @@ const BrandRevise = () => {
                                   />
                                 </div>
                               </Col>
-                              <Col lg={2}>
-                                <div className="mb-3 mb-4">
-                                  <Label
-                                    htmlFor="billing-email-address"
-
-                                    className="form-label"
-                                    style={{ fontWeight: '1000' }}>
-                                    중분류1
-                                  </Label>
-                                  <Input
-                                    type="email"
-                                    className="form-control"
-                                    id="billing-email-address"
-                                    placeholder="123****"
-                                    style={{fontWeight:'500'}}
-                                    value={class1}
-                                    onChange={onChangeClass1}
-                                  />
-                                </div>
-                              </Col>
-                              <Col lg={2}>
-                                <div className="mb-3 mb-4">
-                                  <Label
-                                    htmlFor="billing-phone"
-
-                                    className="form-label"
-                                    style={{ fontWeight: '1000' }}>
-                                    중분류2
-                                  </Label>
-                                  <input
-                                    type="text"
-                                    className="form-control"
-                                    id="billing-phone"
-                                    placeholder="Happycall"
-                                    style={{fontWeight:'500'}}
-                                    value={class2}
-                                    onChange={onChangeClass2}
-                                  />
-                                </div>
-                              </Col>
-                              <Col lg={2}>
-                                <div className="mb-3 mb-4">
-                                  <Label
-                                    htmlFor="billing-phone"
-
-                                    className="form-label"
-                                    style={{ fontWeight: '1000' }}>
-                                    중분류3
-                                  </Label>
-                                  <input
-                                    type="text"
-                                    className="form-control"
-                                    id="billing-phone"
-                                    placeholder="Happycall"
-                                    style={{fontWeight:'500'}}
-                                    value={class3}
-                                    onChange={onChangeClass3}
-                                  />
-                                </div>
-                              </Col>
-                              <Col lg={2}>
-                                <div className="mb-3 mb-4">
-                                  <Label
-                                    htmlFor="billing-phone"
-
-                                    className="form-label"
-                                    style={{ fontWeight: '1000' }}>
-                                    중분류4
-                                  </Label>
-                                  <input
-                                    type="text"
-                                    className="form-control"
-                                    id="billing-phone"
-                                    placeholder="Happycall"
-                                    style={{fontWeight:'500'}}
-                                    value={class4}
-                                    onChange={onChangeClass4}
-                                  />
-                                </div>
-                              </Col>
+                            
                               <Col lg={2}>
                                 <div className="mb-3 mb-4">
                                   <Label
@@ -291,11 +248,201 @@ const BrandRevise = () => {
                                 </div>
                               </Col>
                             </Row>
+                         
                             <Row>
-                              {" "}
+                              <Col lg={2}>
+                                <div className="mb-3 mb-4">
+                                  <Label
+                                    htmlFor="billing-email-address"
+
+                                    className="form-label"
+                                  >
+                                    중분류1
+                                  </Label>
+                                  <Input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Input Class1"
+                                    style={{fontWeight:'500'}}
+                                    value={class1}
+                                    required onChange={onChangeClass1}
+                                  />
+                                </div>
+                              </Col>
+                              <Col lg={2}>
+                                <div className="mb-3 mb-4">
+                                  <Label
+                                    htmlFor="billing-phone"
+
+                                    className="form-label"
+                                  >
+                                    중분류2
+                                  </Label>
+                                  <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Input Class2"
+                                    style={{fontWeight:'500'}}
+                                    value={class2}
+                                    required onChange={onChangeClass2}
+                                  />
+                                </div>
+                              </Col>
+                              <Col lg={2}>
+                                <div className="mb-3 mb-4">
+                                  <Label
+                                    htmlFor="billing-phone"
+
+                                    className="form-label"
+                                  >
+                                    중분류3
+                                  </Label>
+                                  <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Input Class3"
+                                    style={{fontWeight:'500'}}
+                                    value={class3}
+                                    required onChange={onChangeClass3}
+                                  />
+                                </div>
+                              </Col>
+                              <Col lg={2}>
+                                <div className="mb-3 mb-4">
+                                  <Label
+                                    htmlFor="billing-phone"
+
+                                    className="form-label"
+                                  >
+                                    중분류4
+                                  </Label>
+                                  <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Input Class4"
+                                    style={{fontWeight:'500'}}
+                                    value={class4}
+                                    required onChange={onChangeClass4}
+                                  />
+                                </div>
+                              </Col>
+                              <Col lg={2}>
+                                <div className="mb-3 mb-4">
+                                  <Label
+                                    htmlFor="billing-phone"
+
+                                    className="form-label"
+                                  >
+                                    중분류5
+                                  </Label>
+                                  <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Input Class4"
+                                    style={{fontWeight:'500'}}
+                                    value={class5}
+                                    required onChange={onChangeClass5}
+                                  />
+                                </div>
+                              </Col>
                             </Row>
+                            <Row>
+                              <Col lg={2}>
+                                <div className="mb-3 mb-4">
+                                  <Label
+                                    htmlFor="billing-email-address"
 
+                                    className="form-label"
+                                  >
+                                    중분류6
+                                  </Label>
+                                  <Input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Input Class1"
+                                    style={{fontWeight:'500'}}
+                                    value={class6}
+                                    required onChange={onChangeClass6}
+                                  />
+                                </div>
+                              </Col>
+                              <Col lg={2}>
+                                <div className="mb-3 mb-4">
+                                  <Label
+                                    htmlFor="billing-phone"
 
+                                    className="form-label"
+                                  >
+                                    중분류7
+                                  </Label>
+                                  <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Input Class2"
+                                    style={{fontWeight:'500'}}
+                                    value={class7}
+                                    required onChange={onChangeClass7}
+                                  />
+                                </div>
+                              </Col>
+                              <Col lg={2}>
+                                <div className="mb-3 mb-4">
+                                  <Label
+                                    htmlFor="billing-phone"
+
+                                    className="form-label"
+                                  >
+                                    중분류8
+                                  </Label>
+                                  <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Input Class3"
+                                    style={{fontWeight:'500'}}
+                                    value={class8}
+                                    required onChange={onChangeClass8}
+                                  />
+                                </div>
+                              </Col>
+                              <Col lg={2}>
+                                <div className="mb-3 mb-4">
+                                  <Label
+                                    htmlFor="billing-phone"
+
+                                    className="form-label"
+                                  >
+                                    중분류9
+                                  </Label>
+                                  <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Input Class4"
+                                    style={{fontWeight:'500'}}
+                                    value={class9}
+                                    required onChange={onChangeClass9}
+                                  />
+                                </div>
+                              </Col>
+                              <Col lg={2}>
+                                <div className="mb-3 mb-4">
+                                  <Label
+                                    htmlFor="billing-phone"
+
+                                    className="form-label"
+                                  >
+                                    중분류10
+                                  </Label>
+                                  <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Input Class4"
+                                    style={{fontWeight:'500'}}
+                                    value={class10}
+                                    required onChange={onChangeClass10}
+                                  />
+                                </div>
+                              </Col>
+                            </Row>
                           </div>
                         </Form>
                       </div>

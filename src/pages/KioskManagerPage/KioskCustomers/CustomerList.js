@@ -127,6 +127,7 @@ const CustomerList = (props) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [with_delete, setwith_delete] = useState(false);
   const [search, setSearch] = useState('')
+  const [allUser, setAllUser] = useState([])
   const isAdmin = async () => {
     setLoading(true);
     const { data: response } = await axios.get('/api/auth')
@@ -148,15 +149,76 @@ const CustomerList = (props) => {
   useEffect(() => {
     isAdmin()
   }, [])
-
+  function makeTopDown(list1, all_user1){
+    let list = list1;
+    let all_user = all_user1
+    for(var i =0;i<list.length;i++){
+      if(list[i].user_level==50){
+        list[i].master_id = '';
+        list[i].senior_id = '';
+        list[i].user_id = '';
+      } else if(list[i].user_level==45){
+        list[i].master_id = list[i].id;
+        list[i].senior_id = '';
+        list[i].user_id = '';
+      } else if(list[i].user_level==40) {
+        for(var j=0;j<all_user.length;j++){
+          if(list[i].senior_user_pk==all_user[j].pk&&all_user[j].user_level==45){
+            list[i].master_id = all_user[j].id;
+            break;
+          }
+        }
+        if(j==all_user.length){
+          list[i].master_id = '';
+        }
+        list[i].senior_id = list[i].id;
+        list[i].user_id = '';
+      } else if(list[i].user_level==0) {
+        
+        for(var j=0;j<all_user.length;j++){
+          if(list[i].senior_user_pk==all_user[j].pk&&all_user[j].user_level==40){
+            list[i].senior_id = all_user[j].id;
+            list[i].senior_ppk = all_user[j].senior_user_pk
+            break;
+          }
+        }
+        if(j==all_user.length){
+          list[i].senior_id = '';
+        }
+        if(list[i].senior_id){
+          for(var j = 0;j<all_user.length;j++){
+            if(list[i].senior_ppk==all_user[j].pk&&all_user[j].user_level==45){
+              list[i].master_id = all_user[j].id
+              break;
+            }
+          }
+          if(j==all_user.length){
+          list[i].master_id = '';
+          }
+        } else {
+          list[i].master_id = '';
+        }
+        list[i].user_id = list[i].id;
+      }
+    }
+    return list;
+  }
   useEffect(() => {
     async function fetchPosts() {
       setLoading(true);
       const page = currentPage
-      const { data: response } = await axios.get(`/api/user/${page}?keyword=${search}`);
+      const { data: response } = await axios.get(`/api/user?page=${page}&keyword=${search}`);
 
+      const {data: response2} = await axios.get(`/api/user?keyword=${search}`)
+      console.log(response2)
+      setAllUser(response2.data.result)
+      let list = response.data.result;
+      let all_user = response2.data.result;
+      let result = await makeTopDown(list,all_user);
+      setPosts(result)
       setPosts(response.data.result);
       setMaxPage(response.data.maxPage);
+
       setLoading(false);
     }
     fetchPosts()
@@ -182,8 +244,10 @@ const CustomerList = (props) => {
       setLoading(true);
       const page = num
       setCurrentPage(num)
-      const { data: response } = await axios.get(`/api/user/${page}?keyword=${search}`);
-      setPosts(response.data.result);
+      const { data: response } = await axios.get(`/api/user?page=${page}&keyword=${search}`);
+
+      let result = await makeTopDown(response.data.result,allUser);
+      setPosts(result);
       setLoading(false);
     }
     fetchPosts()
@@ -250,7 +314,9 @@ const CustomerList = (props) => {
 
                     <Table style={{ background: '#EEF1FD' }}>
                       <CheckBox type="checkbox" id="cb1" />
-                      <ID>Senior ID</ID>
+                      <ID>최고관리자</ID>
+                      <ID>관리자</ID>
+                      <ID>일반유저</ID>
                       <ID>ID</ID>
                       <PW>PW</PW>
                       <UserLevel>User Level</UserLevel>
@@ -267,7 +333,9 @@ const CustomerList = (props) => {
  
                         <Table key={post.pk}>
                           <CheckBox type="checkbox" id="cb1" />
-                          <ID>{post.senior_user_id}</ID>
+                          <ID>{post.master_id}</ID>
+                          <ID>{post.senior_id}</ID>
+                          <ID>{post.user_id}</ID>
                           <ID>
                             {
                               post.user_level == 50 ?

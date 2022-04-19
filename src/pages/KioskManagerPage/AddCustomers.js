@@ -78,7 +78,7 @@ const AddCustomers = () => {
   const [checkPw, setCheckPw] = useState(false);
   const [checkAddUser, setCheckAddUser] = useState(false);
   const [userLevel, setUserLevel] = useState(0);
-  const [selectList, setSelectList] = useState(["일반유저", "관리자"]);
+  const [selectList, setSelectList] = useState(["일반유저"]);
   const [selected, setSelected] = useState("일반유저");
   const [myPk, setMyPk] = useState(0)
   const [myId, setMyId] = useState('')
@@ -115,10 +115,13 @@ const AddCustomers = () => {
           alert('관리자만 접근 가능합니다.')
           history.push('/product-list')
         } else {
-          if(response.first){
+          if(response.user_level>=50){
             selectList.push('최고 관리자')
-            selectList.push('개발자');
+            selectList.push('관리자');
+          } else if(response.user_level>=45) {
+            selectList.push('관리자');
           }
+          
           setLoading(false)
         }
       

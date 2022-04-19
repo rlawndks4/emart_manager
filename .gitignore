@@ -3,3 +3,6 @@
 # server/database.json
 # server/config
 server/node_modules/
+./node_modules
+/node_modules
+node_modules

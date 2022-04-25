@@ -13,7 +13,7 @@ import {
 import SweetAlert from "react-bootstrap-sweetalert"
 import { Link } from "react-router-dom"
 import { useHistory, useLocation } from 'react-router';
-
+import Dropzone from "react-dropzone"
 import Breadcrumbs from "../../../components/Common/Breadcrumb"
 import axios from "axios";
 import cancel from "../cancel.png"
@@ -74,7 +74,10 @@ const BrandRevise = () => {
   const statusList = ['사용중', '사용안함'];
   const [statusNum, setStatusNum] = useState(0)
   const location = useLocation();
-
+  const [brandFile, setBrandFile] = useState({
+    file: []
+  })
+  const [selectedFiles, setselectedFiles] = useState([])
   useEffect(() => {
     if (typeof location.state != "undefined") {
       setRevisePk(location.state.pk)
@@ -95,38 +98,43 @@ const BrandRevise = () => {
       history.push('/brand-list')
     }
   }, [])
-  const onSubmit = () => {
-    if (!brandName.length ||
-      !class1.length ||
-      !class2.length ||
-      !class3.length ||
-      !class4.length) {
+  const onSubmit =async () => {
+    if (!brandName.length ) {
       alert('필수 값을 입력하지 않았습니다.')
       setwith_save(false)
     }
     else {
-      axios.put('/api/updatebrand', {
-        pk: revisePk,
-        name: brandName,
-        class1: class1,
-        class2: class2,
-        class3: class3,
-        class4: class4,
-        class5: class5,
-        class6: class6,
-        class7: class7,
-        class8: class8,
-        class9: class9,
-        class10: class10,
-        status: statusNum
-      }).then(() => {
+      let formData = new FormData();
+      formData.append('pk',revisePk)
+      formData.append('image', brandFile)
+      formData.append('brandName', brandName)
+      formData.append('class1', class1)
+      formData.append('class2', class2)
+      formData.append('class3', class3)
+      formData.append('class4', class4)
+      formData.append('class5', class5)
+      formData.append('class6', class6)
+      formData.append('class7', class7)
+      formData.append('class8', class8)
+      formData.append('class9', class9)
+      formData.append('class10', class10)
+      formData.append('status',statusNum)
+      const config = {
+        header: {
+          'Content-type': 'multipart/form-data; charset=UTF-8',
+          'Accept': '*/*'
+        }
+      }
+      const {data:response} = await  axios.put('/api/updatebrand', formData, config )
+      if(response.result<0){
+        alert(response.message)
         setwith_save(false)
-        setwith_good(true)
-
-      })
-        .catch(err => console.log(err))
+      } else {
+        alert('성공적으로 수정되었습니다.')
+        setwith_save(false)
+        history.push('/brand-list')
+      }
     }
-
 
   };
   useEffect(() => {
@@ -171,6 +179,28 @@ const BrandRevise = () => {
   const handleSelectStatus = (e) => {
     setStatus(e.target.value);
   };
+  useEffect(() => {
+    setBrandFile(selectedFiles[0]);
+  }, [selectedFiles])
+  function handleAcceptedFiles(files) {
+    files.map(file =>
+      Object.assign(file, {
+        preview: URL.createObjectURL(file),
+        formattedSize: formatBytes(file.size)
+      })
+
+    )
+    setselectedFiles(files)
+  }
+  function formatBytes(bytes, decimals = 2) {
+    if (bytes === 0) return "0 Bytes"
+    const k = 1024
+    const dm = decimals < 0 ? 0 : decimals
+    const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i]
+  }
   return (
     <React.Fragment>
       <div className="page-content" style={{color:'#596275'}}>
@@ -442,6 +472,74 @@ const BrandRevise = () => {
                                   />
                                 </div>
                               </Col>
+                              <div className="p-4 border-top">
+                                <Label
+                                  htmlFor="billing-phone"
+
+                                  className="form-label"
+                                >
+                                  브랜드 이미지
+                                </Label>
+                                <Form>
+                                  <Dropzone
+                                    onDrop={acceptedFiles => {
+                                      handleAcceptedFiles(acceptedFiles)
+                                    }}
+                                  >
+                                    {({ getRootProps, getInputProps }) => (
+                                      <div className="dropzone">
+                                        <div
+                                          className="dz-message needsclick"
+                                          {...getRootProps()}
+                                        >
+                                          <input {...getInputProps()} />
+                                          <div className="dz-message needsclick">
+                                            <div className="mb-3">
+                                              <i className="display-4 text-muted uil uil-cloud-upload" ></i>
+                                            </div>
+                                            <h4>파일을 업로드 해주세요.<br />(jpg, png, jpeg, gif, mp4, avi)<br/>세로 150px(고정), 가로 880px 이하</h4>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    )}
+                                  </Dropzone>
+                                  <div className="dropzone-previews mt-3" id="file-previews">
+                                    {selectedFiles.map((f, i) => {
+                                      return (
+                                        <Card
+                                          className="mt-1 mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete"
+                                          key={i + "-file"}
+                                        >
+                                          <div className="p-2">
+                                            <Row className="align-items-center">
+                                              <Col className="col-auto">
+                                                <img
+                                                  data-dz-thumbnail=""
+                                                  height="80"
+                                                  className="avatar-sm rounded bg-light"
+                                                  alt={f.name}
+                                                  src={f.preview}
+                                                />
+                                              </Col>
+                                              <Col>
+                                                <Link
+                                                  to="#"
+                                                  className="text-muted font-weight-bold"
+                                                >
+                                                  {f.name}
+                                                </Link>
+                                                <p className="mb-0">
+                                                  <strong>{f.formattedSize}</strong>
+                                                </p>
+                                              </Col>
+                                            </Row>
+                                          </div>
+                                        </Card>
+                                      )
+                                    })}
+                                  </div>
+                                </Form>
+                              </div>
                             </Row>
                           </div>
                         </Form>

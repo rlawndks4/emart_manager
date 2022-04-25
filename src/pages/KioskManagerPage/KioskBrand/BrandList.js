@@ -9,6 +9,7 @@ import SweetAlert from "react-bootstrap-sweetalert"
 import { useHistory } from 'react-router';
 import { AvForm } from "availity-reactstrap-validation"
 import { Button } from "reactstrap";
+import ServerLink from "../data/ServerLink";
 const CheckBox = styled.input`
 margin: 14px 14px 14px;
 `
@@ -130,7 +131,10 @@ const PageSpan = styled.span`
     background-color:black;
   }
 `;
-
+const ListImg = styled.img`
+height: auto;
+width: 100%;
+`
 const BrandList = () => {
 
   const history = useHistory()
@@ -274,7 +278,9 @@ const BrandList = () => {
 
                     <Table style={{ background: '#EEF1FD' }}>
                       <CheckBox type="checkbox" id="cb1" />
+                      <BrandName>이미지</BrandName>
                       <BrandName>브랜드</BrandName>
+                      
                       <Class1>중분류1</Class1>
                       <Class2>중분류2</Class2>
                       <Class3>중분류3</Class3>
@@ -287,7 +293,6 @@ const BrandList = () => {
                       <Class4>중분류10</Class4>
                       <Status>온오프</Status>
                       <Status>상태</Status>
-                      <Date>생성시간</Date>
                       <Modify>수정</Modify>
                       <Delete>삭제</Delete>
                     </Table>
@@ -299,6 +304,7 @@ const BrandList = () => {
                       {posts && posts.map(post => (
                         <Table key={post.pk}>
                           <CheckBox type="checkbox" id="cb1" />
+                          <BrandName><ListImg src={ServerLink + post.image_src} /></BrandName>
                           <BrandName><ListText>{post.brand_name}</ListText></BrandName>
                           <Class1><ListText style={{padding:'4px',background:`${JSON.parse(post.middle_class_onoff_list)[0]==1?'#2ecc71':'#74788d'}`,color:`white`,borderRadius:'4px',cursor:'pointer'}} onClick={()=>{
                             if(JSON.parse(post.middle_class_onoff_list)[0]==1){
@@ -434,7 +440,6 @@ const BrandList = () => {
                           }
                         }}>{'on'}</Button>}</Status>
                           <Status><ListText>{setStatus(post.status)}</ListText></Status>
-                          <Date><ListText>{onCreateTime(post.create_time)}</ListText></Date>
                           <Modify><Link to={{
                             pathname: '/brand-revise',
                             state: {

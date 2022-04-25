@@ -13,6 +13,7 @@ import {
 import SweetAlert from "react-bootstrap-sweetalert"
 import { Link } from "react-router-dom"
 //Import Breadcrumb
+import Dropzone from "react-dropzone"
 import Breadcrumbs from "../../components/Common/Breadcrumb"
 import axios from 'axios'
 import { useHistory } from 'react-router';
@@ -39,9 +40,12 @@ const AddBrand = () => {
   const [class8, setClass8] = useState("");
   const [class9, setClass9] = useState("");
   const [class10, setClass10] = useState("");
-
+  const [image, setImage] = useState([])
   const [checkAddBrand, setCheckAddBrand] = useState(false);
-
+  const [brandFile, setBrandFile] = useState({
+    file: []
+  })
+  const [selectedFiles, setselectedFiles] = useState([])
   const isAdmin = async () => {
 
     const { data: response } = await axios.get('/api/auth')
@@ -65,30 +69,40 @@ const AddBrand = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault()
-      const {data:response} = await axios.post('/api/addbrand', {
-        brandName:brandName,
-        class1:class1,
-        class2:class2,
-        class3:class3,
-        class4:class4,
-        class5:class5,
-        class6:class6,
-        class7:class7,
-        class8:class8,
-        class9:class9,
-        class10:class10,
-      })
-      if(response.result>0){
-        setwith_save(false)
-      setwith_good(true)
+    if (!brandName || !brandFile) {
+      alert('필수 값을 입력하지 않았습니다.')
+      setwith_save(false)
+    } else {
+      let formData = new FormData();
+      formData.append('image', brandFile)
+      formData.append('brandName', brandName)
+      formData.append('class1', class1)
+      formData.append('class2', class2)
+      formData.append('class3', class3)
+      formData.append('class4', class4)
+      formData.append('class5', class5)
+      formData.append('class6', class6)
+      formData.append('class7', class7)
+      formData.append('class8', class8)
+      formData.append('class9', class9)
+      formData.append('class10', class10)
+      const config = {
+        header: {
+          'Content-type': 'multipart/form-data; charset=UTF-8',
+          'Accept': '*/*'
+        }
       }
-      else{
+      const { data: response } = await axios.post('/api/addbrand', formData, config)
+      if (response.result > 0) {
+        setwith_save(false)
+        setwith_good(true)
+      }
+      else {
         alert(response.message)
       }
+    }
 
-      
 
-   
   };
 
   useEffect(() => {
@@ -137,11 +151,33 @@ const AddBrand = () => {
   const onChangeClass10 = (e) => {
     setClass10(e.target.value)
   }
- 
+  useEffect(() => {
+    setBrandFile(selectedFiles[0]);
+  }, [selectedFiles])
+  function handleAcceptedFiles(files) {
+    console.log(files)
+    files.map(file =>
+      Object.assign(file, {
+        preview: URL.createObjectURL(file),
+        formattedSize: formatBytes(file.size)
+      })
+
+    )
+    setselectedFiles(files)
+  }
+  function formatBytes(bytes, decimals = 2) {
+    if (bytes === 0) return "0 Bytes"
+    const k = 1024
+    const dm = decimals < 0 ? 0 : decimals
+    const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i]
+  }
   return (
     <React.Fragment>
-      <div className="page-content" style={{color:'#596275'}}>
-        <Container fluid style={{fontFamily:'NanumGothic'}}>
+      <div className="page-content" style={{ color: '#596275' }}>
+        <Container fluid style={{ fontFamily: 'NanumGothic' }}>
           {/* Render Breadcrumb */}
           <Breadcrumbs breadcrumbItem="브랜드 관리" />
 
@@ -186,13 +222,13 @@ const AddBrand = () => {
                                     type="text"
                                     className="form-control"
                                     placeholder="Input Brand"
-                                    style={{fontWeight:'500'}}
+                                    style={{ fontWeight: '500' }}
                                     value={brandName}
                                     required onChange={onChangeBrand}
                                   />
                                 </div>
                               </Col>
-                             
+
                             </Row>
                             <Row>
                               <Col lg={2}>
@@ -208,7 +244,7 @@ const AddBrand = () => {
                                     type="text"
                                     className="form-control"
                                     placeholder="Input Class1"
-                                    style={{fontWeight:'500'}}
+                                    style={{ fontWeight: '500' }}
                                     value={class1}
                                     required onChange={onChangeClass1}
                                   />
@@ -227,7 +263,7 @@ const AddBrand = () => {
                                     type="text"
                                     className="form-control"
                                     placeholder="Input Class2"
-                                    style={{fontWeight:'500'}}
+                                    style={{ fontWeight: '500' }}
                                     value={class2}
                                     required onChange={onChangeClass2}
                                   />
@@ -246,7 +282,7 @@ const AddBrand = () => {
                                     type="text"
                                     className="form-control"
                                     placeholder="Input Class3"
-                                    style={{fontWeight:'500'}}
+                                    style={{ fontWeight: '500' }}
                                     value={class3}
                                     required onChange={onChangeClass3}
                                   />
@@ -265,7 +301,7 @@ const AddBrand = () => {
                                     type="text"
                                     className="form-control"
                                     placeholder="Input Class4"
-                                    style={{fontWeight:'500'}}
+                                    style={{ fontWeight: '500' }}
                                     value={class4}
                                     required onChange={onChangeClass4}
                                   />
@@ -284,7 +320,7 @@ const AddBrand = () => {
                                     type="text"
                                     className="form-control"
                                     placeholder="Input Class4"
-                                    style={{fontWeight:'500'}}
+                                    style={{ fontWeight: '500' }}
                                     value={class5}
                                     required onChange={onChangeClass5}
                                   />
@@ -305,7 +341,7 @@ const AddBrand = () => {
                                     type="text"
                                     className="form-control"
                                     placeholder="Input Class1"
-                                    style={{fontWeight:'500'}}
+                                    style={{ fontWeight: '500' }}
                                     value={class6}
                                     required onChange={onChangeClass6}
                                   />
@@ -324,7 +360,7 @@ const AddBrand = () => {
                                     type="text"
                                     className="form-control"
                                     placeholder="Input Class2"
-                                    style={{fontWeight:'500'}}
+                                    style={{ fontWeight: '500' }}
                                     value={class7}
                                     required onChange={onChangeClass7}
                                   />
@@ -343,7 +379,7 @@ const AddBrand = () => {
                                     type="text"
                                     className="form-control"
                                     placeholder="Input Class3"
-                                    style={{fontWeight:'500'}}
+                                    style={{ fontWeight: '500' }}
                                     value={class8}
                                     required onChange={onChangeClass8}
                                   />
@@ -362,7 +398,7 @@ const AddBrand = () => {
                                     type="text"
                                     className="form-control"
                                     placeholder="Input Class4"
-                                    style={{fontWeight:'500'}}
+                                    style={{ fontWeight: '500' }}
                                     value={class9}
                                     required onChange={onChangeClass9}
                                   />
@@ -381,12 +417,81 @@ const AddBrand = () => {
                                     type="text"
                                     className="form-control"
                                     placeholder="Input Class4"
-                                    style={{fontWeight:'500'}}
+                                    style={{ fontWeight: '500' }}
                                     value={class10}
                                     required onChange={onChangeClass10}
                                   />
                                 </div>
                               </Col>
+
+                              <div className="p-4 border-top">
+                                <Label
+                                  htmlFor="billing-phone"
+
+                                  className="form-label"
+                                >
+                                  브랜드 이미지
+                                </Label>
+                                <Form>
+                                  <Dropzone
+                                    onDrop={acceptedFiles => {
+                                      handleAcceptedFiles(acceptedFiles)
+                                    }}
+                                  >
+                                    {({ getRootProps, getInputProps }) => (
+                                      <div className="dropzone">
+                                        <div
+                                          className="dz-message needsclick"
+                                          {...getRootProps()}
+                                        >
+                                          <input {...getInputProps()} />
+                                          <div className="dz-message needsclick">
+                                            <div className="mb-3">
+                                              <i className="display-4 text-muted uil uil-cloud-upload" ></i>
+                                            </div>
+                                            <h4>파일을 업로드 해주세요.<br />(jpg, png, jpeg, gif, mp4, avi)<br/>세로 150px(고정), 가로 880px 이하</h4>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    )}
+                                  </Dropzone>
+                                  <div className="dropzone-previews mt-3" id="file-previews">
+                                    {selectedFiles.map((f, i) => {
+                                      return (
+                                        <Card
+                                          className="mt-1 mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete"
+                                          key={i + "-file"}
+                                        >
+                                          <div className="p-2">
+                                            <Row className="align-items-center">
+                                              <Col className="col-auto">
+                                                <img
+                                                  data-dz-thumbnail=""
+                                                  height="80"
+                                                  className="avatar-sm rounded bg-light"
+                                                  alt={f.name}
+                                                  src={f.preview}
+                                                />
+                                              </Col>
+                                              <Col>
+                                                <Link
+                                                  to="#"
+                                                  className="text-muted font-weight-bold"
+                                                >
+                                                  {f.name}
+                                                </Link>
+                                                <p className="mb-0">
+                                                  <strong>{f.formattedSize}</strong>
+                                                </p>
+                                              </Col>
+                                            </Row>
+                                          </div>
+                                        </Card>
+                                      )
+                                    })}
+                                  </div>
+                                </Form>
+                              </div>
                             </Row>
                           </div>
                         </Form>

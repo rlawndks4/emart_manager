@@ -19,7 +19,7 @@ const Sidebar = props => {
 
           <Link to="/product-list" className="logo logo-light">
             <span className="logo-lg">
-              <img src={EmartLogo} alt="" height="20" />
+              <img src={EmartLogo} alt="" height="40" />
             </span>
           </Link>
         </div>

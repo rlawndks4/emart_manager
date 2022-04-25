@@ -89,7 +89,7 @@ const onLogin = async (e) => {
                       ) : null}
                       <div className="text-center">
                         <Link to="/login" className="mb-5 d-block auth-logo">
-                          <img src={EmartLogo} alt="" height="33" className="emart_logo" />
+                          <img src={EmartLogo} alt="" height="50" className="emart_logo" />
                   
                         </Link>
                       </div>

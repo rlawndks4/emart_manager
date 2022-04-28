@@ -181,21 +181,7 @@ const ProductRevise = () => {
           if(response.data.result[i].middle_class_5){
             middle_list.push(response.data.result[i].middle_class_5)
           }
-          if(response.data.result[i].middle_class_6){
-            middle_list.push(response.data.result[i].middle_class_6)
-          }
-          if(response.data.result[i].middle_class_7){
-            middle_list.push(response.data.result[i].middle_class_7)
-          }
-          if(response.data.result[i].middle_class_8){
-            middle_list.push(response.data.result[i].middle_class_8)
-          }
-          if(response.data.result[i].middle_class_9){
-            middle_list.push(response.data.result[i].middle_class_9)
-          }
-          if(response.data.result[i].middle_class_10){
-            middle_list.push(response.data.result[i].middle_class_10)
-          }
+       
           setMiddleClassList(middle_list)
           break;
         }
@@ -288,21 +274,7 @@ const ProductRevise = () => {
         if(brandList[i].middle_class_5){
           middleClassList.push(brandList[i].middle_class_5)
         }
-        if(brandList[i].middle_class_6){
-          middleClassList.push(brandList[i].middle_class_6)
-        }
-        if(brandList[i].middle_class_7){
-          middleClassList.push(brandList[i].middle_class_7)
-        }
-        if(brandList[i].middle_class_8){
-          middleClassList.push(brandList[i].middle_class_8)
-        }
-        if(brandList[i].middle_class_9){
-          middleClassList.push(brandList[i].middle_class_9)
-        }
-        if(brandList[i].middle_class_10){
-          middleClassList.push(brandList[i].middle_class_10)
-        }
+       
         setMiddleClassList(middleClassList)
         setSelectedmiddleClass(middleClassList[0])
       }

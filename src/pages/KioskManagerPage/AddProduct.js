@@ -169,21 +169,7 @@ const AddProduct = () => {
         if(response.data.result[0].middle_class_5){
           middleClassList.push(response.data.result[0].middle_class_5)
         }
-        if(response.data.result[0].middle_class_6){
-          middleClassList.push(response.data.result[0].middle_class_6)
-        }
-        if(response.data.result[0].middle_class_7){
-          middleClassList.push(response.data.result[0].middle_class_7)
-        }
-        if(response.data.result[0].middle_class_8){
-          middleClassList.push(response.data.result[0].middle_class_8)
-        }
-        if(response.data.result[0].middle_class_9){
-          middleClassList.push(response.data.result[0].middle_class_9)
-        }
-        if(response.data.result[0].middle_class_10){
-          middleClassList.push(response.data.result[0].middle_class_10)
-        }
+     
        setSelectedBrand(response.data.result[0].brand_name)
       setMiddleClassList(middleClassList)
       setSelectedmiddleClass(middleClassList[0])
@@ -279,21 +265,7 @@ const AddProduct = () => {
         if(brandList[i].middle_class_5){
           middleClassList.push(brandList[i].middle_class_5)
         }
-        if(brandList[i].middle_class_6){
-          middleClassList.push(brandList[i].middle_class_6)
-        }
-        if(brandList[i].middle_class_7){
-          middleClassList.push(brandList[i].middle_class_7)
-        }
-        if(brandList[i].middle_class_8){
-          middleClassList.push(brandList[i].middle_class_8)
-        }
-        if(brandList[i].middle_class_9){
-          middleClassList.push(brandList[i].middle_class_9)
-        }
-        if(brandList[i].middle_class_10){
-          middleClassList.push(brandList[i].middle_class_10)
-        }
+      
         setMiddleClassList(middleClassList)
         setSelectedmiddleClass(middleClassList[0])
       }
